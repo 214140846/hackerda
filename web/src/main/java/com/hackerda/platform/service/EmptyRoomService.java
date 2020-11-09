@@ -76,7 +76,9 @@ public class EmptyRoomService {
 				if (!lockMap.containsKey(week + teaNum)) {
 					synchronized (this) {
 						if (!lockMap.containsKey(week + teaNum))
-							lockMap.put(week + teaNum, new ReentrantLock());
+							{
+							   lockMap.put(week + teaNum, new ReentrantLock());
+							}
 					}
 				}
 				lockMap.get(week + teaNum).lock();
