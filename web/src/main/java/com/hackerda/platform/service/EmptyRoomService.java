@@ -27,12 +27,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class EmptyRoomService {
-	Map<String, EmptyRoom> classRoomMap = new HashMap<>();
     @Autowired
     private EmptyRoomDao emptyRoomDao;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
-    
+    //创建map变量存储锁
     private Map<String,ReentrantLock>lockMap=new HashMap<>();
 
     /**
@@ -70,10 +69,11 @@ public class EmptyRoomService {
      */
 	public List<EmptyRoomVo> getFullEmptyRoomReply(String week, String teaNum, int dayOfWeek, int floor) {
 	  try { 
+			Map<String, EmptyRoom> classRoomMap = new HashMap<>();
 			List<Integer> orderList = Lists.newArrayList(1, 3, 5, 7, 9);
+			//加锁部分
 			if (stringRedisTemplate.keys("empty_Room_data::" + week + teaNum + "*").size() == 0) {
 				if (!lockMap.containsKey(week + teaNum)) {
-					//加锁
 					synchronized (this) {
 						if (!lockMap.containsKey(week + teaNum))
 							lockMap.put(week + teaNum, new ReentrantLock());
@@ -96,7 +96,7 @@ public class EmptyRoomService {
 					.sorted(Comparator.comparing(o -> o.getUrpClassroom().getNumber())).collect(Collectors.toList());
 
 		} finally {
-			//解锁
+			//finally语句块解锁
 			if (lockMap.get(week + teaNum) != null && lockMap.get(week + teaNum).isLocked()) {
 				lockMap.get(week + teaNum).unlock();
 				}
