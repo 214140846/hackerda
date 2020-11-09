@@ -75,8 +75,7 @@ public class EmptyRoomService {
 			if (stringRedisTemplate.keys("empty_Room_data::" + week + teaNum + "*").size() == 0) {
 				if (!lockMap.containsKey(week + teaNum)) {
 					synchronized (this) {
-						if (!lockMap.containsKey(week + teaNum))
-							{
+						if (!lockMap.containsKey(week + teaNum)){
 							   lockMap.put(week + teaNum, new ReentrantLock());
 							}
 					}
