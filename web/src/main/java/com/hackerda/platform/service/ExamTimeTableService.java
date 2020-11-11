@@ -91,8 +91,7 @@ public class ExamTimeTableService {
      * @return
      */
     public List<Exam> getExamTimeList(int account) {
-
-        return Collections.emptyList();
+        return getExamTimeListFromSpider(account);
     }
 
     private Course getCourseFromExamText(String examText) {
