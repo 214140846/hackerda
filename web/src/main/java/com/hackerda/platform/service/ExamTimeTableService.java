@@ -128,11 +128,15 @@ public class ExamTimeTableService {
 
     private UrpClassroom getClassRoomFromText(String date) {
         String[] split = date.split(" ");
-        UrpClassroom room = roomService.getClassRoomByName(split[3]);
-        if (room != null) {
-            return room;
+        try {
+            return roomService.getClassRoomByName(split[3]);
+        }catch (Exception e) {
+            UrpClassroom urpClassroom = new UrpClassroom();
+            urpClassroom.setName(split[3]);
+            urpClassroom.setTeachingBuildingName(split[2]);
+            return urpClassroom;
         }
-        return new UrpClassroom();
+
     }
 
 

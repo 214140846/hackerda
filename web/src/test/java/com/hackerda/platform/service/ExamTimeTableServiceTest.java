@@ -25,7 +25,7 @@ public class ExamTimeTableServiceTest {
     @Test
     public void getExamTimeListFromSpider() {
 
-        List<Exam> examList = examTimeTableService.getExamTimeListFromSpider(2017026003);
+        List<Exam> examList = examTimeTableService.getExamTimeListFromSpider(2019023695);
 
 
         for (Exam exam : examList) {
