@@ -43,6 +43,11 @@ public class ExamTimeTableService {
         if (student == null) {
             throw new PasswordUnCorrectException();
         }
+
+        if (!student.isMsgHasCheck()) {
+            return Collections.emptyList();
+        }
+
         List<UrpExamTime> examTime;
         try {
             examTime = newUrpSpiderService.getExamTime(student);
