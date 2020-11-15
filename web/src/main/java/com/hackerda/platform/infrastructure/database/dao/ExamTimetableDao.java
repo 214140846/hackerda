@@ -22,12 +22,12 @@ public class ExamTimetableDao {
 
     public void insertSelective(ExamTimetable examTimetable) {
         examTimetableMapper.insertSelective(examTimetable);
-    }
-
+    }}//恢复删除该右大括号
+/*
     public ExamTimetable selectByPrimaryKey(Integer id) {
         return examTimetableMapper.selectByPrimaryKey(id).orElse(null);
     }
-
+  
     public List<ExamTimetable> selectByPojo(ExamTimetable examTimetable) {
 
         ExamTimetableExample example = new ExamTimetableExample();
@@ -56,3 +56,4 @@ public class ExamTimetableDao {
     }
 
 }
+*/
