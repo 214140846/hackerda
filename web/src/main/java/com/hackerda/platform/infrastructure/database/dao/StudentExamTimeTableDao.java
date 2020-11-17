@@ -4,6 +4,8 @@ import com.hackerda.platform.infrastructure.database.mapper.StudentExamTimetable
 import com.hackerda.platform.infrastructure.database.model.StudentExamTimetable;
 import com.hackerda.platform.infrastructure.database.model.StudentExamTimetableExample;
 import com.hackerda.platform.infrastructure.database.model.example.ExamTimetable;
+import com.hackerda.platform.utils.DateUtils;
+import com.hackerda.platform.utils.Term;
 
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ public class StudentExamTimeTableDao {
     @Resource
     private StudentExamTimetableMapper studentExamTimetableMapper;
 	
+    private Term term=DateUtils.getCurrentSchoolTime().getTerm();
 
 
     public void insertSelective(StudentExamTimetable record){
@@ -34,11 +37,8 @@ public class StudentExamTimeTableDao {
     	StudentExamTimetable studentExamTimetable=new StudentExamTimetable();
     	studentExamTimetable.setAccount(account)
     	.setExamTimetableId(exam.getId())
-    	.setGmtCreate(new Date())
-    	.setGmtModify(new Date())
-    	.setTermOrder(1)
-				/* Integer.parseInt(exam.getTermOrder()) */
-    	.setTermYear(exam.getTermYear());
+    	.setTermOrder(term.getOrder())
+    	.setTermYear(String.valueOf(term.getEndYear()));
     	studentExamTimetableMapper.insert(studentExamTimetable);
     }
 

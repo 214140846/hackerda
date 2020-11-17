@@ -6,16 +6,22 @@ import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.infrastructure.database.dao.ExamTimetableDao;
 import com.hackerda.platform.infrastructure.database.dao.StudentExamTimeTableDao;
 import com.hackerda.platform.infrastructure.database.model.*;
+import com.hackerda.platform.infrastructure.database.model.example.ExamTimetable;
 import com.hackerda.platform.utils.DateUtils;
+import com.hackerda.platform.utils.Term;
 import com.hackerda.spider.exception.PasswordUnCorrectException;
 import com.hackerda.spider.exception.UrpRequestException;
 import com.hackerda.spider.support.UrpExamTime;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +47,11 @@ public class ExamTimeTableService {
 
     @Autowired
     private ExamTimetableDao examTimetableDao;
+    
+    @Autowired
+    StudentExamTimeTableDao studentExamTimeTableDao;
+    
+    private Term term=DateUtils.getCurrentSchoolTime().getTerm();
 
     public List<Exam> getExamTimeListFromSpider(int account) {
 
@@ -90,7 +101,8 @@ public class ExamTimeTableService {
                 )
                 .collect(Collectors.toList());
         for (Exam exam : examList) {
-			examTimetableDao.insertIfAbsent(exam,String.valueOf(account));
+        	//由于需要做到增量添加，不得以需要逐条数据进行处理
+			insertIfAbsent(exam,String.valueOf(account));
 		}
 		return examList;
     }
@@ -146,5 +158,32 @@ public class ExamTimeTableService {
 
     }
 
-
-}
+	public void insertIfAbsent(Exam exam, String account) {		
+			if (exam == null) {
+				return;
+			}
+			String baseDate = DateUtils.getDateStr(exam.getDate(), "yyyy-MM-dd ");
+			String examDate = baseDate + exam.getStartTime();
+			String examEndTime = baseDate + exam.getEndTime();
+			ExamTimetable examTimetable = new ExamTimetable();
+			examTimetable.setCourseName(exam.getCourse().getName()).setDay(exam.getExamDay())
+					.setExamDate(DateUtils.localDateToDate(examDate, "yyyy-MM-dd HH:mm")).setGmtCreate(new Date())
+					.setGmtModify(new Date()).setName(exam.getExamName()).setRoomName(exam.getClassRoom().getName())
+					.setSchoolWeek(exam.getExamWeekOfTerm())
+					.setStartTime(DateUtils.localDateToDate(examDate, "yyyy-MM-dd HH:mm"))
+					.setEndTime(DateUtils.localDateToDate(examEndTime, "yyyy-MM-dd HH:mm"))
+					.setTermOrder(String.valueOf(term.getOrder())).setTermYear(term.getTermYear());
+			List<ExamTimetable> list = examTimetableDao.selectByExam(exam, examDate, examEndTime);
+			if (CollectionUtils.isEmpty(list)) {
+				examTimetableDao.insertByExam(examTimetable, examDate, examEndTime);
+				studentExamTimeTableDao.insert(account, examTimetable);
+			} else {
+				List<StudentExamTimetable> seList = studentExamTimeTableDao.selectByAccountAndExamTimetable(account,
+						list.get(0));
+				if (CollectionUtils.isEmpty(seList)) {
+					studentExamTimeTableDao.insert(account, list.get(0));
+				}
+			}
+	}
+    
+    }

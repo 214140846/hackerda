@@ -85,13 +85,4 @@ public class TimetableController {
         List<Exam> examTimeList = examTimeTableService.getExamTimeList(Integer.parseInt(account));
         return WebResponse.success(examTimeList);
     }
-    
-	/*
-	 * @GetMapping("/test") public String test() { ExamTimetable e=new
-	 * ExamTimetable(); e.setCourseName("a"); e.setDay("a"); e.setEndTime(new
-	 * Date()); e.setExamDate(new Date()); e.setGmtCreate(new Date());
-	 * e.setGmtModify(new Date()); e.setId(1); e.setName("a"); e.setRoomName("a");
-	 * e.setSchoolWeek("a"); e.setStartTime(new Date()); e.setTermOrder("a");
-	 * e.setTermYear("a"); mapper.insert(e); return "ok"; }
-	 */
 }
