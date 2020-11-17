@@ -1,18 +1,23 @@
 package com.hackerda.platform.infrastructure.database.mapper;
 
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
-
 import com.hackerda.platform.infrastructure.database.model.example.ExamTimetable;
 import com.hackerda.platform.infrastructure.database.model.example.ExamTimetableExample;
+import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+@Mapper
+@Repository
 public interface ExamTimetableMapper {
     long countByExample(ExamTimetableExample example);
 
     int deleteByExample(ExamTimetableExample example);
 
     int deleteByPrimaryKey(Integer id);
-
+    
     int insert(ExamTimetable record);
 
     int insertSelective(ExamTimetable record);

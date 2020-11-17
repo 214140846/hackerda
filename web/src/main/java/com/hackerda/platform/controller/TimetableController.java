@@ -1,10 +1,14 @@
 package com.hackerda.platform.controller;
 
 
+import com.hackerda.platform.infrastructure.database.mapper.ExamTimetableMapper;
 import com.hackerda.platform.infrastructure.database.model.Exam;
+import com.hackerda.platform.infrastructure.database.model.example.ExamTimetable;
 import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.service.ExamTimeTableService;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,7 +27,6 @@ public class TimetableController {
 
     @Resource
     private ExamTimeTableService examTimeTableService;
-
 
     @GetMapping("/teacher")
     public WebResponse getTimeTableByTeacher(@RequestParam(value = "account") String account) {
@@ -81,6 +85,13 @@ public class TimetableController {
         List<Exam> examTimeList = examTimeTableService.getExamTimeList(Integer.parseInt(account));
         return WebResponse.success(examTimeList);
     }
-
-
+    
+	/*
+	 * @GetMapping("/test") public String test() { ExamTimetable e=new
+	 * ExamTimetable(); e.setCourseName("a"); e.setDay("a"); e.setEndTime(new
+	 * Date()); e.setExamDate(new Date()); e.setGmtCreate(new Date());
+	 * e.setGmtModify(new Date()); e.setId(1); e.setName("a"); e.setRoomName("a");
+	 * e.setSchoolWeek("a"); e.setStartTime(new Date()); e.setTermOrder("a");
+	 * e.setTermYear("a"); mapper.insert(e); return "ok"; }
+	 */
 }

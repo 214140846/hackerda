@@ -705,52 +705,62 @@ public class ExamTimetableExample {
             return (Criteria) this;
         }
 
-        public Criteria andDayEqualTo(Integer value) {
+        public Criteria andDayEqualTo(String value) {
             addCriterion("day =", value, "day");
             return (Criteria) this;
         }
 
-        public Criteria andDayNotEqualTo(Integer value) {
+        public Criteria andDayNotEqualTo(String value) {
             addCriterion("day <>", value, "day");
             return (Criteria) this;
         }
 
-        public Criteria andDayGreaterThan(Integer value) {
+        public Criteria andDayGreaterThan(String value) {
             addCriterion("day >", value, "day");
             return (Criteria) this;
         }
 
-        public Criteria andDayGreaterThanOrEqualTo(Integer value) {
+        public Criteria andDayGreaterThanOrEqualTo(String value) {
             addCriterion("day >=", value, "day");
             return (Criteria) this;
         }
 
-        public Criteria andDayLessThan(Integer value) {
+        public Criteria andDayLessThan(String value) {
             addCriterion("day <", value, "day");
             return (Criteria) this;
         }
 
-        public Criteria andDayLessThanOrEqualTo(Integer value) {
+        public Criteria andDayLessThanOrEqualTo(String value) {
             addCriterion("day <=", value, "day");
             return (Criteria) this;
         }
 
-        public Criteria andDayIn(List<Integer> values) {
+        public Criteria andDayLike(String value) {
+            addCriterion("day like", value, "day");
+            return (Criteria) this;
+        }
+
+        public Criteria andDayNotLike(String value) {
+            addCriterion("day not like", value, "day");
+            return (Criteria) this;
+        }
+
+        public Criteria andDayIn(List<String> values) {
             addCriterion("day in", values, "day");
             return (Criteria) this;
         }
 
-        public Criteria andDayNotIn(List<Integer> values) {
+        public Criteria andDayNotIn(List<String> values) {
             addCriterion("day not in", values, "day");
             return (Criteria) this;
         }
 
-        public Criteria andDayBetween(Integer value1, Integer value2) {
+        public Criteria andDayBetween(String value1, String value2) {
             addCriterion("day between", value1, value2, "day");
             return (Criteria) this;
         }
 
-        public Criteria andDayNotBetween(Integer value1, Integer value2) {
+        public Criteria andDayNotBetween(String value1, String value2) {
             addCriterion("day not between", value1, value2, "day");
             return (Criteria) this;
         }
@@ -765,52 +775,62 @@ public class ExamTimetableExample {
             return (Criteria) this;
         }
 
-        public Criteria andSchoolWeekEqualTo(Integer value) {
+        public Criteria andSchoolWeekEqualTo(String value) {
             addCriterion("school_week =", value, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSchoolWeekNotEqualTo(Integer value) {
+        public Criteria andSchoolWeekNotEqualTo(String value) {
             addCriterion("school_week <>", value, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSchoolWeekGreaterThan(Integer value) {
+        public Criteria andSchoolWeekGreaterThan(String value) {
             addCriterion("school_week >", value, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSchoolWeekGreaterThanOrEqualTo(Integer value) {
+        public Criteria andSchoolWeekGreaterThanOrEqualTo(String value) {
             addCriterion("school_week >=", value, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSchoolWeekLessThan(Integer value) {
+        public Criteria andSchoolWeekLessThan(String value) {
             addCriterion("school_week <", value, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSchoolWeekLessThanOrEqualTo(Integer value) {
+        public Criteria andSchoolWeekLessThanOrEqualTo(String value) {
             addCriterion("school_week <=", value, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSchoolWeekIn(List<Integer> values) {
+        public Criteria andSchoolWeekLike(String value) {
+            addCriterion("school_week like", value, "schoolWeek");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolWeekNotLike(String value) {
+            addCriterion("school_week not like", value, "schoolWeek");
+            return (Criteria) this;
+        }
+
+        public Criteria andSchoolWeekIn(List<String> values) {
             addCriterion("school_week in", values, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSchoolWeekNotIn(List<Integer> values) {
+        public Criteria andSchoolWeekNotIn(List<String> values) {
             addCriterion("school_week not in", values, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSchoolWeekBetween(Integer value1, Integer value2) {
+        public Criteria andSchoolWeekBetween(String value1, String value2) {
             addCriterion("school_week between", value1, value2, "schoolWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSchoolWeekNotBetween(Integer value1, Integer value2) {
+        public Criteria andSchoolWeekNotBetween(String value1, String value2) {
             addCriterion("school_week not between", value1, value2, "schoolWeek");
             return (Criteria) this;
         }

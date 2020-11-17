@@ -3,6 +3,8 @@ package com.hackerda.platform.service;
 import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.student.StudentRepository;
+import com.hackerda.platform.infrastructure.database.dao.ExamTimetableDao;
+import com.hackerda.platform.infrastructure.database.dao.StudentExamTimeTableDao;
 import com.hackerda.platform.infrastructure.database.model.*;
 import com.hackerda.platform.utils.DateUtils;
 import com.hackerda.spider.exception.PasswordUnCorrectException;
@@ -10,6 +12,7 @@ import com.hackerda.spider.exception.UrpRequestException;
 import com.hackerda.spider.support.UrpExamTime;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,6 +39,8 @@ public class ExamTimeTableService {
     @Resource
     private StudentRepository studentRepository;
 
+    @Autowired
+    private ExamTimetableDao examTimetableDao;
 
     public List<Exam> getExamTimeListFromSpider(int account) {
 
@@ -58,9 +63,7 @@ public class ExamTimeTableService {
             }
             throw e;
         }
-
-
-        return examTime.stream()
+        List<Exam> examList=examTime.stream()
                 .filter(x -> StringUtils.isNotEmpty(x.getDate()))
                 .map(x -> {
                             if (StringUtils.isEmpty(x.getExamTime())) {
@@ -86,6 +89,10 @@ public class ExamTimeTableService {
 
                 )
                 .collect(Collectors.toList());
+        for (Exam exam : examList) {
+			examTimetableDao.insertIfAbsent(exam,String.valueOf(account));
+		}
+		return examList;
     }
 
 
