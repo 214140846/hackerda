@@ -1,22 +1,19 @@
 package com.hackerda.platform.controller;
 
 
-import com.hackerda.platform.infrastructure.database.mapper.ExamTimetableMapper;
 import com.hackerda.platform.infrastructure.database.model.Exam;
-import com.hackerda.platform.infrastructure.database.model.example.ExamTimetable;
 import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.service.ExamTimeTableService;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 

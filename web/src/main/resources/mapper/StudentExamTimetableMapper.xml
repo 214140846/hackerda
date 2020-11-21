@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hackerda.platform.infrastructure.database.mapper.StudentExamTimetableMapper">
+  <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id"
+	keyColumn="id">
+	insert into student_exam_timetable (id, account, exam_timetable_id, 
+      term_year, term_order, gmt_create, 
+      gmt_modify)
+    values
+	<foreach collection="list" separator="," item="item">
+	   (#{item.id,jdbcType=INTEGER}, #{item.account,jdbcType=VARCHAR}, #{item.examTimetableId,jdbcType=INTEGER}, 
+      #{item.termYear,jdbcType=VARCHAR}, #{item.termOrder,jdbcType=INTEGER}, #{item.gmtCreate,jdbcType=TIMESTAMP}, 
+      #{item.gmtModify,jdbcType=TIMESTAMP})
+	</foreach>
+  </insert>
   <resultMap id="BaseResultMap" type="com.hackerda.platform.infrastructure.database.model.StudentExamTimetable">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="account" jdbcType="VARCHAR" property="account" />

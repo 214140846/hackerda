@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -48,9 +49,7 @@ public class ExamTimeTableService {
     private ExamTimetableDao examTimetableDao;
     
     @Autowired
-    StudentExamTimeTableDao studentExamTimeTableDao;
-    
-    private Term term=DateUtils.getCurrentSchoolTime().getTerm();
+    private StudentExamTimeTableDao studentExamTimeTableDao;
 
     public List<Exam> getExamTimeListFromSpider(int account) {
 
@@ -99,9 +98,19 @@ public class ExamTimeTableService {
 
                 )
                 .collect(Collectors.toList());
+        List <ExamTimetable> examTimetableList=new ArrayList<>();
+        //由于需要examTimetable表的id，所以需要主键返回，插入studentexamTimetable
+        //需要有examTimetable的参与，创建列表存储需要被加入到studentexamTimetable表的examTimetable对象
+        List <ExamTimetable> temp=new ArrayList<>();
         for (Exam exam : examList) {
-        	//由于需要做到增量添加，不得以需要逐条数据进行处理
-			insertIfAbsent(exam,String.valueOf(account));
+			insertIfAbsent(exam, String.valueOf(account), examTimetableList, temp);
+		}
+		if (!CollectionUtils.isEmpty(examTimetableList)) {
+			examTimetableDao.batchInsert(examTimetableList);
+		}
+		if (!CollectionUtils.isEmpty(temp)) {
+			List<StudentExamTimetable> studentExamTimetableList = transform(temp, String.valueOf(account));
+			studentExamTimeTableDao.insertBatch(studentExamTimetableList);
 		}
 		return examList;
     }
@@ -157,32 +166,48 @@ public class ExamTimeTableService {
 
     }
 
-	public void insertIfAbsent(Exam exam, String account) {		
-			if (exam == null) {
-				return;
+	public void insertIfAbsent(Exam exam, String account, List<ExamTimetable> examTimetableList,
+			List<ExamTimetable> temp) {
+		if (exam == null) {
+			return;
+		}
+		String baseDate = DateUtils.getDateStr(exam.getDate(), "yyyy-MM-dd ");
+		String examDate = baseDate + exam.getStartTime();
+		String examEndTime = baseDate + exam.getEndTime();
+		ExamTimetable examTimetable = new ExamTimetable();
+		Term term=DateUtils.getCurrentSchoolTime().getTerm();
+		examTimetable.setCourseName(exam.getCourse().getName()).setDay(exam.getExamDay())
+				.setExamDate(DateUtils.localDateToDate(examDate, "yyyy-MM-dd HH:mm")).setGmtCreate(new Date())
+				.setGmtModify(new Date()).setName(exam.getExamName()).setRoomName(exam.getClassRoom().getName())
+				.setSchoolWeek(exam.getExamWeekOfTerm())
+				.setStartTime(DateUtils.localDateToDate(examDate, "yyyy-MM-dd HH:mm"))
+				.setEndTime(DateUtils.localDateToDate(examEndTime, "yyyy-MM-dd HH:mm"))
+				.setTermOrder(String.valueOf(term.getOrder())).setTermYear(term.getTermYear());
+		ExamTimetable examIsExist = examTimetableDao.selectByExam(examTimetable);
+		if (examIsExist == null) {
+			examTimetableList.add(examTimetable);
+			temp.add(examTimetable);
+		} else {
+			StudentExamTimetable stuExamIsExist = studentExamTimeTableDao.selectByAccountAndExamTimetable(account,
+					examIsExist);
+			if (stuExamIsExist == null) {
+				temp.add(examIsExist);
 			}
-			String baseDate = DateUtils.getDateStr(exam.getDate(), "yyyy-MM-dd ");
-			String examDate = baseDate + exam.getStartTime();
-			String examEndTime = baseDate + exam.getEndTime();
-			ExamTimetable examTimetable = new ExamTimetable();
-			examTimetable.setCourseName(exam.getCourse().getName()).setDay(exam.getExamDay())
-					.setExamDate(DateUtils.localDateToDate(examDate, "yyyy-MM-dd HH:mm")).setGmtCreate(new Date())
-					.setGmtModify(new Date()).setName(exam.getExamName()).setRoomName(exam.getClassRoom().getName())
-					.setSchoolWeek(exam.getExamWeekOfTerm())
-					.setStartTime(DateUtils.localDateToDate(examDate, "yyyy-MM-dd HH:mm"))
-					.setEndTime(DateUtils.localDateToDate(examEndTime, "yyyy-MM-dd HH:mm"))
-					.setTermOrder(String.valueOf(term.getOrder())).setTermYear(term.getTermYear());
-			List<ExamTimetable> list = examTimetableDao.selectByExam(exam, examDate, examEndTime);
-			if (CollectionUtils.isEmpty(list)) {
-				examTimetableDao.insertByExam(examTimetable, examDate, examEndTime);
-				studentExamTimeTableDao.insert(account, examTimetable);
-			} else {
-				List<StudentExamTimetable> seList = studentExamTimeTableDao.selectByAccountAndExamTimetable(account,
-						list.get(0));
-				if (CollectionUtils.isEmpty(seList)) {
-					studentExamTimeTableDao.insert(account, list.get(0));
-				}
-			}
+		}
 	}
-    
-    }
+/**
+   * 传入需要加入studentExamTimetable表中的列表由
+ * ExamTimetable对象转化到StudentExamTimetable对象
+ */
+	public List<StudentExamTimetable> transform(List<ExamTimetable> temp, String account) {
+		List<StudentExamTimetable> studentExamTimetableList = new ArrayList<>();
+		Term term=DateUtils.getCurrentSchoolTime().getTerm();
+		for (ExamTimetable examTimetable : temp) {
+			StudentExamTimetable stuExam = new StudentExamTimetable();
+			stuExam.setAccount(account).setExamTimetableId(examTimetable.getId())
+			.setTermOrder(term.getOrder()).setTermYear(term.getTermYear());
+			studentExamTimetableList.add(stuExam);
+		}
+		return studentExamTimetableList;
+	}
+}

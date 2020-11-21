@@ -33,4 +33,6 @@ public interface ExamTimetableMapper {
     int updateByPrimaryKeySelective(ExamTimetable record);
 
     int updateByPrimaryKey(ExamTimetable record);
+    
+    int batchInsert(@Param("list") List<ExamTimetable> list);
 }

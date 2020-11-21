@@ -7,6 +7,7 @@ import com.hackerda.platform.infrastructure.database.model.example.ExamTimetable
 
 import com.hackerda.platform.utils.DateUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,19 +25,24 @@ public class ExamTimetableDao {
     private StudentExamTimeTableDao studentExamTimeTableDao;    
  
     //通过查询出来的exam对象插入数据
-    public void insertByExam(ExamTimetable examTimetable,String examDate,String examEndTime) {
+    public void insertByExam(ExamTimetable examTimetable) {
 	    examTimetableMapper.insert(examTimetable);
     }
     
     //通过exam查询数据库中是否存在
-    public List<ExamTimetable> selectByExam(Exam exam,String examDate,String examEndTime) {
+    public ExamTimetable selectByExam(ExamTimetable examTimetable) {
 		ExamTimetableExample example = new ExamTimetableExample();
-		example.createCriteria().andCourseNameEqualTo(exam.getCourse().getName()).andDayEqualTo(exam.getExamDay())
-				.andExamDateEqualTo(DateUtils.localDateToDate(examDate, "yyyy-MM-dd HH:mm"))
-				.andNameEqualTo(exam.getExamName()).andRoomNameEqualTo(exam.getClassRoom().getName())
-				.andSchoolWeekEqualTo(exam.getExamWeekOfTerm())
-				.andStartTimeEqualTo(DateUtils.localDateToDate(examDate, "yyyy-MM-dd HH:mm"))
-				.andEndTimeEqualTo(DateUtils.localDateToDate(examEndTime, "yyyy-MM-dd HH:mm"));
-		return examTimetableMapper.selectByExample(example);
+		example.createCriteria().andRoomNameEqualTo(examTimetable.getRoomName())
+		.andCourseNameEqualTo(examTimetable.getCourseName())
+		.andExamDateEqualTo(examTimetable.getExamDate());
+		List<ExamTimetable> list= examTimetableMapper.selectByExample(example);
+		if(!CollectionUtils.isEmpty(list)) {
+			return list.get(0);
+		}
+		return null;		
+    }
+    
+    public int batchInsert(List<ExamTimetable> list) {
+    	return examTimetableMapper.batchInsert(list);
     }
 }

@@ -2,6 +2,8 @@ package com.hackerda.platform.infrastructure.database.mapper;
 
 import com.hackerda.platform.infrastructure.database.model.StudentExamTimetable;
 import com.hackerda.platform.infrastructure.database.model.StudentExamTimetableExample;
+import com.hackerda.platform.infrastructure.database.model.example.ExamTimetable;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -31,4 +33,6 @@ public interface StudentExamTimetableMapper {
     int updateByPrimaryKeySelective(StudentExamTimetable record);
 
     int updateByPrimaryKey(StudentExamTimetable record);
+    
+    int batchInsert(@Param("list") List<StudentExamTimetable> list);
 }
