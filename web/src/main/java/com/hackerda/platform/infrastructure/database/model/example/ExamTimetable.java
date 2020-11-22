@@ -1,38 +1,37 @@
 package com.hackerda.platform.infrastructure.database.model.example;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.util.Date;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class ExamTimetable {
+
     private Integer id;
 
     private String name;
 
     private String roomName;
 
-    private String courseNum;
+    private String courseName;
 
-    private String courseOrder;
+    private String termOrder;
 
     private String termYear;
 
-    private Integer termOrder;
-
     private Date examDate;
 
-    private String startTime;
+    private Date startTime;
 
-    private String endTime;
+    private Date endTime;
 
     private String day;
 
-    private String schoolWek;
+    private String schoolWeek;
 
     private Date gmtCreate;
 
     private Date gmtModify;
+
 }

@@ -5,12 +5,14 @@ import com.hackerda.platform.infrastructure.database.model.Exam;
 import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.service.ExamTimeTableService;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +24,6 @@ public class TimetableController {
 
     @Resource
     private ExamTimeTableService examTimeTableService;
-
 
     @GetMapping("/teacher")
     public WebResponse getTimeTableByTeacher(@RequestParam(value = "account") String account) {
@@ -81,6 +82,4 @@ public class TimetableController {
         List<Exam> examTimeList = examTimeTableService.getExamTimeList(Integer.parseInt(account));
         return WebResponse.success(examTimeList);
     }
-
-
 }

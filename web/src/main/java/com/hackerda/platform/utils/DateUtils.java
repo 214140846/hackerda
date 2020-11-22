@@ -83,7 +83,12 @@ public class DateUtils {
             throw new RuntimeException(e);
         }
     }
-
+    
+    public static String getDateStr(Date date,String pattern) {
+    	SimpleDateFormat format =  new SimpleDateFormat(pattern);
+    	return format.format(date);
+    }
+    
     public static SchoolTime getCurrentSchoolTime() {
         SchoolTime schoolTime = new SchoolTime();
         schoolTime.setDay(getCurrentDay());

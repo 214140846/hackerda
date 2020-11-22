@@ -1,58 +1,52 @@
 package com.hackerda.platform.infrastructure.database.dao;
 
 import com.hackerda.platform.infrastructure.database.mapper.ExamTimetableMapper;
+import com.hackerda.platform.infrastructure.database.model.Exam;
 import com.hackerda.platform.infrastructure.database.model.example.ExamTimetable;
 import com.hackerda.platform.infrastructure.database.model.example.ExamTimetableExample;
-import com.hackerda.platform.utils.Term;
+
 import com.hackerda.platform.utils.DateUtils;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.util.List;
 
-import static com.hackerda.platform.infrastructure.database.mapper.ExamTimetableDynamicSqlSupport.*;
-import static com.hackerda.platform.infrastructure.database.mapper.StudentExamTimetableDynamicSqlSupport.studentExamTimetable;
-import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 @Service
 public class ExamTimetableDao {
     @Resource
     private ExamTimetableMapper examTimetableMapper;
-
-
-    public void insertSelective(ExamTimetable examTimetable) {
-        examTimetableMapper.insertSelective(examTimetable);
+    
+    @Autowired
+    private StudentExamTimeTableDao studentExamTimeTableDao;    
+ 
+    //通过查询出来的exam对象插入数据
+    public void insertByExam(ExamTimetable examTimetable) {
+	    examTimetableMapper.insert(examTimetable);
     }
-
-    public ExamTimetable selectByPrimaryKey(Integer id) {
-        return examTimetableMapper.selectByPrimaryKey(id).orElse(null);
+    
+    //通过exam查询数据库中是否存在
+    public ExamTimetable selectByExam(ExamTimetable examTimetable) {
+		ExamTimetableExample example = new ExamTimetableExample();
+		example.createCriteria().andRoomNameEqualTo(examTimetable.getRoomName())
+		.andCourseNameEqualTo(examTimetable.getCourseName())
+		.andExamDateEqualTo(examTimetable.getExamDate());
+		List<ExamTimetable> list= examTimetableMapper.selectByExample(example);
+		if(!CollectionUtils.isEmpty(list)) {
+			return list.get(0);
+		}
+		return null;		
     }
-
-    public List<ExamTimetable> selectByPojo(ExamTimetable examTimetable) {
-
-        ExamTimetableExample example = new ExamTimetableExample();
-        ExamTimetableExample.Criteria criteria = example.createCriteria();
-
-        criteria.andCourseNumEqualTo(examTimetable.getCourseNum());
-        criteria.andCourseOrderEqualTo(examTimetable.getCourseOrder());
-        criteria.andTermYearEqualTo(examTimetable.getTermYear());
-        criteria.andTermOrderEqualTo(examTimetable.getTermOrder());
-
-        return examTimetableMapper.select(c ->
-                c.where(courseNum, isEqualToWhenPresent(examTimetable.getCourseNum()))
-                        .and(courseOrder, isEqualToWhenPresent(examTimetable.getCourseOrder()))
-                        .and(termYear, isEqualToWhenPresent(examTimetable.getTermYear()))
-                        .and(termOrder, isEqualToWhenPresent(examTimetable.getTermOrder()))
-        );
+    
+    public int batchInsert(List<ExamTimetable> list) {
+    	return examTimetableMapper.batchInsert(list);
     }
-
-    public List<ExamTimetable> selectCurrentExamByAccount(String account) {
-        Term term = DateUtils.getCurrentSchoolTime().getTerm();
-        return examTimetableMapper.select(c ->
-                c.join(studentExamTimetable, on(studentExamTimetable.examTimetableId, equalTo(examTimetable.id)))
-                .where(studentExamTimetable.account, isEqualTo(account))
-                        .and(studentExamTimetable.termOrder, isEqualTo(term.getOrder()))
-                        .and(studentExamTimetable.termYear, isEqualTo(term.getTermYear())));
+    
+    public List<ExamTimetable> getExamByAccount(String account){
+    	return examTimetableMapper.selectByAccount(account);
     }
-
 }

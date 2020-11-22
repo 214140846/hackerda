@@ -1,4 +1,4 @@
-package com.hackerda.platform.infrastructure.database.model.example;
+package com.hackerda.platform.infrastructure.database.model;
 
 import java.util.ArrayList;
 import java.util.Date;
