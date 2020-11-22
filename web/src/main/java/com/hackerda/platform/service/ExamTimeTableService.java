@@ -66,12 +66,11 @@ public class ExamTimeTableService {
         try {
             examTime = newUrpSpiderService.getExamTime(student);
         } catch (UrpRequestException e) {
-           
             if (e.getCode() >= 500) {
             	List<ExamTimetable> res=examTimetableDao.getExamByAccount(String.valueOf(account));
             	return transform(res);
-            }
-            throw e;
+              }
+              throw e;
         }
         List<Exam> examList=examTime.stream()
                 .filter(x -> StringUtils.isNotEmpty(x.getDate()))
@@ -196,10 +195,10 @@ public class ExamTimeTableService {
 			}
 		}
 	}
-/**
-   * 传入需要加入studentExamTimetable表中的列表由
- * ExamTimetable对象转化到StudentExamTimetable对象
- */
+     /**
+                * 传入需要加入studentExamTimetable表中的列表由
+      * ExamTimetable对象转化到StudentExamTimetable对象
+      */
 	public List<StudentExamTimetable> transform(List<ExamTimetable> temp, String account) {
 		List<StudentExamTimetable> studentExamTimetableList = new ArrayList<>();
 		Term term=DateUtils.getCurrentSchoolTime().getTerm();
