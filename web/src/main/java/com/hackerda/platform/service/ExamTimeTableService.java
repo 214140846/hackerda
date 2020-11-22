@@ -66,9 +66,10 @@ public class ExamTimeTableService {
         try {
             examTime = newUrpSpiderService.getExamTime(student);
         } catch (UrpRequestException e) {
-
+           
             if (e.getCode() >= 500) {
-                return Collections.emptyList();
+            	List<ExamTimetable> res=examTimetableDao.getExamByAccount(String.valueOf(account));
+            	return transform(res);
             }
             throw e;
         }
@@ -177,12 +178,12 @@ public class ExamTimeTableService {
 		ExamTimetable examTimetable = new ExamTimetable();
 		Term term=DateUtils.getCurrentSchoolTime().getTerm();
 		examTimetable.setCourseName(exam.getCourse().getName()).setDay(exam.getExamDay())
-				.setExamDate(DateUtils.localDateToDate(examDate, "yyyy-MM-dd HH:mm")).setGmtCreate(new Date())
-				.setGmtModify(new Date()).setName(exam.getExamName()).setRoomName(exam.getClassRoom().getName())
-				.setSchoolWeek(exam.getExamWeekOfTerm())
-				.setStartTime(DateUtils.localDateToDate(examDate, "yyyy-MM-dd HH:mm"))
-				.setEndTime(DateUtils.localDateToDate(examEndTime, "yyyy-MM-dd HH:mm"))
-				.setTermOrder(String.valueOf(term.getOrder())).setTermYear(term.getTermYear());
+		  .setExamDate(DateUtils.localDateToDate(examDate, "yyyy-MM-dd HH:mm")).setGmtCreate(new Date())
+		  .setGmtModify(new Date()).setName(exam.getExamName()).setRoomName(exam.getClassRoom().getName())
+		  .setSchoolWeek(exam.getExamWeekOfTerm())
+		  .setStartTime(DateUtils.localDateToDate(examDate, "yyyy-MM-dd HH:mm"))
+		  .setEndTime(DateUtils.localDateToDate(examEndTime, "yyyy-MM-dd HH:mm"))
+		  .setTermOrder(String.valueOf(term.getOrder())).setTermYear(term.getTermYear());
 		ExamTimetable examIsExist = examTimetableDao.selectByExam(examTimetable);
 		if (examIsExist == null) {
 			examTimetableList.add(examTimetable);
@@ -205,9 +206,27 @@ public class ExamTimeTableService {
 		for (ExamTimetable examTimetable : temp) {
 			StudentExamTimetable stuExam = new StudentExamTimetable();
 			stuExam.setAccount(account).setExamTimetableId(examTimetable.getId())
-			.setTermOrder(term.getOrder()).setTermYear(term.getTermYear());
+			.setTermOrder(term.getOrder()).setTermYear(term.getTermYear())
+			.setGmtCreate(new Date()).setGmtModify(new Date());
 			studentExamTimetableList.add(stuExam);
 		}
 		return studentExamTimetableList;
+	}
+	
+	public List<Exam> transform(List<ExamTimetable> temp){
+		List<Exam> exam=new ArrayList<Exam>();
+		for (ExamTimetable e : temp) {
+			Exam etemp=new Exam();
+			Course course=new Course();
+			course.setName(e.getCourseName());
+			UrpClassroom urproom=new UrpClassroom();
+			urproom.setName(e.getRoomName());
+			etemp.setStartTime(DateUtils.getDateStr(e.getStartTime(),"yyyy-MM-dd HH:mm"))
+			.setEndTime(DateUtils.getDateStr(e.getEndTime(),"yyyy-MM-dd HH:mm"))
+			.setDate(e.getStartTime()).setExamName(e.getName()).setExamWeekOfTerm(e.getSchoolWeek())
+			.setExamDay(e.getDay()).setCourse(course).setClassRoom(urproom);	
+			exam.add(etemp);
+		}
+		return exam;
 	}
 }

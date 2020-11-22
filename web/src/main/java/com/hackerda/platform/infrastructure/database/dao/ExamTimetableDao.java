@@ -45,4 +45,8 @@ public class ExamTimetableDao {
     public int batchInsert(List<ExamTimetable> list) {
     	return examTimetableMapper.batchInsert(list);
     }
+    
+    public List<ExamTimetable> getExamByAccount(String account){
+    	return examTimetableMapper.selectByAccount(account);
+    }
 }

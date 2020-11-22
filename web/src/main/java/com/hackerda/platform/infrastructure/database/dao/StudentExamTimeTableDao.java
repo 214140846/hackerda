@@ -46,4 +46,5 @@ public class StudentExamTimeTableDao {
     public int insertBatch(List<StudentExamTimetable> list) {
     	return studentExamTimetableMapper.batchInsert(list);
     }
+
 }
