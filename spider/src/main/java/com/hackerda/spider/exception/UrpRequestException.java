@@ -20,4 +20,10 @@ public class UrpRequestException extends UrpException {
         this.code = code;
         this.message = message;
     }
+
+    public UrpRequestException(String url, int code, Throwable e){
+        super("url: " + url + " code: " + code, e);
+        this.url = url;
+        this.code = code;
+    }
 }

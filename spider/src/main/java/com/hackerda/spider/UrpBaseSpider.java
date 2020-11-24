@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestOperations;
 
 import java.net.HttpCookie;
@@ -187,15 +188,19 @@ public class UrpBaseSpider {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.COOKIE, cookieToString(cookiePersist.getByAccount(account)));
+        try {
+            ResponseEntity<String> responseEntity = client.exchange(
+                    url, HttpMethod.GET, new HttpEntity(headers), String.class);
 
-        ResponseEntity<String> responseEntity = client.exchange(
-                url, HttpMethod.GET, new HttpEntity(headers), String.class);
+            String content = responseEntity.getBody();
 
-        String content = responseEntity.getBody();
+            checkResult(content);
 
-        checkResult(content);
+            return content;
+        } catch (HttpServerErrorException.InternalServerError e) {
+            throw new UrpRequestException(url, e.getRawStatusCode(), e);
+        }
 
-        return content;
     }
 
 
