@@ -13,6 +13,7 @@
     <result column="like_count" jdbcType="INTEGER" property="likeCount" />
     <result column="view_count" jdbcType="INTEGER" property="viewCount" />
     <result column="equipment" jdbcType="VARCHAR" property="equipment" />
+    <result column="show" jdbcType="BOOLEAN" property="show" />
     <result column="last_reply_time" jdbcType="TIMESTAMP" property="lastReplyTime" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify" />
@@ -77,7 +78,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, user_name, content, allow_comment, identity_code, post_time, record_status, comment_count, 
-    like_count, view_count, equipment, last_reply_time, gmt_create, gmt_modify
+    like_count, view_count, equipment, `show`, last_reply_time, gmt_create, gmt_modify
   </sql>
   <select id="selectByExample" parameterType="com.hackerda.platform.infrastructure.database.model.PostExample" resultMap="BaseResultMap">
     select
@@ -113,13 +114,13 @@
     insert into post (user_name, content, allow_comment, 
       identity_code, post_time, record_status, 
       comment_count, like_count, view_count, 
-      equipment, last_reply_time, gmt_create, 
-      gmt_modify)
+      equipment, `show`, last_reply_time, 
+      gmt_create, gmt_modify)
     values (#{userName,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{allowComment,jdbcType=TINYINT}, 
       #{identityCode,jdbcType=INTEGER}, #{postTime,jdbcType=TIMESTAMP}, #{recordStatus,jdbcType=INTEGER}, 
       #{commentCount,jdbcType=INTEGER}, #{likeCount,jdbcType=INTEGER}, #{viewCount,jdbcType=INTEGER}, 
-      #{equipment,jdbcType=VARCHAR}, #{lastReplyTime,jdbcType=TIMESTAMP}, #{gmtCreate,jdbcType=TIMESTAMP}, 
-      #{gmtModify,jdbcType=TIMESTAMP})
+      #{equipment,jdbcType=VARCHAR}, #{show,jdbcType=BOOLEAN}, #{lastReplyTime,jdbcType=TIMESTAMP}, 
+      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModify,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.hackerda.platform.infrastructure.database.model.Post" useGeneratedKeys="true">
     insert into post
@@ -153,6 +154,9 @@
       </if>
       <if test="equipment != null">
         equipment,
+      </if>
+      <if test="show != null">
+        `show`,
       </if>
       <if test="lastReplyTime != null">
         last_reply_time,
@@ -194,6 +198,9 @@
       </if>
       <if test="equipment != null">
         #{equipment,jdbcType=VARCHAR},
+      </if>
+      <if test="show != null">
+        #{show,jdbcType=BOOLEAN},
       </if>
       <if test="lastReplyTime != null">
         #{lastReplyTime,jdbcType=TIMESTAMP},
@@ -248,6 +255,9 @@
       <if test="record.equipment != null">
         equipment = #{record.equipment,jdbcType=VARCHAR},
       </if>
+      <if test="record.show != null">
+        `show` = #{record.show,jdbcType=BOOLEAN},
+      </if>
       <if test="record.lastReplyTime != null">
         last_reply_time = #{record.lastReplyTime,jdbcType=TIMESTAMP},
       </if>
@@ -275,6 +285,7 @@
       like_count = #{record.likeCount,jdbcType=INTEGER},
       view_count = #{record.viewCount,jdbcType=INTEGER},
       equipment = #{record.equipment,jdbcType=VARCHAR},
+      `show` = #{record.show,jdbcType=BOOLEAN},
       last_reply_time = #{record.lastReplyTime,jdbcType=TIMESTAMP},
       gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
       gmt_modify = #{record.gmtModify,jdbcType=TIMESTAMP}
@@ -315,6 +326,9 @@
       <if test="equipment != null">
         equipment = #{equipment,jdbcType=VARCHAR},
       </if>
+      <if test="show != null">
+        `show` = #{show,jdbcType=BOOLEAN},
+      </if>
       <if test="lastReplyTime != null">
         last_reply_time = #{lastReplyTime,jdbcType=TIMESTAMP},
       </if>
@@ -339,6 +353,7 @@
       like_count = #{likeCount,jdbcType=INTEGER},
       view_count = #{viewCount,jdbcType=INTEGER},
       equipment = #{equipment,jdbcType=VARCHAR},
+      `show` = #{show,jdbcType=BOOLEAN},
       last_reply_time = #{lastReplyTime,jdbcType=TIMESTAMP},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       gmt_modify = #{gmtModify,jdbcType=TIMESTAMP}

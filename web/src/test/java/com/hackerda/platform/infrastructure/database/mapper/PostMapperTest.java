@@ -24,28 +24,9 @@ import static org.junit.Assert.*;
 @SpringBootTest
 public class PostMapperTest {
 
-    @Autowired
-    private PostExtMapper postExtMapper;
-
     @Test
     public void hideAll() {
 
-        PostExample example = new PostExample();
-        example.createCriteria()
-                .andRecordStatusEqualTo(RecordStatus.Release.getCode())
-                .andIdentityCodeEqualTo(IdentityCategory.Anonymous.getCode());
-
-
-        List<Post> posts = postExtMapper.selectByExample(example);
-
-        for (Post post : posts) {
-            post.setRecordStatus(RecordStatus.Hide.getCode());
-            postExtMapper.updateByPrimaryKeySelective(post);
-
-        }
-
-
-        System.out.println(posts.size());
 
     }
 
@@ -53,34 +34,11 @@ public class PostMapperTest {
     @Test
     public void showAll() {
 
-        PostExample example = new PostExample();
-        example.createCriteria()
-                .andRecordStatusEqualTo(RecordStatus.Hide.getCode())
-                .andIdentityCodeEqualTo(IdentityCategory.Anonymous.getCode());
-
-
-        List<Post> posts = postExtMapper.selectByExample(example);
-
-        for (Post post : posts) {
-            post.setRecordStatus(RecordStatus.Release.getCode());
-            postExtMapper.updateByPrimaryKeySelective(post);
-
-        }
-
-
-        System.out.println(posts.size());
-
     }
 
 
     @Test
     public void pageHelper() {
-        PostExample postExample = new PostExample();
-        postExample.setOrderByClause("id desc");
 
-        PageHelper.startPage(0, 5);
-        for (Post post : postExtMapper.selectByExample(postExample)) {
-            System.out.println(post);
-        }
     }
 }

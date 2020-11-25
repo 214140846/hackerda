@@ -795,6 +795,66 @@ public class PostExample {
             return (Criteria) this;
         }
 
+        public Criteria andShowIsNull() {
+            addCriterion("`show` is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShowIsNotNull() {
+            addCriterion("`show` is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShowEqualTo(Boolean value) {
+            addCriterion("`show` =", value, "show");
+            return (Criteria) this;
+        }
+
+        public Criteria andShowNotEqualTo(Boolean value) {
+            addCriterion("`show` <>", value, "show");
+            return (Criteria) this;
+        }
+
+        public Criteria andShowGreaterThan(Boolean value) {
+            addCriterion("`show` >", value, "show");
+            return (Criteria) this;
+        }
+
+        public Criteria andShowGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("`show` >=", value, "show");
+            return (Criteria) this;
+        }
+
+        public Criteria andShowLessThan(Boolean value) {
+            addCriterion("`show` <", value, "show");
+            return (Criteria) this;
+        }
+
+        public Criteria andShowLessThanOrEqualTo(Boolean value) {
+            addCriterion("`show` <=", value, "show");
+            return (Criteria) this;
+        }
+
+        public Criteria andShowIn(List<Boolean> values) {
+            addCriterion("`show` in", values, "show");
+            return (Criteria) this;
+        }
+
+        public Criteria andShowNotIn(List<Boolean> values) {
+            addCriterion("`show` not in", values, "show");
+            return (Criteria) this;
+        }
+
+        public Criteria andShowBetween(Boolean value1, Boolean value2) {
+            addCriterion("`show` between", value1, value2, "show");
+            return (Criteria) this;
+        }
+
+        public Criteria andShowNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("`show` not between", value1, value2, "show");
+            return (Criteria) this;
+        }
+
         public Criteria andLastReplyTimeIsNull() {
             addCriterion("last_reply_time is null");
             return (Criteria) this;

@@ -145,7 +145,8 @@ public class PosterRepositoryImpl implements PosterRepository {
         if(startId != null) {
             criteria.andIdLessThan(startId.longValue());
         }
-        criteria.andRecordStatusEqualTo(RecordStatus.Release.getCode());
+        criteria.andRecordStatusEqualTo(RecordStatus.Release.getCode())
+                .andShowEqualTo(true);
         PageHelper.startPage(0, limit);
         List<Post> postList = postExtMapper.selectByExample(example);
 
@@ -161,7 +162,8 @@ public class PosterRepositoryImpl implements PosterRepository {
         if(lastReplyTime != null) {
             criteria.andLastReplyTimeLessThan(lastReplyTime);
         }
-        criteria.andRecordStatusEqualTo(RecordStatus.Release.getCode());
+        criteria.andRecordStatusEqualTo(RecordStatus.Release.getCode())
+                .andShowEqualTo(true);
         PageHelper.startPage(0, count);
         List<Post> postList = postExtMapper.selectByExample(example);
 

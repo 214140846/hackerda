@@ -30,7 +30,7 @@ public enum RecordStatus {
     UnPassReview(3),
 
     /**
-     * 审核不通过
+     * 创建中
      */
     Create(4),
 

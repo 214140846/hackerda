@@ -47,7 +47,7 @@ public class IdentityCategoryRedisFilterScript {
         List<Post> posts = postExtMapper.selectByExample(example);
 
         for (Post post : posts) {
-            post.setRecordStatus(RecordStatus.Hide.getCode());
+            post.setShow(false);
             postExtMapper.updateByPrimaryKeySelective(post);
 
         }
@@ -66,16 +66,15 @@ public class IdentityCategoryRedisFilterScript {
 
         PostExample example = new PostExample();
         example.createCriteria()
-                .andRecordStatusEqualTo(RecordStatus.Hide.getCode())
+                .andShowEqualTo(false)
                 .andIdentityCodeIn(Lists.newArrayList(IdentityCategory.Anonymous.getCode(),
                         IdentityCategory.College.getCode(), IdentityCategory.Grade.getCode()));
-
 
 
         List<Post> posts = postExtMapper.selectByExample(example);
 
         for (Post post : posts) {
-            post.setRecordStatus(RecordStatus.Release.getCode());
+            post.setShow(true);
             postExtMapper.updateByPrimaryKeySelective(post);
 
         }
