@@ -10,4 +10,6 @@ public class RoleDetailDO {
 
     private String permissionName;
     private String permissionCode;
+
+    private int priority;
 }

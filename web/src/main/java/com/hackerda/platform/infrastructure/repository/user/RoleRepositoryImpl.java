@@ -72,12 +72,13 @@ public class RoleRepositoryImpl implements RoleRepository {
         }
 
         Map<RoleBO, List<PermissionBO>> collect = roleDetailList.stream()
-                .collect(Collectors.groupingBy(x -> new RoleBO(x.getRoleName(), x.getRoleCode()),
-                        Collectors.mapping(x -> new PermissionBO(x.getPermissionName(), x.getPermissionCode(), false),
+                .collect(Collectors.groupingBy(x -> new RoleBO(x.getRoleName(), x.getRoleCode(), x.getPriority()),
+                        Collectors.mapping(x -> new PermissionBO(x.getPermissionName(), x.getPermissionCode(),
+                                        x.getPriority(), false),
                                 Collectors.toList())));
 
         return collect.keySet().stream()
-                .map(x -> new RoleBO(x.getName(), x.getCode(), collect.get(x)))
+                .map(x -> new RoleBO(x.getName(), x.getCode(), x.getPriority(), collect.get(x)))
                 .collect(Collectors.toList());
     }
 }

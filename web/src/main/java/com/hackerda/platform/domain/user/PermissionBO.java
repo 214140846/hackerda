@@ -20,6 +20,8 @@ public class PermissionBO {
 
     private final String code;
 
+    private final int priority;
+
     /**
      * 是否是新的权限，区别从数据库中读取还是用户自己新建
      */
@@ -27,10 +29,11 @@ public class PermissionBO {
     private final boolean isNew;
 
 
-    public PermissionBO(String name, String code, boolean isNew) {
+    public PermissionBO(String name, String code, int priority, boolean isNew) {
         this.name = name;
         this.code = code;
         this.isNew = isNew;
+        this.priority = priority;
     }
 
 }

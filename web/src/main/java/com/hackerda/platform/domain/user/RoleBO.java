@@ -21,16 +21,19 @@ public class RoleBO {
 
     private final String code;
 
+    private final int priority;
+
     private final List<PermissionBO> permissionList;
 
 
-    public RoleBO(String name, String code) {
-        this(name, code, new ArrayList<>(0));
+    public RoleBO(String name, String code, int priority) {
+        this(name, code, priority, new ArrayList<>(0));
     }
 
-    public RoleBO(String name, String code, List<PermissionBO> permissionList) {
+    public RoleBO(String name, String code, int priority, List<PermissionBO> permissionList) {
         this.name = name;
         this.code = code;
+        this.priority = priority;
         this.permissionList = permissionList;
     }
 

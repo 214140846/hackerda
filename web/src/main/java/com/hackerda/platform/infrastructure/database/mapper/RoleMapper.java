@@ -1,15 +1,10 @@
 package com.hackerda.platform.infrastructure.database.mapper;
 
 import com.hackerda.platform.infrastructure.database.model.Role;
-import com.hackerda.platform.infrastructure.database.model.example.RoleExample;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
+import com.hackerda.platform.infrastructure.database.model.RoleExample;
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
-@Mapper
-@Repository
 public interface RoleMapper {
     long countByExample(RoleExample example);
 

@@ -22,7 +22,7 @@ public class RoleRepositoryTest {
 
     @Test
     public void store() {
-        RoleBO roleBO = new RoleBO("普通用户", RoleBO.USER);
+        RoleBO roleBO = new RoleBO("普通用户", RoleBO.USER, 2);
 
         roleBO.grantPermission(new PermissionBO("查看", PermissionBO.VIEW, true));
         roleBO.grantPermission(new PermissionBO("评论", PermissionBO.COMMENT, true));
