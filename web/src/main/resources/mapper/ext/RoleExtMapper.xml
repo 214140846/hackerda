@@ -49,5 +49,13 @@
                  left join permission p on rp.permission_id = p.id
         where ur.user_name = #{userName}
     </select>
+    <select id="selectRoleByUserName" resultMap="com.hackerda.platform.infrastructure.database.mapper.RoleMapper.BaseResultMap">
+        select
+        <include refid="com.hackerda.platform.infrastructure.database.mapper.RoleMapper.Base_Column_List" />
+        from role r
+                 left join user_role ur on ur.role_code = r.code
+        where ur.user_name = #{userName}
+
+    </select>
 
 </mapper>
