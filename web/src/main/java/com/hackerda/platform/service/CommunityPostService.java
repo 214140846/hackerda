@@ -1,5 +1,6 @@
 package com.hackerda.platform.service;
 
+import com.google.common.collect.Lists;
 import com.hackerda.platform.application.CommunityPostApp;
 import com.hackerda.platform.controller.request.CreatePostRequest;
 import com.hackerda.platform.controller.vo.*;
@@ -9,6 +10,7 @@ import com.hackerda.platform.domain.wechat.WechatUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -134,7 +136,8 @@ public class CommunityPostService {
     public PostDetailVO getRecentlyPost(String userName, Long timestamp, int count, String appId, String openid) {
 
         List<PostDetailBO> detailBOList =
-                posterRepository.findShowPostByLastReply(timestamp == null ? null : new Date(timestamp), count);
+                posterRepository.findShowPostByLastReply(timestamp == null ? null : new Date(timestamp), count,
+                        Lists.newArrayList(RecordStatus.Release, RecordStatus.Featured));
         return getPostDetailVO(userName, appId, openid, detailBOList);
     }
 

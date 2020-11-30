@@ -155,14 +155,14 @@ public class PosterRepositoryImpl implements PosterRepository {
     }
 
     @Override
-    public List<PostDetailBO> findShowPostByLastReply(Date lastReplyTime, int count) {
+    public List<PostDetailBO> findShowPostByLastReply(Date lastReplyTime, int count, List<RecordStatus> identityCategoryList) {
         PostExample example = new PostExample();
         example.setOrderByClause("last_reply_time desc");
         PostExample.Criteria criteria = example.createCriteria();
         if(lastReplyTime != null) {
             criteria.andLastReplyTimeLessThan(lastReplyTime);
         }
-        criteria.andRecordStatusEqualTo(RecordStatus.Release.getCode())
+        criteria.andRecordStatusIn(identityCategoryList.stream().map(RecordStatus::getCode).collect(Collectors.toList()))
                 .andShowEqualTo(true);
         PageHelper.startPage(0, count);
         List<Post> postList = postExtMapper.selectByExample(example);
@@ -183,6 +183,18 @@ public class PosterRepositoryImpl implements PosterRepository {
         criteria.andUserNameEqualTo(userName);
         criteria.andIdentityCodeEqualTo(IdentityCategory.Community.getCode());
         PageHelper.startPage(0, count);
+        List<Post> postList = postExtMapper.selectByExample(example);
+
+        return postList.stream().map(this::getPostDetailBO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PostDetailBO> findByStatus(List<RecordStatus> identityCategoryList) {
+        PostExample example = new PostExample();
+        example.createCriteria()
+                .andRecordStatusIn(identityCategoryList.stream().map(RecordStatus::getCode)
+                        .collect(Collectors.toList()));
+
         List<Post> postList = postExtMapper.selectByExample(example);
 
         return postList.stream().map(this::getPostDetailBO).collect(Collectors.toList());

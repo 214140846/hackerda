@@ -227,6 +227,7 @@ CREATE TABLE `post`
     `like_count`      int(255)     NOT NULL DEFAULT '0',
     `view_count`      int(255)     NOT NULL DEFAULT '0',
     `equipment`       varchar(255) NOT NULL DEFAULT '',
+    `show`            tinyint(1)   NOT NULL DEFAULT '1',
     `last_reply_time` datetime              DEFAULT CURRENT_TIMESTAMP,
     `gmt_create`      timestamp    NULL     DEFAULT CURRENT_TIMESTAMP,
     `gmt_modify`      timestamp    NULL     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -372,3 +373,17 @@ CREATE TABLE `course`
     UNIQUE KEY `uc_course` (`num`, `course_order`, `term_year`, `term_order`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE `user_action_record`
+(
+    `id`            bigint(20)  NOT NULL AUTO_INCREMENT,
+    `operator`      varchar(32) NOT NULL,
+    `user_action`   int(16)     NOT NULL,
+    `action_target` int(16)     NOT NULL,
+    `target_id`     varchar(32) NOT NULL,
+    `action_value`  varchar(16) NOT NULL,
+    `operate_time`  datetime    NOT NULL,
+    `gmt_create`    datetime DEFAULT CURRENT_TIMESTAMP,
+    `gmt_modify`    datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;

@@ -24,9 +24,11 @@ public interface PosterRepository {
 
     List<PostDetailBO> findShowPost(Integer start, int count);
 
-    List<PostDetailBO> findShowPostByLastReply(Date lastReplyTime, int count);
+    List<PostDetailBO> findShowPostByLastReply(Date lastReplyTime, int count, List<RecordStatus> identityCategoryList);
 
     List<PostDetailBO> findPostByUser(String userName, Integer start, int count);
+
+    List<PostDetailBO> findByStatus(List<RecordStatus> identityCategoryList);
 
     long countShowPost(String userName, List<IdentityCategory> identityCategoryList);
 

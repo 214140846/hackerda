@@ -38,6 +38,16 @@ public enum RecordStatus {
      * 隐藏
      */
     Hide(5),
+
+    /**
+     * 置顶
+     */
+    TOP(6),
+
+    /**
+     * 精选
+     */
+    Featured(7),
     ;
 
     private final int code;

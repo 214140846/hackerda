@@ -99,4 +99,35 @@ public class PostBO {
     public boolean isAnonymous() {
         return identityCategory.isAnonymous();
     }
+
+    public boolean isTop() {
+        return status == RecordStatus.TOP;
+    }
+
+    public void statusToRelease() {
+        this.status = RecordStatus.Release;
+    }
+
+
+    /**
+     * 置顶
+     */
+    public void top() {
+        if (this.status == RecordStatus.Release) {
+            this.status = RecordStatus.TOP;
+        } else {
+            throw new IllegalStateException("id:" + this.id + "帖子状态为"+this.status.name()+" 无法被置顶");
+        }
+    }
+
+    /**
+     * 置顶
+     */
+    public void feature() {
+        if (this.status == RecordStatus.Release) {
+            this.status = RecordStatus.Featured;
+        } else {
+            throw new IllegalStateException("id:" + this.id + "帖子状态为"+this.status.name()+" 无法被精选");
+        }
+    }
 }

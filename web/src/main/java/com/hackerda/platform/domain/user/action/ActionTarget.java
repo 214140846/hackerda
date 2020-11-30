@@ -4,7 +4,9 @@ public enum ActionTarget {
 
     USER(0),
 
-    ROLE(1)
+    ROLE(1),
+
+    POST(2)
     ;
 
     private final int code;
