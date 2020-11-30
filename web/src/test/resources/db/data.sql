@@ -1966,9 +1966,9 @@ INSERT INTO `urp_class` VALUES (82745, '2020', '2020060013', '机电20-3', '机�
 INSERT INTO `urp_class` VALUES (82746, '2020', '2020150004', '力学20-2', '理学院', '15', '工程力学', '080102');
 INSERT INTO `urp_class` VALUES (82747, '2020', '2020060012', '机电20-2', '机械工程学院', '06', '机械电子工程', '080204');
 
-INSERT INTO `role` VALUES (1, '普通用户', 'user');
-INSERT INTO `permission` VALUES (1, '查看', 'view');
-INSERT INTO `permission` VALUES (2, '评论', 'comment');
+INSERT INTO `role` VALUES (1, '普通用户', 'user', 2);
+INSERT INTO `permission` VALUES (1, '查看', 'view', 2);
+INSERT INTO `permission` VALUES (2, '评论', 'comment', 2);
 INSERT INTO `role_permission` VALUES (1, 1, 1);
 INSERT INTO `role_permission` VALUES (2, 1, 2);
 

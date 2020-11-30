@@ -17,7 +17,7 @@ public class Permission implements Serializable {
 
     private String permissionCode;
 
-    private String priority;
+    private Integer priority;
 
     private static final long serialVersionUID = 1L;
 }

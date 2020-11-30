@@ -5,7 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="permission_name" jdbcType="VARCHAR" property="permissionName" />
     <result column="permission_code" jdbcType="VARCHAR" property="permissionCode" />
-    <result column="priority" jdbcType="VARCHAR" property="priority" />
+    <result column="priority" jdbcType="INTEGER" property="priority" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -101,7 +101,7 @@
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.hackerda.platform.infrastructure.database.model.Permission" useGeneratedKeys="true">
     insert into permission (permission_name, permission_code, priority
       )
-    values (#{permissionName,jdbcType=VARCHAR}, #{permissionCode,jdbcType=VARCHAR}, #{priority,jdbcType=VARCHAR}
+    values (#{permissionName,jdbcType=VARCHAR}, #{permissionCode,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.hackerda.platform.infrastructure.database.model.Permission" useGeneratedKeys="true">
@@ -125,7 +125,7 @@
         #{permissionCode,jdbcType=VARCHAR},
       </if>
       <if test="priority != null">
-        #{priority,jdbcType=VARCHAR},
+        #{priority,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -148,7 +148,7 @@
         permission_code = #{record.permissionCode,jdbcType=VARCHAR},
       </if>
       <if test="record.priority != null">
-        priority = #{record.priority,jdbcType=VARCHAR},
+        priority = #{record.priority,jdbcType=INTEGER},
       </if>
     </set>
     <if test="_parameter != null">
@@ -160,7 +160,7 @@
     set id = #{record.id,jdbcType=INTEGER},
       permission_name = #{record.permissionName,jdbcType=VARCHAR},
       permission_code = #{record.permissionCode,jdbcType=VARCHAR},
-      priority = #{record.priority,jdbcType=VARCHAR}
+      priority = #{record.priority,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -175,7 +175,7 @@
         permission_code = #{permissionCode,jdbcType=VARCHAR},
       </if>
       <if test="priority != null">
-        priority = #{priority,jdbcType=VARCHAR},
+        priority = #{priority,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -184,7 +184,7 @@
     update permission
     set permission_name = #{permissionName,jdbcType=VARCHAR},
       permission_code = #{permissionCode,jdbcType=VARCHAR},
-      priority = #{priority,jdbcType=VARCHAR}
+      priority = #{priority,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -314,62 +314,52 @@ public class PermissionExample {
             return (Criteria) this;
         }
 
-        public Criteria andPriorityEqualTo(String value) {
+        public Criteria andPriorityEqualTo(Integer value) {
             addCriterion("priority =", value, "priority");
             return (Criteria) this;
         }
 
-        public Criteria andPriorityNotEqualTo(String value) {
+        public Criteria andPriorityNotEqualTo(Integer value) {
             addCriterion("priority <>", value, "priority");
             return (Criteria) this;
         }
 
-        public Criteria andPriorityGreaterThan(String value) {
+        public Criteria andPriorityGreaterThan(Integer value) {
             addCriterion("priority >", value, "priority");
             return (Criteria) this;
         }
 
-        public Criteria andPriorityGreaterThanOrEqualTo(String value) {
+        public Criteria andPriorityGreaterThanOrEqualTo(Integer value) {
             addCriterion("priority >=", value, "priority");
             return (Criteria) this;
         }
 
-        public Criteria andPriorityLessThan(String value) {
+        public Criteria andPriorityLessThan(Integer value) {
             addCriterion("priority <", value, "priority");
             return (Criteria) this;
         }
 
-        public Criteria andPriorityLessThanOrEqualTo(String value) {
+        public Criteria andPriorityLessThanOrEqualTo(Integer value) {
             addCriterion("priority <=", value, "priority");
             return (Criteria) this;
         }
 
-        public Criteria andPriorityLike(String value) {
-            addCriterion("priority like", value, "priority");
-            return (Criteria) this;
-        }
-
-        public Criteria andPriorityNotLike(String value) {
-            addCriterion("priority not like", value, "priority");
-            return (Criteria) this;
-        }
-
-        public Criteria andPriorityIn(List<String> values) {
+        public Criteria andPriorityIn(List<Integer> values) {
             addCriterion("priority in", values, "priority");
             return (Criteria) this;
         }
 
-        public Criteria andPriorityNotIn(List<String> values) {
+        public Criteria andPriorityNotIn(List<Integer> values) {
             addCriterion("priority not in", values, "priority");
             return (Criteria) this;
         }
 
-        public Criteria andPriorityBetween(String value1, String value2) {
+        public Criteria andPriorityBetween(Integer value1, Integer value2) {
             addCriterion("priority between", value1, value2, "priority");
             return (Criteria) this;
         }
 
-        public Criteria andPriorityNotBetween(String value1, String value2) {
+        public Criteria andPriorityNotBetween(Integer value1, Integer value2) {
             addCriterion("priority not between", value1, value2, "priority");
             return (Criteria) this;
         }

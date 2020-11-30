@@ -46,6 +46,8 @@ public class AppUserBO {
 
     private List<RoleBO> roleList = new ArrayList<>(0);
 
+    private int rolePriority;
+
     public AppUserBO(String userName, String nickname, String password, String avatarPath, PhoneNumber phoneNumber, Gender gender
             , String introduction) {
         this.salt = UUID.randomUUID().toString().replaceAll("-","");
@@ -99,6 +101,10 @@ public class AppUserBO {
 
     public boolean isLogoutStatus() {
         return LifeCycleStatus.Logout == lifeCycleStatus;
+    }
+
+    public int getRolePriority() {
+        return roleList.stream().mapToInt(RoleBO::getPriority).min().orElse(Integer.MAX_VALUE);
     }
 
 }

@@ -2,6 +2,7 @@ package com.hackerda.platform.domain.user;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.builder.EqualsExclude;
 
@@ -16,24 +17,31 @@ public class PermissionBO {
 
     public static final String DELETE = "delete";
 
+    @Setter
+    private Integer id;
+
     private final String name;
 
     private final String code;
 
     private final int priority;
 
-    /**
-     * 是否是新的权限，区别从数据库中读取还是用户自己新建
-     */
-    @EqualsExclude
-    private final boolean isNew;
 
-
-    public PermissionBO(String name, String code, int priority, boolean isNew) {
+    public PermissionBO( String name, String code, int priority) {
         this.name = name;
         this.code = code;
-        this.isNew = isNew;
         this.priority = priority;
+    }
+
+    public PermissionBO(Integer id, String name, String code, int priority) {
+        this.id = id;
+        this.name = name;
+        this.code = code;
+        this.priority = priority;
+    }
+
+    public boolean isNew() {
+        return id == null;
     }
 
 }
