@@ -45,8 +45,6 @@ public class RoleTest {
         roleRepository.store(roleBO2);
 
         assertThat(roleRepository.findByCode("black_list")).isEqualTo(roleBO2);
-
-
     }
 
     @Test

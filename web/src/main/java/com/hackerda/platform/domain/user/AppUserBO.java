@@ -48,6 +48,13 @@ public class AppUserBO {
 
     private int rolePriority;
 
+    private boolean guest = false;
+
+    private AppUserBO() {
+        this.guest = true;
+        this.salt = UUID.randomUUID().toString().replaceAll("-","");
+    }
+
     public AppUserBO(String userName, String nickname, String password, String avatarPath, PhoneNumber phoneNumber, Gender gender
             , String introduction) {
         this.salt = UUID.randomUUID().toString().replaceAll("-","");
@@ -65,7 +72,7 @@ public class AppUserBO {
 
     public AppUserBO(String userName, String nickname, String password, String salt, String avatarPath, PhoneNumber phoneNumber,
                      Gender gender
-            , String introduction, boolean useDefaultPassword) {
+            , String introduction, boolean useDefaultPassword, List<RoleBO> roleList) {
         this.salt = salt;
 
         this.userName = userName;
@@ -77,6 +84,7 @@ public class AppUserBO {
         this.gender = gender;
         this.introduction = introduction;
         this.useDefaultPassword = useDefaultPassword;
+        this.roleList = roleList;
     }
 
     public void grantRole(RoleBO roleBO) {
@@ -105,6 +113,10 @@ public class AppUserBO {
 
     public int getRolePriority() {
         return roleList.stream().mapToInt(RoleBO::getPriority).min().orElse(Integer.MAX_VALUE);
+    }
+
+    public static AppUserBO createGuest() {
+        return new AppUserBO();
     }
 
 }

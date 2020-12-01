@@ -49,6 +49,8 @@ public class PostVO {
     /** 是否允许评论 **/
     private boolean allowComment = true;
 
+    private int status;
+
     private boolean hasLike;
 
     /**
@@ -70,4 +72,6 @@ public class PostVO {
      * 帖子最后被回复时间
      */
     private Date lastReplyTime;
+
+    private List<ActionSheetVO> actionSheetList;
 }

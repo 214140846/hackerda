@@ -6,14 +6,15 @@ import com.hackerda.platform.controller.request.CreatePostRequest;
 import com.hackerda.platform.controller.vo.*;
 import com.hackerda.platform.domain.community.*;
 import com.hackerda.platform.domain.student.StudentAccount;
+import com.hackerda.platform.domain.user.AppUserBO;
+import com.hackerda.platform.domain.user.PermissionBO;
 import com.hackerda.platform.domain.wechat.WechatUser;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -114,7 +115,9 @@ public class CommunityPostService {
                 .setIdentityCode(post.getIdentityCategory().getCode())
                 .setAnonymous(post.getIdentityCategory().isAnonymous())
                 .setHasDelete(post.isDelete())
-                .setLastReplyTime(post.getLastReplyTime());
+                .setLastReplyTime(post.getLastReplyTime())
+                .setStatus(post.getStatus().getCode())
+        ;
 
         List<ImageInfoVO> imageInfoVOList = post.getImageInfoList().stream().map(imageInfo -> {
             ImageInfoVO infoVO = new ImageInfoVO();
@@ -124,6 +127,24 @@ public class CommunityPostService {
         }).collect(Collectors.toList());
 
         postVO.setImageInfoList(imageInfoVOList);
+
+        // 设置菜单视图
+        Subject subject = SecurityUtils.getSubject();
+        AppUserBO appUserBO = (AppUserBO) subject.getPrincipal();
+        List<ActionSheetVO> actionSheet = Lists.newArrayListWithExpectedSize(5);
+
+        if (subject.isPermitted(PermissionBO.DELETE) || appUserBO.getUserName().equals(post.getUserName())) {
+            actionSheet.add(ActionSheetVO.getByCode(PermissionBO.DELETE));
+        }
+        if (subject.isPermitted(PermissionBO.TOP)) {
+            actionSheet.add(ActionSheetVO.top);
+        }
+
+        if (subject.isPermitted(PermissionBO.RECOMMEND)) {
+            actionSheet.add(ActionSheetVO.recommend);
+        }
+
+        postVO.setActionSheetList(actionSheet);
 
         return postVO;
     }

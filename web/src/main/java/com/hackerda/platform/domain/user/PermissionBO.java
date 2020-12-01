@@ -17,6 +17,10 @@ public class PermissionBO {
 
     public static final String DELETE = "delete";
 
+    public static final String TOP = "top";
+
+    public static final String RECOMMEND = "recommend";
+
     @Setter
     private Integer id;
 
