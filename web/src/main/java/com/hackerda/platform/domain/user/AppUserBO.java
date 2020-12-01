@@ -51,6 +51,7 @@ public class AppUserBO {
     private boolean guest = false;
 
     private AppUserBO() {
+        this.userName = "";
         this.guest = true;
         this.salt = UUID.randomUUID().toString().replaceAll("-","");
     }
