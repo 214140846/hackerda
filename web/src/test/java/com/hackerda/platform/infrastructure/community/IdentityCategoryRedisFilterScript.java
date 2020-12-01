@@ -39,7 +39,6 @@ public class IdentityCategoryRedisFilterScript {
 
         PostExample example = new PostExample();
         example.createCriteria()
-                .andRecordStatusEqualTo(RecordStatus.Release.getCode())
                 .andIdentityCodeIn(Lists.newArrayList(IdentityCategory.Anonymous.getCode(),
                         IdentityCategory.College.getCode(), IdentityCategory.Grade.getCode()));
 

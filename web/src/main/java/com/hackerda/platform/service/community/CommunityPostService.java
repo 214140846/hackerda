@@ -132,19 +132,21 @@ public class CommunityPostService {
         Subject subject = SecurityUtils.getSubject();
         AppUserBO appUserBO = (AppUserBO) subject.getPrincipal();
         List<ActionSheetVO> actionSheet = Lists.newArrayListWithExpectedSize(5);
+        if (!appUserBO.isGuest()) {
+            if (subject.isPermitted(PermissionBO.DELETE) || appUserBO.getUserName().equals(post.getUserName())) {
+                actionSheet.add(ActionSheetVO.getByCode(PermissionBO.DELETE));
+            }
+            if (subject.isPermitted(PermissionBO.TOP)) {
+                actionSheet.add(ActionSheetVO.top);
+            }
 
-        if (subject.isPermitted(PermissionBO.DELETE) || appUserBO.getUserName().equals(post.getUserName())) {
-            actionSheet.add(ActionSheetVO.getByCode(PermissionBO.DELETE));
-        }
-        if (subject.isPermitted(PermissionBO.TOP)) {
-            actionSheet.add(ActionSheetVO.top);
+            if (subject.isPermitted(PermissionBO.RECOMMEND)) {
+                actionSheet.add(ActionSheetVO.recommend);
+            }
+
+            postVO.setActionSheetList(actionSheet);
         }
 
-        if (subject.isPermitted(PermissionBO.RECOMMEND)) {
-            actionSheet.add(ActionSheetVO.recommend);
-        }
-
-        postVO.setActionSheetList(actionSheet);
 
         return postVO;
     }
