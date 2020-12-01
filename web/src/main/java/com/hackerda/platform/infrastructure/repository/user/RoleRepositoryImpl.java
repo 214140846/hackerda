@@ -33,20 +33,37 @@ public class RoleRepositoryImpl implements RoleRepository {
     @Transactional
     @Override
     public void store(RoleBO roleBO) {
-        Role role = new Role().setName(roleBO.getName()).setCode(roleBO.getCode());
-        roleDao.insertSelective(role);
-
-        List<Permission> permissionList = roleBO.getPermissionList().stream()
-                .filter(PermissionBO::isNew)
-                .map(x -> new Permission().setPermissionName(x.getName()).setPermissionCode(x.getCode()))
-                .collect(Collectors.toList());
-
-        for (Permission permission : permissionList) {
-            permissionDao.insertSelective(permission);
+        Role role = new Role().setName(roleBO.getName())
+                .setCode(roleBO.getCode())
+                .setId(roleBO.getId())
+                .setPriority(roleBO.getPriority());
+        if (roleBO.isNewRole()) {
+            roleDao.insertSelective(role);
+            roleBO.setId(role.getId());
         }
+
+        List<Permission> permissionList = roleBO.getNewGrantPermissionList().stream()
+                .map(x -> new Permission()
+                        .setId(x.getId())
+                        .setPermissionName(x.getName())
+                        .setPermissionCode(x.getCode())
+                        .setPriority(x.getPriority()))
+                .collect(Collectors.toList());
 
         rolePermissionDao.insertBatch(Lists.newArrayList(role.getId()), permissionList.stream().map(Permission::getId).collect(Collectors.toList()));
 
+    }
+
+    @Override
+    public void store(PermissionBO permissionBO) {
+        Permission permission = new Permission()
+                .setId(permissionBO.getId())
+                .setPermissionName(permissionBO.getName())
+                .setPermissionCode(permissionBO.getCode())
+                .setPriority(permissionBO.getPriority());
+
+        permissionDao.insertSelective(permission);
+        permissionBO.setId(permission.getId());
     }
 
     @Override
@@ -54,6 +71,15 @@ public class RoleRepositoryImpl implements RoleRepository {
         List<RoleDetailDO> roleDetailList = roleDao.selectRoleDetailByCode(code);
 
         return transfer(roleDetailList).stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public PermissionBO findPermissionByCode(String code) {
+        Permission x = permissionDao.selectByCode(code);
+
+        return new PermissionBO(x.getId(), x.getPermissionName(),
+                x.getPermissionCode(), x.getPriority());
+
     }
 
     @Override
@@ -72,12 +98,15 @@ public class RoleRepositoryImpl implements RoleRepository {
         }
 
         Map<RoleBO, List<PermissionBO>> collect = roleDetailList.stream()
-                .collect(Collectors.groupingBy(x -> new RoleBO(x.getRoleName(), x.getRoleCode()),
-                        Collectors.mapping(x -> new PermissionBO(x.getPermissionName(), x.getPermissionCode(), false),
+                .collect(Collectors.groupingBy(x -> new RoleBO(x.getRoleId(), x.getRoleName(), x.getRoleCode(),
+                                x.getRolePriority(), Collections.emptyList()),
+                        Collectors.mapping(x -> new PermissionBO(x.getPermissionId(), x.getPermissionName(),
+                                        x.getPermissionCode(),
+                                        x.getPermissionPriority()),
                                 Collectors.toList())));
 
         return collect.keySet().stream()
-                .map(x -> new RoleBO(x.getName(), x.getCode(), collect.get(x)))
+                .map(x -> new RoleBO(x.getId(), x.getName(), x.getCode(), x.getPriority(), collect.get(x)))
                 .collect(Collectors.toList());
     }
 }

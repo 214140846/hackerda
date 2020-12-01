@@ -40,4 +40,8 @@ public class RoleDao {
         return roleExtMapper.selectRoleDetailByUserName(userName);
     }
 
+    public List<Role> selectRoleByUserName(String userName) {
+        return roleExtMapper.selectRoleByUserName(userName);
+    }
+
 }

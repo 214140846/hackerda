@@ -1,4 +1,4 @@
-package com.hackerda.platform.service;
+package com.hackerda.platform.service.community;
 
 import com.google.common.collect.Lists;
 import com.hackerda.platform.application.UserRegisterApp;

@@ -1,14 +1,23 @@
 package com.hackerda.platform.infrastructure.database.model;
 
+import java.io.Serializable;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+/**
+ * permission
+ * @author 
+ */
 @Data
 @Accessors(chain = true)
-public class Permission {
+public class Permission implements Serializable {
     private Integer id;
 
     private String permissionName;
 
     private String permissionCode;
+
+    private Integer priority;
+
+    private static final long serialVersionUID = 1L;
 }

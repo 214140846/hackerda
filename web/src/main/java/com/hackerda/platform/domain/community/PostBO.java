@@ -49,19 +49,22 @@ public class PostBO {
 
     private Date lastReplyTime;
 
+    private final boolean show;
+
 
     public PostBO(String userName, String content, List<ImageInfo> imageInfoList, IdentityCategory identityCategory, String equipment) {
-        this(userName, content, imageInfoList, identityCategory, new Date(), equipment);
+        this(userName, content, imageInfoList, identityCategory, new Date(), equipment, true);
     }
 
     public PostBO(String userName, String content, List<ImageInfo> imageInfoList, IdentityCategory identityCategory,
-                  Date postTime, String equipment) {
+                  Date postTime, String equipment, boolean show) {
         this.userName = userName;
         this.content = content;
         this.imageInfoList = imageInfoList;
         this.identityCategory = identityCategory;
         this.postTime = postTime;
         this.equipment = equipment;
+        this.show = show;
     }
 
     public boolean isRelease() {
@@ -98,5 +101,36 @@ public class PostBO {
 
     public boolean isAnonymous() {
         return identityCategory.isAnonymous();
+    }
+
+    public boolean isTop() {
+        return status == RecordStatus.TOP;
+    }
+
+    public void statusToRelease() {
+        this.status = RecordStatus.Release;
+    }
+
+
+    /**
+     * 置顶
+     */
+    public void top() {
+        if (this.status == RecordStatus.Release) {
+            this.status = RecordStatus.TOP;
+        } else {
+            throw new IllegalStateException("id:" + this.id + "帖子状态为"+this.status.name()+" 无法被置顶");
+        }
+    }
+
+    /**
+     * 置顶
+     */
+    public void feature() {
+        if (this.status == RecordStatus.Release) {
+            this.status = RecordStatus.Featured;
+        } else {
+            throw new IllegalStateException("id:" + this.id + "帖子状态为"+this.status.name()+" 无法被精选");
+        }
     }
 }

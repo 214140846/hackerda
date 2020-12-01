@@ -1,17 +1,20 @@
-package com.hackerda.platform.service;
+package com.hackerda.platform.service.community;
 
+import com.google.common.collect.Lists;
 import com.hackerda.platform.application.CommunityPostApp;
 import com.hackerda.platform.controller.request.CreatePostRequest;
 import com.hackerda.platform.controller.vo.*;
 import com.hackerda.platform.domain.community.*;
 import com.hackerda.platform.domain.student.StudentAccount;
+import com.hackerda.platform.domain.user.AppUserBO;
+import com.hackerda.platform.domain.user.PermissionBO;
 import com.hackerda.platform.domain.wechat.WechatUser;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -112,7 +115,9 @@ public class CommunityPostService {
                 .setIdentityCode(post.getIdentityCategory().getCode())
                 .setAnonymous(post.getIdentityCategory().isAnonymous())
                 .setHasDelete(post.isDelete())
-                .setLastReplyTime(post.getLastReplyTime());
+                .setLastReplyTime(post.getLastReplyTime())
+                .setStatus(post.getStatus().getCode())
+        ;
 
         List<ImageInfoVO> imageInfoVOList = post.getImageInfoList().stream().map(imageInfo -> {
             ImageInfoVO infoVO = new ImageInfoVO();
@@ -122,6 +127,24 @@ public class CommunityPostService {
         }).collect(Collectors.toList());
 
         postVO.setImageInfoList(imageInfoVOList);
+
+        // 设置菜单视图
+        Subject subject = SecurityUtils.getSubject();
+        AppUserBO appUserBO = (AppUserBO) subject.getPrincipal();
+        List<ActionSheetVO> actionSheet = Lists.newArrayListWithExpectedSize(5);
+
+        if (subject.isPermitted(PermissionBO.DELETE) || appUserBO.getUserName().equals(post.getUserName())) {
+            actionSheet.add(ActionSheetVO.getByCode(PermissionBO.DELETE));
+        }
+        if (subject.isPermitted(PermissionBO.TOP)) {
+            actionSheet.add(ActionSheetVO.top);
+        }
+
+        if (subject.isPermitted(PermissionBO.RECOMMEND)) {
+            actionSheet.add(ActionSheetVO.recommend);
+        }
+
+        postVO.setActionSheetList(actionSheet);
 
         return postVO;
     }
@@ -134,12 +157,18 @@ public class CommunityPostService {
     public PostDetailVO getRecentlyPost(String userName, Long timestamp, int count, String appId, String openid) {
 
         List<PostDetailBO> detailBOList =
-                posterRepository.findShowPostByLastReply(timestamp == null ? null : new Date(timestamp), count);
+                posterRepository.findShowPostByLastReply(timestamp == null ? null : new Date(timestamp), count,
+                        Lists.newArrayList(RecordStatus.Release, RecordStatus.Featured));
         return getPostDetailVO(userName, appId, openid, detailBOList);
     }
 
     public PostDetailVO getRecommendPost(String userName, String appId, String openid) {
         List<PostDetailBO> detailBOList = communityPostApp.getRecommendPost();
+        return getPostDetailVO(userName, appId, openid, detailBOList);
+    }
+
+    public PostDetailVO getTopPost(String userName, String appId, String openid) {
+        List<PostDetailBO> detailBOList = posterRepository.findByStatus(Collections.singletonList(RecordStatus.TOP));
         return getPostDetailVO(userName, appId, openid, detailBOList);
     }
 

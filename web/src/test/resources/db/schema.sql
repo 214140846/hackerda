@@ -115,10 +115,12 @@ CREATE TABLE `schedule_task`
 
 CREATE TABLE `role`
 (
-    `id`   int(11)      NOT NULL AUTO_INCREMENT,
-    `name` varchar(255) NOT NULL,
-    `code` varchar(255) NOT NULL,
-    PRIMARY KEY (`id`)
+    `id`       int(11)      NOT NULL AUTO_INCREMENT,
+    `name`     varchar(255) NOT NULL,
+    `code`     varchar(255) NOT NULL,
+    `priority` int(16)      NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `code` (`code`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -136,7 +138,9 @@ CREATE TABLE `permission`
     `id`              int(11)      NOT NULL AUTO_INCREMENT,
     `permission_name` varchar(255) NOT NULL,
     `permission_code` varchar(255) NOT NULL,
-    PRIMARY KEY (`id`)
+    `priority`        int(16)      NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `permission_code` (`permission_code`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -210,28 +214,26 @@ CREATE TABLE `wechat_action_record`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
-
 CREATE TABLE `post`
 (
-    `id`            bigint(20)   NOT NULL AUTO_INCREMENT,
-    `user_name`     varchar(128) NOT NULL,
-    `content`       varchar(255) NOT NULL,
-    `allow_comment` tinyint(255) NOT NULL,
-    `identity_code` int(255)     NOT NULL,
-    `post_time`     datetime     NOT NULL,
-    `record_status` int(255)     NOT NULL,
-    `comment_count` int(255)     NOT NULL DEFAULT '0',
-    `like_count`    int(255)     NOT NULL DEFAULT '0',
-    `view_count`    int(255)     NOT NULL DEFAULT '0',
-    `equipment`     varchar(255) NOT NULL DEFAULT '',
-    `last_reply_time` datetime DEFAULT CURRENT_TIMESTAMP,
-    `gmt_create`    timestamp    NULL     DEFAULT CURRENT_TIMESTAMP,
-    `gmt_modify`    timestamp    NULL     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `id`              bigint(20)   NOT NULL AUTO_INCREMENT,
+    `user_name`       varchar(128) NOT NULL,
+    `content`         varchar(255) NOT NULL,
+    `allow_comment`   tinyint(255) NOT NULL,
+    `identity_code`   int(255)     NOT NULL,
+    `post_time`       datetime     NOT NULL,
+    `record_status`   int(255)     NOT NULL,
+    `comment_count`   int(255)     NOT NULL DEFAULT '0',
+    `like_count`      int(255)     NOT NULL DEFAULT '0',
+    `view_count`      int(255)     NOT NULL DEFAULT '0',
+    `equipment`       varchar(255) NOT NULL DEFAULT '',
+    `show`            tinyint(1)   NOT NULL DEFAULT '1',
+    `last_reply_time` datetime              DEFAULT CURRENT_TIMESTAMP,
+    `gmt_create`      timestamp    NULL     DEFAULT CURRENT_TIMESTAMP,
+    `gmt_modify`      timestamp    NULL     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
-
-
 
 CREATE TABLE `post_image`
 (
@@ -241,7 +243,6 @@ CREATE TABLE `post_image`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
-
 
 CREATE TABLE `image_info`
 (
@@ -254,8 +255,6 @@ CREATE TABLE `image_info`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
-
-
 
 CREATE TABLE `message`
 (
@@ -374,3 +373,17 @@ CREATE TABLE `course`
     UNIQUE KEY `uc_course` (`num`, `course_order`, `term_year`, `term_order`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE `user_action_record`
+(
+    `id`            bigint(20)  NOT NULL AUTO_INCREMENT,
+    `operator`      varchar(32) NOT NULL,
+    `user_action`   int(16)     NOT NULL,
+    `action_target` int(16)     NOT NULL,
+    `target_id`     varchar(32) NOT NULL,
+    `action_value`  varchar(16) NOT NULL,
+    `operate_time`  datetime    NOT NULL,
+    `gmt_create`    datetime DEFAULT CURRENT_TIMESTAMP,
+    `gmt_modify`    datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;

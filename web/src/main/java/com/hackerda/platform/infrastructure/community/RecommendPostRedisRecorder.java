@@ -25,7 +25,8 @@ public class RecommendPostRedisRecorder implements RecommendPostRecorder {
     @Override
     public List<Long> getPostIdList(Date date) {
 
-        return Optional.ofNullable(stringRedisTemplate.opsForSet().members(genKey(date))).orElse(Collections.emptySet())
+        return Optional.ofNullable(stringRedisTemplate.opsForSet().members(genKey(date)))
+                .orElse(Collections.emptySet())
                 .stream().map(Long::valueOf).collect(Collectors.toList());
     }
 

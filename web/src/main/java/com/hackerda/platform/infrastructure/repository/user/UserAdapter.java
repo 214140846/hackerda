@@ -6,6 +6,7 @@ import com.hackerda.platform.infrastructure.database.model.User;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 @Service
 public class UserAdapter {
@@ -42,7 +43,7 @@ public class UserAdapter {
     }
 
     @Nullable
-    public AppStudentUserBO toStudentBO(User user, StudentAccount studentAccount) {
+    public AppStudentUserBO toStudentBO(User user, StudentAccount studentAccount, List<RoleBO> roleList) {
         if(user == null) {
             return null;
         }
@@ -54,7 +55,7 @@ public class UserAdapter {
                 user.getSalt(),
                 user.getAvatarPath(),
                 phoneNumber, Gender.formCode(user.getGender()),
-                user.getIntroduction(), user.getUseDefaultPassword() == (byte) 1);
+                user.getIntroduction(), user.getUseDefaultPassword() == (byte) 1, roleList);
 
         appStudentUserBO.setUserType(UserType.Student);
         appStudentUserBO.setLifeCycleStatus(LifeCycleStatus.getByCode(user.getLifeCycleStatus()));
@@ -63,7 +64,7 @@ public class UserAdapter {
     }
 
     @Nullable
-    public AppUserBO toBO(User user) {
+    public AppUserBO toBO(User user, List<RoleBO> roleList) {
         if(user == null) {
             return null;
         }
@@ -75,7 +76,7 @@ public class UserAdapter {
                 user.getSalt(),
                 user.getAvatarPath(),
                 phoneNumber, Gender.formCode(user.getGender()),
-                user.getIntroduction(), user.getUseDefaultPassword() == (byte) 1);
+                user.getIntroduction(), user.getUseDefaultPassword() == (byte) 1, roleList);
 
         appUserBO.setUserType(UserType.getByCode(user.getUserType()));
         appUserBO.setLifeCycleStatus(LifeCycleStatus.getByCode(user.getLifeCycleStatus()));

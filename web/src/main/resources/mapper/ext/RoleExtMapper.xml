@@ -3,10 +3,14 @@
 <mapper namespace="com.hackerda.platform.infrastructure.database.mapper.ext.RoleExtMapper">
 
     <resultMap id="RoleDetailMap" type="com.hackerda.platform.infrastructure.database.model.RoleDetailDO">
+        <result column="role_id" property="roleId" jdbcType="INTEGER"/>
         <result column="name" property="roleName" jdbcType="VARCHAR"/>
         <result column="code" property="roleCode" jdbcType="VARCHAR"/>
+        <result column="role_priority" property="rolePriority" jdbcType="INTEGER"/>
+        <result column="permission_id" property="permissionId" jdbcType="INTEGER"/>
         <result column="permission_name" property="permissionName" jdbcType="VARCHAR"/>
         <result column="permission_code" property="permissionCode" jdbcType="VARCHAR"/>
+        <result column="permission_priority" property="permissionPriority" jdbcType="INTEGER"/>
     </resultMap>
 
     <insert id="insertUserRoleRelative">
@@ -28,7 +32,8 @@
 
 
     <select id="selectRoleDetailByCode" resultMap="RoleDetailMap">
-        select r.name, r.code, p.permission_name, p.permission_code
+        select r.id as role_id, r.name, r.code, r.priority as role_priority,
+               p.id as permission_id, p.permission_name, p.permission_code, p.priority as permission_priority
         from role r
                  left join role_permission rp on r.id = rp.role_id
                  left join permission p on rp.permission_id = p.id
@@ -36,11 +41,21 @@
     </select>
 
     <select id="selectRoleDetailByUserName" resultMap="RoleDetailMap">
-        select r.name, r.code, p.permission_name, p.permission_code
+        select r.id as role_id, r.name, r.code, r.priority as role_priority,
+               p.id as permission_id, p.permission_name, p.permission_code, p.priority as permission_priority
         from role r
                  left join user_role ur on ur.role_code = r.code
                  left join role_permission rp on r.id = rp.role_id
                  left join permission p on rp.permission_id = p.id
         where ur.user_name = #{userName}
     </select>
+    <select id="selectRoleByUserName" resultMap="com.hackerda.platform.infrastructure.database.mapper.RoleMapper.BaseResultMap">
+        select
+        <include refid="com.hackerda.platform.infrastructure.database.mapper.RoleMapper.Base_Column_List" />
+        from role r
+                 left join user_role ur on ur.role_code = r.code
+        where ur.user_name = #{userName}
+
+    </select>
+
 </mapper>

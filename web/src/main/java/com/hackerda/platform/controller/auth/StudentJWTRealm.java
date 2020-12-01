@@ -4,6 +4,7 @@ import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
+import com.hackerda.platform.domain.user.AppUserBO;
 import com.hackerda.platform.infrastructure.database.model.Permission;
 import com.hackerda.platform.infrastructure.database.model.Role;
 import com.hackerda.platform.infrastructure.database.model.UserDetail;
@@ -45,6 +46,10 @@ public class StudentJWTRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+
+        if (principals.getPrimaryPrincipal() instanceof  AppUserBO) {
+            return null;
+        }
         String userName = principals.toString();
 
         UserDetail userDetail = userDetailService.getStudentUserDetail(userName);
