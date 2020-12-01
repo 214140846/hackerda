@@ -26,13 +26,17 @@ public class UserRoleApp {
 
     @Transactional
     public void grantRole(AppStudentUserBO operator, AppStudentUserBO appUserBO, RoleBO roleBO) {
-        appUserBO.grantRole(roleBO);
-        userRepository.store(appUserBO);
 
-        UserActionRecordBO record = new UserActionRecordBO(operator.getUserName(), UserAction.GRANT_ROLE, ActionTarget.USER,
-                appUserBO.getUserName(), roleBO.getId().toString(), new Date());
+        if (!appUserBO.hasRole(roleBO)) {
+            appUserBO.grantRole(roleBO);
+            userRepository.update(appUserBO);
 
-        userActionRecordRepository.store(record);
+            UserActionRecordBO record = new UserActionRecordBO(operator.getUserName(), UserAction.GRANT_ROLE, ActionTarget.USER,
+                    appUserBO.getUserName(), roleBO.getId().toString(), new Date());
+
+            userActionRecordRepository.store(record);
+        }
+
     }
 
 

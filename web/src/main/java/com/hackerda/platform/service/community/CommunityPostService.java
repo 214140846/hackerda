@@ -143,10 +143,8 @@ public class CommunityPostService {
             if (subject.isPermitted(PermissionBO.RECOMMEND)) {
                 actionSheet.add(ActionSheetVO.recommend);
             }
-
-            postVO.setActionSheetList(actionSheet);
         }
-
+        postVO.setActionSheetList(actionSheet);
 
         return postVO;
     }

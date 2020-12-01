@@ -55,9 +55,9 @@ public class UserRepositoryImpl implements UserRepository {
 
         saveOrUpdateStudentRelative(appStudentUserBO, user);
 
-        if(CollectionUtils.isNotEmpty(appStudentUserBO.getRoleList())) {
+        if(CollectionUtils.isNotEmpty(appStudentUserBO.getNewGrantRole())) {
             roleDao.insertUserRoleRelative(user.getUserName(),
-                    appStudentUserBO.getRoleList().stream()
+                    appStudentUserBO.getNewGrantRole().stream()
                             .map(RoleBO ::getCode)
                             .collect(Collectors.toList()));
         }
@@ -70,9 +70,18 @@ public class UserRepositoryImpl implements UserRepository {
     public void update(AppStudentUserBO appStudentUserBO) {
         User user = userAdapter.toDO(appStudentUserBO);
 
-        saveOrUpdateStudentRelative(appStudentUserBO, user);
+        if(appStudentUserBO.isLogoutStatus()) {
+            userDao.deleteRelativeByStudent(appStudentUserBO.getAccount().getAccount());
+        }
 
         userDao.updateByUserNameSelective(user);
+
+        if(CollectionUtils.isNotEmpty(appStudentUserBO.getNewGrantRole())) {
+            roleDao.insertUserRoleRelative(user.getUserName(),
+                    appStudentUserBO.getNewGrantRole().stream()
+                            .map(RoleBO ::getCode)
+                            .collect(Collectors.toList()));
+        }
 
     }
 

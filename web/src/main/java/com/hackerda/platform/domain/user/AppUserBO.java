@@ -4,6 +4,7 @@ import lombok.Data;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,6 +46,8 @@ public class AppUserBO {
     private boolean useDefaultPassword;
 
     private List<RoleBO> roleList = new ArrayList<>(0);
+
+    private List<RoleBO> newGrantRole = new ArrayList<>(2);
 
     private int rolePriority;
 
@@ -89,11 +92,21 @@ public class AppUserBO {
     }
 
     public void grantRole(RoleBO roleBO) {
-        roleList.add(roleBO);
+        if (!roleList.contains(roleBO)) {
+            roleList.add(roleBO);
+            newGrantRole.add(roleBO);
+        }
+
+    }
+
+    public boolean hasRole(RoleBO roleBO) {
+        return roleList.contains(roleBO);
     }
 
     public void grantRole(List<RoleBO> roleBOList) {
-        roleList.addAll(roleBOList);
+        for (RoleBO roleBO : roleBOList) {
+            grantRole(roleBO);
+        }
     }
 
     /**
@@ -118,6 +131,10 @@ public class AppUserBO {
 
     public static AppUserBO createGuest() {
         return new AppUserBO();
+    }
+
+    public List<RoleBO> getNewGrantRole() {
+        return Collections.unmodifiableList(newGrantRole);
     }
 
 }
