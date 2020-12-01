@@ -30,6 +30,9 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public AppStudentUserBO findByStudentAccount(StudentAccount account) {
         User user = userDao.selectByStudentAccount(account.getAccount());
+        if (user == null) {
+            return null;
+        }
         List<RoleBO> roleList = roleRepository.findByUserName(user.getUserName());
         return userAdapter.toStudentBO(user, account, roleList);
     }
