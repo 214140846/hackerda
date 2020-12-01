@@ -1,4 +1,4 @@
-package com.hackerda.platform.service;
+package com.hackerda.platform.service.community;
 
 import com.hackerda.platform.application.CommunityCommentApp;
 import com.hackerda.platform.controller.request.LikeRequest;
@@ -49,11 +49,8 @@ public class CommunityCommentService {
 
         communityCommentApp.addComment(commentBO);
 
-        CreateCommentResultVO vo = new CreateCommentResultVO();
-        vo.setRelease(commentBO.isRelease());
-        vo.setErrMsg(commentBO.getUnReleaseReason());
 
-        return vo;
+        return new CreateCommentResultVO(commentBO.isRelease(), commentBO.getUnReleaseReason());
     }
 
     public CreateCommentResultVO deleteCommentById(String userName, long commentId) {

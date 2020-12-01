@@ -1,4 +1,4 @@
-package com.hackerda.platform.service;
+package com.hackerda.platform.service.community;
 
 import com.google.common.collect.Lists;
 import com.hackerda.platform.application.CommunityPostApp;
@@ -164,6 +164,11 @@ public class CommunityPostService {
 
     public PostDetailVO getRecommendPost(String userName, String appId, String openid) {
         List<PostDetailBO> detailBOList = communityPostApp.getRecommendPost();
+        return getPostDetailVO(userName, appId, openid, detailBOList);
+    }
+
+    public PostDetailVO getTopPost(String userName, String appId, String openid) {
+        List<PostDetailBO> detailBOList = posterRepository.findByStatus(Collections.singletonList(RecordStatus.TOP));
         return getPostDetailVO(userName, appId, openid, detailBOList);
     }
 

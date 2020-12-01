@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-@ActiveProfiles("beta")
+@ActiveProfiles("prod")
 @RunWith(SpringRunner.class)
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
@@ -26,15 +26,15 @@ public class RoleScript {
     public void createRole() {
 
 
-//        roleRepository.store(new PermissionBO("推荐", "recommend", 1));
-//        roleRepository.store(new PermissionBO("置顶", "top", 1));
+        roleRepository.store(new PermissionBO("推荐", "recommend", 1));
+        roleRepository.store(new PermissionBO("置顶", "top", 1));
 
-//        RoleBO roleBO = new RoleBO("管理员", "admin", 1);
-//
-//        roleBO.grantPermission(roleRepository.findPermissionByCode(PermissionBO.RECOMMEND));
-//        roleBO.grantPermission(roleRepository.findPermissionByCode(PermissionBO.TOP));
-//
-//        roleRepository.store(roleBO);
+        RoleBO roleBO = new RoleBO("管理员", "admin", 1);
+
+        roleBO.grantPermission(roleRepository.findPermissionByCode(PermissionBO.RECOMMEND));
+        roleBO.grantPermission(roleRepository.findPermissionByCode(PermissionBO.TOP));
+
+        roleRepository.store(roleBO);
 
         RoleBO superAdmin = roleRepository.findByCode("admin");
 

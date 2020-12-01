@@ -2,10 +2,7 @@ package com.hackerda.platform.application;
 
 import com.hackerda.platform.MDCThreadPool;
 import com.hackerda.platform.domain.community.*;
-import com.hackerda.platform.domain.user.action.ActionTarget;
-import com.hackerda.platform.domain.user.action.UserAction;
-import com.hackerda.platform.domain.user.action.UserActionRecordBO;
-import com.hackerda.platform.domain.user.action.UserActionRecordRepository;
+import com.hackerda.platform.domain.user.action.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -91,7 +85,7 @@ public class CommunityPostApp {
      * @return 是否置顶成功
      */
     @Transactional
-    public synchronized boolean topPost(String operateUser, PostBO postBO, boolean revoke) {
+    public synchronized ActionResult topPost(String operateUser, PostBO postBO, boolean revoke) {
         Date operatorTime = new Date();
         if (revoke) {
             if(postBO.isTop()) {
@@ -99,9 +93,9 @@ public class CommunityPostApp {
 
                 posterRepository.update(postBO);
                 recordStatusChange(operateUser, postBO, operatorTime);
-                return true;
+                return ActionResult.success();
             }
-            return false;
+            return ActionResult.fail(postBO.getId() +"无法取消置顶");
         }
 
         List<PostDetailBO> topPostList = posterRepository.findByStatus(Collections.singletonList(RecordStatus.TOP));
@@ -118,7 +112,7 @@ public class CommunityPostApp {
         posterRepository.update(postBO);
 
         recordStatusChange(operateUser, postBO, operatorTime);
-        return true;
+        return ActionResult.success();
     }
 
 
@@ -131,30 +125,30 @@ public class CommunityPostApp {
      * @return 是否置顶成功
      */
     @Transactional
-    public synchronized boolean recommendPost(String operateUser, PostBO postBO, boolean revoke) {
+    public synchronized ActionResult recommendPost(String operateUser, PostBO postBO, boolean revoke) {
         if (revoke) {
             if(postBO.getStatus() == RecordStatus.Featured) {
                 postBO.statusToRelease();
 
                 posterRepository.update(postBO);
-                recommendPostRecorder.remove(postBO.getId(), new Date());
+                recommendPostRecorder.remove(postBO.getId(), getTomorrow(new Date()));
                 recordStatusChange(operateUser, postBO, new Date());
-                return true;
+                return ActionResult.success();
             }
-            return false;
+            return ActionResult.fail(postBO.getId() +"无法取消精选");
         }
 
         if (recommendPostRecorder.getPostIdList(new Date()).size() < 2) {
             postBO.feature();
 
             posterRepository.update(postBO);
-            recommendPostRecorder.add(postBO.getId(), new Date());
+            recommendPostRecorder.add(postBO.getId(), getTomorrow(new Date()));
 
             recordStatusChange(operateUser, postBO, new Date());
-            return true;
+            return ActionResult.success();
         }
 
-        return false;
+        return ActionResult.fail("今日精选帖子以达上限");
     }
 
     private boolean imageSecCheck(ImageInfo imageInfo) {
@@ -177,7 +171,7 @@ public class CommunityPostApp {
     public List<PostDetailBO> getRecommendPost() {
         List<Long> idList = recommendPostRecorder.getPostIdList(new Date());
         return posterRepository.findByIdList(idList)
-                .stream().filter(PostBO::isRelease)
+                .stream().filter(PostBO::isShow)
                 .sorted(Comparator.comparing(PostBO::getId).reversed()).collect(Collectors.toList());
     }
 
@@ -188,6 +182,14 @@ public class CommunityPostApp {
 
         userActionRecordRepository.store(record);
 
+    }
+
+    private Date getTomorrow(Date date) {
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE,1);
+
+        return calendar.getTime();
     }
 
     @Autowired

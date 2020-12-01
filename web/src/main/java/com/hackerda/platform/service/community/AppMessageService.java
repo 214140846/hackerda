@@ -1,4 +1,4 @@
-package com.hackerda.platform.service;
+package com.hackerda.platform.service.community;
 
 import com.hackerda.platform.application.MessageApp;
 import com.hackerda.platform.controller.vo.AppMessageOverviewVO;

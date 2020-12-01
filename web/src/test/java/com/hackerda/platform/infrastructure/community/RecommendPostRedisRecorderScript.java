@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 
 @Slf4j
 @RunWith(SpringRunner.class)
-@ActiveProfiles("prod")
+@ActiveProfiles("beta")
 @SpringBootTest
 public class RecommendPostRedisRecorderScript {
 

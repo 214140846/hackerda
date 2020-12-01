@@ -236,7 +236,7 @@ public class PosterRepositoryImpl implements PosterRepository {
                         RecordStatus.getByCode(imageInfoDO.getRecordStatus()))).collect(Collectors.toList());
 
         PostDetailBO postDetailBO = new PostDetailBO(post.getId(), post.getUserName(), post.getContent(), imageInfoList,
-                IdentityCategory.getByCode(post.getIdentityCode()), post.getPostTime(), post.getEquipment());
+                IdentityCategory.getByCode(post.getIdentityCode()), post.getPostTime(), post.getEquipment(), post.getShow());
 
         StudentPoster poster = this.findStudentPosterByUserName(post.getUserName());
 

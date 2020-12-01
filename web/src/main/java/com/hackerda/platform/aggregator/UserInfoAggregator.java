@@ -5,7 +5,7 @@ import com.hackerda.platform.controller.vo.AppUserVO;
 import com.hackerda.platform.controller.vo.StudentUserDetailVO;
 import com.hackerda.platform.controller.vo.UserInfoVO;
 import com.hackerda.platform.service.CreateStudentService;
-import com.hackerda.platform.service.UserService;
+import com.hackerda.platform.service.community.UserService;
 import com.hackerda.platform.service.rbac.UserAuthorizeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

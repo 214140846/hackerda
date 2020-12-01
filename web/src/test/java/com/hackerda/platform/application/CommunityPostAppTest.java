@@ -41,11 +41,11 @@ public class CommunityPostAppTest {
 
         communityPostApp.createPost(postBO);
 
-        assertThat(communityPostApp.topPost("test", postBO, false)).isTrue();
+        assertThat(communityPostApp.topPost("test", postBO, false).isSuccess()).isTrue();
 
         assertThat(postBO.getStatus()).isEqualTo(RecordStatus.TOP);
 
-        assertThat(communityPostApp.topPost("test", postBO, true)).isTrue();
+        assertThat(communityPostApp.topPost("test", postBO, true).isSuccess()).isTrue();
 
         assertThat(postBO.getStatus()).isEqualTo(RecordStatus.Release);
 
@@ -59,7 +59,7 @@ public class CommunityPostAppTest {
 
         communityPostApp.createPost(postBO1);
 
-        assertThat(communityPostApp.topPost("test", postBO1, false)).isTrue();
+        assertThat(communityPostApp.topPost("test", postBO1, false).isSuccess()).isTrue();
 
         PostBO postBO2 = new PostBO("test", "测试内容", Collections.emptyList(), IdentityCategory.Community,
                 "IPhone X");
@@ -67,7 +67,7 @@ public class CommunityPostAppTest {
 
         communityPostApp.createPost(postBO2);
 
-        assertThat(communityPostApp.topPost("test", postBO2, false)).isTrue();
+        assertThat(communityPostApp.topPost("test", postBO2, false).isSuccess()).isTrue();
 
     }
 
@@ -79,11 +79,11 @@ public class CommunityPostAppTest {
 
         communityPostApp.createPost(postBO);
 
-        assertThat(communityPostApp.recommendPost("test", postBO, false)).isTrue();
+        assertThat(communityPostApp.recommendPost("test", postBO, false).isSuccess()).isTrue();
 
         assertThat(recommendPostRedisRecorder.getPostIdList(new Date()).size()).isEqualTo(1);
 
-        assertThat(communityPostApp.recommendPost("test", postBO, true)).isTrue();
+        assertThat(communityPostApp.recommendPost("test", postBO, true).isSuccess()).isTrue();
 
         assertThat(recommendPostRedisRecorder.getPostIdList(new Date()).size()).isEqualTo(0);
 

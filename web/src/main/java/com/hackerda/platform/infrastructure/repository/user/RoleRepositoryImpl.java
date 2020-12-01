@@ -87,8 +87,6 @@ public class RoleRepositoryImpl implements RoleRepository {
 
         List<RoleDetailDO> roleDetailList = roleDao.selectRoleDetailByUserName(userName);
 
-//        List<Role> roleList = roleDao.selectRoleByUserName(userName);
-
         return transfer(roleDetailList);
     }
 

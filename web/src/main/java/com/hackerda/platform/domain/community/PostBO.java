@@ -49,19 +49,22 @@ public class PostBO {
 
     private Date lastReplyTime;
 
+    private final boolean show;
+
 
     public PostBO(String userName, String content, List<ImageInfo> imageInfoList, IdentityCategory identityCategory, String equipment) {
-        this(userName, content, imageInfoList, identityCategory, new Date(), equipment);
+        this(userName, content, imageInfoList, identityCategory, new Date(), equipment, true);
     }
 
     public PostBO(String userName, String content, List<ImageInfo> imageInfoList, IdentityCategory identityCategory,
-                  Date postTime, String equipment) {
+                  Date postTime, String equipment, boolean show) {
         this.userName = userName;
         this.content = content;
         this.imageInfoList = imageInfoList;
         this.identityCategory = identityCategory;
         this.postTime = postTime;
         this.equipment = equipment;
+        this.show = show;
     }
 
     public boolean isRelease() {

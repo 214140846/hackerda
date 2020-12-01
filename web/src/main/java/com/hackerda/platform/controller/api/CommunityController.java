@@ -8,10 +8,10 @@ import com.hackerda.platform.controller.request.ModifyUserInfoRequest;
 import com.hackerda.platform.controller.vo.*;
 import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.domain.user.AppUserBO;
-import com.hackerda.platform.service.AppMessageService;
-import com.hackerda.platform.service.CommunityCommentService;
-import com.hackerda.platform.service.CommunityPostService;
-import com.hackerda.platform.service.UserService;
+import com.hackerda.platform.service.community.AppMessageService;
+import com.hackerda.platform.service.community.CommunityCommentService;
+import com.hackerda.platform.service.community.CommunityPostService;
+import com.hackerda.platform.service.community.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +94,14 @@ public class CommunityController {
         AppUserBO appUserBO = (AppUserBO)SecurityUtils.getSubject().getPrincipal();
         String username = appUserBO.getUserName();
         return WebResponse.success(communityPostService.getRecommendPost(username,  appId, openid));
+    }
+
+    @GetMapping("/getTopPost")
+    public WebResponse<PostDetailVO> getTopPost(@RequestParam(value = "appId", required = false) String appId,
+                                                      @RequestParam(value = "openid", required = false) String openid){
+        AppUserBO appUserBO = (AppUserBO)SecurityUtils.getSubject().getPrincipal();
+        String username = appUserBO.getUserName();
+        return WebResponse.success(communityPostService.getTopPost(username,  appId, openid));
     }
 
     @GetMapping("/checkPostUpdate")
