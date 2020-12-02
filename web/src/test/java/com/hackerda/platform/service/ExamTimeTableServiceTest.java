@@ -1,5 +1,8 @@
 package com.hackerda.platform.service;
 
+import com.hackerda.platform.domain.student.StudentAccount;
+import com.hackerda.platform.domain.student.StudentRepository;
+import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.infrastructure.database.model.Exam;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -21,11 +24,13 @@ public class ExamTimeTableServiceTest {
 
     @Autowired
     private ExamTimeTableService examTimeTableService;
+    @Autowired
+    private StudentRepository studentRepository;
 
     @Test
     public void getExamTimeListFromSpider() {
-
-        List<Exam> examList = examTimeTableService.getExamTimeListFromSpider(2019023695);
+        WechatStudentUserBO student = studentRepository.findWetChatUser(new StudentAccount(2019023695));
+        List<Exam> examList = examTimeTableService.getExamTimeListFromSpider(student);
 
 
         for (Exam exam : examList) {

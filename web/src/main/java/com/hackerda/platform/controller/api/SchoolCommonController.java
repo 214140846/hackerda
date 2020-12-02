@@ -5,15 +5,23 @@ import com.hackerda.platform.controller.WebResponse;
 import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.controller.vo.CourseTimetableOverviewVO;
 import com.hackerda.platform.controller.vo.GradeResultVo;
+import com.hackerda.platform.domain.student.StudentUserBO;
+import com.hackerda.platform.infrastructure.database.model.Exam;
 import com.hackerda.platform.service.CourseTimeTableService;
+import com.hackerda.platform.service.ExamTimeTableService;
 import com.hackerda.platform.service.GradeService;
 import com.hackerda.platform.service.rbac.UserAuthorizeService;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -25,6 +33,8 @@ public class SchoolCommonController {
     private GradeService gradeService;
     @Autowired
     private UserAuthorizeService userAuthorizeService;
+    @Autowired
+    private ExamTimeTableService examTimeTableService;
 
     @RequiresAuthentication
     @RequestMapping(value = "/grade")
@@ -56,5 +66,14 @@ public class SchoolCommonController {
 
         userAuthorizeService.appStudentRevokeAuthorize(account, appId);
         return WebResponse.success("success");
+    }
+
+    @RequiresAuthentication
+    @GetMapping("/exam")
+    public WebResponse getExamTimeTableByStudent() {
+        StudentUserBO wechatStudentUserBO = (StudentUserBO) SecurityUtils.getSubject().getPrincipal();
+
+        List<Exam> examTimeList = examTimeTableService.getExamTimeListFromSpider(wechatStudentUserBO);
+        return WebResponse.success(examTimeList);
     }
 }

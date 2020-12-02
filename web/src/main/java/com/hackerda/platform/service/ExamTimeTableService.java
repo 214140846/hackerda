@@ -1,6 +1,7 @@
 package com.hackerda.platform.service;
 
 import com.hackerda.platform.domain.student.StudentAccount;
+import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.infrastructure.database.dao.ExamTimetableDao;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,9 +53,8 @@ public class ExamTimeTableService {
     @Autowired
     private StudentExamTimeTableDao studentExamTimeTableDao;
 
-    public List<Exam> getExamTimeListFromSpider(int account) {
+    public List<Exam> getExamTimeListFromSpider(StudentUserBO student) {
 
-        WechatStudentUserBO student = studentRepository.findWetChatUser(new StudentAccount(account));
         if (student == null) {
             throw new PasswordUnCorrectException();
         }
@@ -67,7 +68,7 @@ public class ExamTimeTableService {
             examTime = newUrpSpiderService.getExamTime(student);
         } catch (UrpRequestException e) {
             if (e.getCode() >= 500) {
-            	List<ExamTimetable> res=examTimetableDao.getExamByAccount(String.valueOf(account));
+            	List<ExamTimetable> res=examTimetableDao.getExamByAccount(student.getAccount().toString());
             	return transform(res);
               }
               throw e;
@@ -103,13 +104,13 @@ public class ExamTimeTableService {
         //需要有examTimetable的参与，创建列表存储需要被加入到studentexamTimetable表的examTimetable对象
         List <ExamTimetable> temp=new ArrayList<>();
         for (Exam exam : examList) {
-			insertIfAbsent(exam, String.valueOf(account), examTimetableList, temp);
+			insertIfAbsent(exam, student.getAccount().toString(), examTimetableList, temp);
 		}
 		if (!CollectionUtils.isEmpty(examTimetableList)) {
 			examTimetableDao.batchInsert(examTimetableList);
 		}
 		if (!CollectionUtils.isEmpty(temp)) {
-			List<StudentExamTimetable> studentExamTimetableList = transform(temp, String.valueOf(account));
+			List<StudentExamTimetable> studentExamTimetableList = transform(temp, student.getAccount().toString());
 			studentExamTimeTableDao.insertBatch(studentExamTimetableList);
 		}
 		return examList;
@@ -123,7 +124,9 @@ public class ExamTimeTableService {
      * @return
      */
     public List<Exam> getExamTimeList(int account) {
-        return getExamTimeListFromSpider(account);
+        WechatStudentUserBO student = studentRepository.findWetChatUser(new StudentAccount(2019023695));
+
+        return getExamTimeListFromSpider(student);
     }
 
     private Course getCourseFromExamText(String examText) {
