@@ -138,7 +138,7 @@ public class CommunityPostApp {
             return ActionResult.fail(postBO.getId() +"无法取消精选");
         }
 
-        if (recommendPostRecorder.getPostIdList(new Date()).size() < 2) {
+        if (recommendPostRecorder.getPostIdList(getTomorrow(new Date())).size() < 2) {
             postBO.feature();
 
             posterRepository.update(postBO);

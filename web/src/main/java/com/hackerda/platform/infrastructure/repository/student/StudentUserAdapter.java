@@ -1,20 +1,13 @@
 package com.hackerda.platform.infrastructure.repository.student;
 
-import com.hackerda.platform.domain.WechatPlatform;
-import com.hackerda.platform.domain.student.*;
+import com.hackerda.platform.domain.student.StudentAccount;
+import com.hackerda.platform.domain.student.StudentUserBO;
+import com.hackerda.platform.domain.student.StudentWechatBindDetail;
+import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.infrastructure.database.model.StudentUser;
 import com.hackerda.platform.infrastructure.database.model.WechatOpenid;
-import com.hackerda.platform.infrastructure.database.model.WechatStudentUserDO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class StudentUserAdapter {
@@ -49,7 +42,7 @@ public class StudentUserAdapter {
 
     }
 
-    public StudentUser toDO(WechatStudentUserBO wechatStudentUserBO){
+    public StudentUser toDO(StudentUserBO wechatStudentUserBO){
         StudentUser user = new StudentUser();
 
         user.setAccount(wechatStudentUserBO.getAccount().getInt());
