@@ -38,6 +38,7 @@ public class StudentUserBO {
     public void updatePassword(String enablePassword) {
         this.password = DESUtil.encrypt(enablePassword, account + key);
         this.isCorrect = true;
+        this.msgHasCheck = true;
         this.saveOrUpdate = true;
     }
 

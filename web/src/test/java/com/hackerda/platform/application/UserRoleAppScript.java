@@ -37,8 +37,8 @@ public class UserRoleAppScript {
     public void grantRole() {
         RoleBO roleBO = roleRepository.findByCode("admin");
 
-        AppStudentUserBO userBO = userRepository.findByStudentAccount(new StudentAccount(2014025838));
-
-        userRoleApp.grantRole(userBO, userBO, roleBO);
+        AppStudentUserBO operator = userRepository.findByStudentAccount(new StudentAccount(2014025838));
+        AppStudentUserBO user = userRepository.findByStudentAccount(new StudentAccount(2017026003));
+        userRoleApp.grantRole(operator, user, roleBO);
     }
 }
