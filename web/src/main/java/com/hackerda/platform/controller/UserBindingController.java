@@ -112,7 +112,7 @@ public class UserBindingController {
 
         try {
             if (!StringUtils.isEmpty(openid)) {
-                userAuthorizeService.studentAuthorize(account, password, appid, openid);
+                userAuthorizeService.studentAuthorize(account, password, appid, openid, "");
             } else {
                 return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号或者密码错误");
             }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author JR Chan
@@ -18,5 +19,13 @@ import java.util.List;
 public interface StudentUserExtMapper extends StudentUserMapper {
 
     List<Role> selectRoleByAccount(Integer account);
+
+    void insertUnionIdRelative(Integer account, String unionId);
+
+    void deleteUnionIdRelative(Integer account);
+
+    void updateUnionIdRelative(Integer account, String unionId);
+
+    Integer selectAccountByUnionId(String unionId);
 
 }

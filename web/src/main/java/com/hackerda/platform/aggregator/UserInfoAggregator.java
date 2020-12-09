@@ -23,9 +23,9 @@ public class UserInfoAggregator {
     private CreateStudentService createStudentService;
 
     public UserInfoVO studentAuthorize(@Nonnull String account, @Nonnull String password, @Nonnull String appId,
-                                @Nonnull String openid) {
+                                @Nonnull String openid, @Nonnull String unionId) {
 
-        StudentUserDetailVO detailVO = userAuthorizeService.studentAuthorize(account, password, appId, openid);
+        StudentUserDetailVO detailVO = userAuthorizeService.studentAuthorize(account, password, appId, openid, unionId);
 
         AppUserVO appUserVO = userService.getUserByStudentAccount(detailVO.getAccount().toString());
 

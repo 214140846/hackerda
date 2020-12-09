@@ -20,27 +20,16 @@ public class UserAuthorizeController {
     @Autowired
     private UserInfoAggregator userInfoAggregator;
 
-    @RequestMapping(value = "/student", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public WebResponse<StudentUserDetailVO> studentAuthz(@RequestParam("account") String account,
-                                                         @RequestParam("password") String password,
-                                                         @RequestParam(value = "appid", required = false) String appid,
-                                                         @RequestParam(value = "openid", required = false) String openid){
-
-
-        return WebResponse.success(userAuthorizeService.studentAuthorize(account, password, appid, openid));
-    }
-
-
     @RequestMapping(value = "/user", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public WebResponse<UserInfoVO> userAuthz(@RequestParam("account") String account,
                                              @RequestParam("password") String password,
                                              @RequestParam(value = "appid", required = false) String appid,
-                                             @RequestParam(value = "openid", required = false) String openid){
+                                             @RequestParam(value = "openid", required = false) String openid,
+                                             @RequestParam(value = "unionid", required = false) String unionid){
 
 
-        return WebResponse.success(userInfoAggregator.studentAuthorize(account, password, appid, openid));
+        return WebResponse.success(userInfoAggregator.studentAuthorize(account, password, appid, openid, unionid));
     }
 
     @RequestMapping(value = "/commonUser", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")

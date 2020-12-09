@@ -1,6 +1,7 @@
 package com.hackerda.platform.application;
 
 import com.hackerda.platform.domain.student.StudentAccount;
+import com.hackerda.platform.domain.student.StudentInfoService;
 import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.user.UserRepository;
@@ -32,26 +33,41 @@ public class StudentBindAppScript {
     private StudentUserMapper studentUserMapper;
     @Autowired
     private StudentRepository userRepository;
+    @Autowired
+    private StudentInfoService studentInfoService;
 
     @Test
     public void studentUpdate() {
 
         StudentUserExample example = new StudentUserExample();
-        example.createCriteria().andAccountGreaterThan(2020000000);
+        example.createCriteria().andAccountGreaterThan(2020000000).andHasCheckEqualTo(false);
 
         List<StudentUser> studentUsers = studentUserMapper.selectByExample(example);
 
         for (StudentUser studentUser : studentUsers) {
-            if (!studentUser.getHasCheck()) {
-                System.out.println(studentUser.getAccount());
+            System.out.println(studentUser.getAccount());
 
-                try {
-                    WechatStudentUserBO userBO = studentBindApp.getStudentUserBO(new StudentAccount(studentUser.getAccount()), "1");
-                    userRepository.save(userBO);
-                } catch (Exception e) {
-                    System.out.println(studentUser.getAccount() + e.getMessage());
-                }
+            try {
+                WechatStudentUserBO userBO = studentInfoService.getStudentInfo(new StudentAccount(studentUser.getAccount()), "1");
+                userRepository.save(userBO);
+            } catch (Exception e) {
+                System.out.println(studentUser.getAccount() +": " + e.getMessage());
             }
+        }
+
+    }
+
+    @Test
+    public void studentUpdateTest() {
+
+        StudentUserExample example = new StudentUserExample();
+        example.createCriteria().andAccountEqualTo(2020024997);
+
+        List<StudentUser> studentUsers = studentUserMapper.selectByExample(example);
+
+        for (StudentUser studentUser : studentUsers) {
+            WechatStudentUserBO userBO = studentInfoService.getStudentInfo(new StudentAccount(studentUser.getAccount()), "1");
+            userRepository.save(userBO);
         }
 
     }

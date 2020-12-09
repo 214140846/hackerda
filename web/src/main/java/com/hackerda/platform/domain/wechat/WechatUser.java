@@ -18,4 +18,8 @@ public class WechatUser implements Serializable {
     public String asValue() {
         return appId + ":" +openId;
     }
+
+    public static WechatUser ofNull() {
+        return new WechatUser("", "");
+    }
 }
