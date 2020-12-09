@@ -168,6 +168,11 @@ public class MiniProgramService implements WechatAuthService, ContentSecurityChe
     }
 
     @Override
+    public AuthResponse authCode(String code) {
+        return auth(code);
+    }
+
+    @Override
     public boolean isSecurityContent(String content) {
 
         if(StringUtils.isEmpty(content)) {

@@ -4,6 +4,8 @@ import com.hackerda.platform.aggregator.UserInfoAggregator;
 import com.hackerda.platform.controller.WebResponse;
 import com.hackerda.platform.controller.vo.StudentUserDetailVO;
 import com.hackerda.platform.controller.vo.UserInfoVO;
+import com.hackerda.platform.domain.wechat.WechatAuthService;
+import com.hackerda.platform.infrastructure.wechat.model.AuthResponse;
 import com.hackerda.platform.service.rbac.UserAuthorizeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,8 @@ public class UserAuthorizeController {
     private UserAuthorizeService userAuthorizeService;
     @Autowired
     private UserInfoAggregator userInfoAggregator;
+    @Autowired
+    private WechatAuthService wechatAuthService;
 
     @RequestMapping(value = "/user", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -63,6 +67,13 @@ public class UserAuthorizeController {
 
 
         return WebResponse.success(userAuthorizeService.appStudentAuthorize(account, password, appId, code));
+    }
+
+    @RequestMapping(value = "/wechat/code", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public WebResponse<AuthResponse> authCode(@RequestParam(value = "code") String code){
+
+        return WebResponse.success(wechatAuthService.authCode(code));
     }
 
 }
