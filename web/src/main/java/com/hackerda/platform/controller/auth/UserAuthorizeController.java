@@ -24,10 +24,9 @@ public class UserAuthorizeController {
     @ResponseBody
     public WebResponse<UserInfoVO> userAuthz(@RequestParam("account") String account,
                                              @RequestParam("password") String password,
-                                             @RequestParam(value = "appid", required = false) String appid,
-                                             @RequestParam(value = "openid", required = false) String openid,
-                                             @RequestParam(value = "unionid", required = false) String unionid){
-
+                                             @RequestParam(value = "appid") String appid,
+                                             @RequestParam(value = "openid") String openid,
+                                             @RequestParam(value = "unionid") String unionid){
 
         return WebResponse.success(userInfoAggregator.studentAuthorize(account, password, appid, openid, unionid));
     }

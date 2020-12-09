@@ -61,6 +61,11 @@ public enum  ErrorCode {
 	WECHAT_HAS_USED(413),
 
 	/**
+	 * 该微信账号已经被使用
+	 */
+	WECHAT_PARAM_MISS(414),
+
+	/**
 	 *服务器端错误
 	 */
 	SYSTEM_ERROR(500),
