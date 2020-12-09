@@ -53,6 +53,7 @@ public class StudentBindApp {
 
         try {
             WechatStudentUserBO wechatStudentUserBO = getStudentUserBO(account, password);
+            wechatStudentUserBO.setUseUnionId(false);
             WechatStudentUserBO userBO = bindByOpenId(wechatStudentUserBO, wechatUser);
             wechatActionRecordRepository.save(new ActionRecord(wechatUser, Action.Login, wechatStudentUserBO.getAccount()));
             return userBO;

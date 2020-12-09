@@ -13,4 +13,6 @@ public interface WechatAuthService {
 
     AuthResponse authCode(String code);
 
+    String getUserInfo(String code, String encryptedData, String iv);
+
 }

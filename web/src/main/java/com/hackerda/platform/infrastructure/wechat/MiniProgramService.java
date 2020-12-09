@@ -15,6 +15,7 @@ import com.hackerda.platform.infrastructure.wechat.model.SubscribeMessage;
 
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
+import com.hackerda.platform.utils.WXBizDataCrypt;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -170,6 +171,14 @@ public class MiniProgramService implements WechatAuthService, ContentSecurityChe
     @Override
     public AuthResponse authCode(String code) {
         return auth(code);
+    }
+
+    @Override
+    public String getUserInfo(String code, String encryptedData, String iv) {
+        AuthResponse auth = auth(code);
+        WXBizDataCrypt biz = new WXBizDataCrypt(miniProgramProperties.getAppId(), auth.getSessionKey());
+
+        return biz.decryptData(encryptedData, iv);
     }
 
     @Override

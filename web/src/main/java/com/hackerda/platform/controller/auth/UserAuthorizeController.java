@@ -69,11 +69,13 @@ public class UserAuthorizeController {
         return WebResponse.success(userAuthorizeService.appStudentAuthorize(account, password, appId, code));
     }
 
-    @RequestMapping(value = "/wechat/code", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/wechat/code", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public WebResponse<AuthResponse> authCode(@RequestParam(value = "code") String code){
+    public WebResponse<String> authCode(@RequestParam(value = "code") String code,
+                                              @RequestParam(value = "encryptedData") String encryptedData,
+                                              @RequestParam(value = "iv") String iv){
 
-        return WebResponse.success(wechatAuthService.authCode(code));
+        return WebResponse.success(wechatAuthService.getUserInfo(code, encryptedData, iv));
     }
 
 }

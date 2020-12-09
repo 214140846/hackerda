@@ -6,6 +6,7 @@ import com.hackerda.platform.domain.wechat.WechatUser;
 import com.hackerda.platform.exception.BusinessException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,7 +36,8 @@ public class WechatStudentUserBO extends StudentUserBO{
      * 区分该对象是否使用unionId
      */
     @Getter
-    private final boolean useUnionId = true;
+    @Setter
+    private boolean useUnionId = true;
 
     public boolean hasBindApp() {
         return getAppOpenid() != null;
