@@ -1,11 +1,14 @@
 package com.hackerda.platform.service.rbac;
 
 import com.hackerda.platform.application.StudentBindApp;
+import com.hackerda.platform.application.UnionIdApp;
 import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.user.PhoneNumber;
+import com.hackerda.platform.domain.wechat.UnionId;
+import com.hackerda.platform.domain.wechat.UnionIdRepository;
 import com.hackerda.platform.domain.wechat.WechatUser;
 import com.hackerda.platform.exception.BusinessException;
 import com.hackerda.platform.domain.constant.ErrorCode;
@@ -28,15 +31,18 @@ public class StudentAuthorizeServiceImpl implements UserAuthorizeService{
     private StudentBindApp studentBindApp;
     @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    private UnionIdApp unionIdApp;
 
 
     @Override
-    public StudentUserDetailVO studentAuthorize(@Nonnull String account, @Nonnull String password, @Nonnull String appId, @Nonnull String openid) {
+    public StudentUserDetailVO studentAuthorize(@Nonnull String account, @Nonnull String password,
+                                                @Nonnull String appId, @Nonnull String openid, @Nonnull String unionId) {
         StudentAccount studentAccount = new StudentAccount(account);
-
         WechatUser wechatUser = new WechatUser(appId, openid);
 
-        WechatStudentUserBO studentUser = studentBindApp.bindByOpenId(studentAccount, password, wechatUser);
+        UnionId wechatUnionId = unionIdApp.getUnionId(unionId, wechatUser);
+        WechatStudentUserBO studentUser = studentBindApp.bindByUnionId(studentAccount, password, wechatUnionId, wechatUser);
 
         return getVO(studentUser, appId);
     }
@@ -79,7 +85,7 @@ public class StudentAuthorizeServiceImpl implements UserAuthorizeService{
         }
 
 
-        studentBindApp.unbindByPlatform(wechatStudentUserBO, appId);
+        studentBindApp.unbindUnionId(wechatStudentUserBO);
 
     }
 

@@ -25,23 +25,6 @@ public class StudentUserDao {
         return studentUserExtMapper.selectByExample(studentUserExample);
     }
 
-    public void insertStudentSelective(StudentUser studentUser){
-        studentUserExtMapper.insertSelective(studentUser);
-    }
-
-
-    public void updatePassword(String account, String password){
-        StudentUser student = new StudentUser();
-        student.setAccount(Integer.parseInt(account));
-        student.setPassword(password);
-        student.setIsCorrect(true);
-
-        StudentUserExample studentExample = new StudentUserExample();
-        studentExample.createCriteria()
-                .andAccountEqualTo(Integer.parseInt(account));
-        studentUserExtMapper.updateByExampleSelective(student, studentExample);
-    }
-
     public void updatePasswordUnCorrect(Integer account){
         StudentUser student = new StudentUser();
         student.setAccount(account);
@@ -55,6 +38,22 @@ public class StudentUserDao {
 
     public List<Role> selectRoleByAccount(String account){
         return studentUserExtMapper.selectRoleByAccount(Integer.parseInt(account));
+    }
+
+    public void insertUnionIdRelative(Integer account, String unionId) {
+        studentUserExtMapper.insertUnionIdRelative(account, unionId);
+    }
+
+    public void updateUnionIdRelative(Integer account, String unionId) {
+        studentUserExtMapper.updateUnionIdRelative(account, unionId);
+    }
+
+    public Integer selectAccountByUnionId(String unionId) {
+        return studentUserExtMapper.selectAccountByUnionId(unionId);
+    }
+
+    public void deleteUnionIdRelative(Integer account) {
+        studentUserExtMapper.deleteUnionIdRelative(account);
     }
 
 

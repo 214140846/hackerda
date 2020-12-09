@@ -7,13 +7,11 @@ import com.hackerda.platform.domain.user.AppStudentUserBO;
 import com.hackerda.platform.domain.user.PhoneNumber;
 import com.hackerda.platform.domain.user.UserRegisterAssist;
 import com.hackerda.platform.domain.user.UserRepository;
-import com.hackerda.platform.domain.wechat.ActionRecord;
-import com.hackerda.platform.domain.wechat.WechatActionRecordRepository;
-import com.hackerda.platform.domain.wechat.WechatAuthService;
-import com.hackerda.platform.domain.wechat.WechatUser;
+import com.hackerda.platform.domain.wechat.*;
 import com.hackerda.platform.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nonnull;
 
@@ -75,6 +73,43 @@ public class StudentBindApp {
         }
 
     }
+
+    @Transactional(noRollbackFor = BusinessException.class)
+    public WechatStudentUserBO bindByUnionId(@Nonnull StudentAccount account, @Nonnull String password,
+                                         UnionId unionId, WechatUser wechatUser) {
+
+        try {
+            WechatStudentUserBO wechatStudentUserBO = getStudentUserBO(account, password);
+            bindUnionId(wechatStudentUserBO, unionId);
+            wechatActionRecordRepository.save(new ActionRecord(wechatUser, Action.Login, wechatStudentUserBO.getAccount()));
+            return wechatStudentUserBO;
+        } catch (BusinessException e) {
+            Action action = null;
+            if(e.getErrorCode() == ErrorCode.UNCOMMON_WECHAT) {
+                action = Action.UnCommonWechat;
+            } else if(e.getErrorCode() == ErrorCode.ACCOUNT_OR_PASSWORD_INVALID){
+                action = Action.PasswordUnCorrect;
+            }else if(e.getErrorCode() == ErrorCode.ACCOUNT_HAS_BIND) {
+                action = Action.AccountHasBind;
+            }
+            if(action != null) {
+                wechatActionRecordRepository.save(new ActionRecord(wechatUser, action, account));
+            }
+
+            throw e;
+        }
+
+    }
+
+    private void bindUnionId(WechatStudentUserBO wechatStudentUserBO, UnionId unionId) {
+        if(!wechatStudentUserBO.hasBindUnionId()) {
+            wechatStudentUserBO.bindUnionId(unionId);
+            studentRepository.save(wechatStudentUserBO);
+        } else if(!wechatStudentUserBO.getUnionId().equals(unionId)) {
+            throw new BusinessException(ErrorCode.ACCOUNT_HAS_BIND, wechatStudentUserBO.getAccount() + "该学号已经被绑定");
+        }
+    }
+
 
     @VisibleForTesting
     WechatStudentUserBO bindByOpenId(WechatStudentUserBO wechatStudentUserBO, WechatUser wechatUser) {
@@ -138,6 +173,14 @@ public class StudentBindApp {
         studentRepository.save(wechatStudentUserBO);
 
     }
+
+    public void unbindUnionId(@Nonnull WechatStudentUserBO wechatStudentUserBO) {
+
+        wechatStudentUserBO.revokeUnionId();
+        studentRepository.save(wechatStudentUserBO);
+
+    }
+
 
     @VisibleForTesting
     WechatStudentUserBO getStudentUserBO(@Nonnull StudentAccount account, @Nonnull String password) {

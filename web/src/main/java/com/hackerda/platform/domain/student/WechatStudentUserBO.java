@@ -1,10 +1,12 @@
 package com.hackerda.platform.domain.student;
 
-import com.hackerda.platform.domain.WechatPlatform;
 import com.hackerda.platform.domain.constant.ErrorCode;
+import com.hackerda.platform.domain.wechat.UnionId;
 import com.hackerda.platform.domain.wechat.WechatUser;
 import com.hackerda.platform.exception.BusinessException;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -17,8 +19,23 @@ public class WechatStudentUserBO extends StudentUserBO{
 
     private Map<String, WechatUser> wechatUserMap = new HashMap<>(0);
 
+    @Getter
+    private UnionId unionId;
+
+    @Getter
+    private UnionId newBindUnionId = UnionId.ofNull();
+
+    @Getter
+    private UnionId revokeUnionId = UnionId.ofNull();
+
     @EqualsAndHashCode.Exclude
     private Set<WechatUser> originWechatUserSet = Collections.emptySet();
+
+    /**
+     * 区分该对象是否使用unionId
+     */
+    @Getter
+    private final boolean useUnionId = true;
 
     public boolean hasBindApp() {
         return getAppOpenid() != null;
@@ -32,6 +49,47 @@ public class WechatStudentUserBO extends StudentUserBO{
                 wechatUser -> wechatUser));
     }
 
+    public void setUnionId(UnionId unionId) {
+        checkUseUnionId();
+        this.unionId = unionId;
+    }
+
+    public void bindUnionId(UnionId unionId) {
+        checkUseUnionId();
+
+        if (!unionId.equals(this.unionId)) {
+            this.unionId = unionId;
+            this.newBindUnionId = unionId;
+        }
+    }
+
+    public void revokeUnionId() {
+        checkUseUnionId();
+        if (!hasBindUnionId()) {
+            throw new UnsupportedOperationException(this.toString() + ": this user haven`t bind unionId");
+        }
+
+        if (newBindUnionId.isEmpty()) {
+            this.revokeUnionId = this.unionId;
+        } else {
+            this.newBindUnionId = UnionId.ofNull();
+        }
+
+        this.unionId = UnionId.ofNull();
+
+    }
+
+    private void checkUseUnionId() {
+        if (!useUnionId) {
+            throw new UnsupportedOperationException(this.toString() + ": this user cant`t use unionId");
+        }
+
+    }
+
+    public boolean hasBindUnionId() {
+        return !(this.unionId == null || unionId.isEmpty());
+    }
+
 
     public String getAppOpenid(){
         return "";
@@ -39,14 +97,19 @@ public class WechatStudentUserBO extends StudentUserBO{
 
 
     public String getOpenid(String appId) {
-        if(wechatUserMap.isEmpty()) {
-            return "";
+        if(useUnionId) {
+            return unionId.getOpenId(appId);
         }
-        return wechatUserMap.get(appId).getOpenId();
+
+        return wechatUserMap.getOrDefault(appId, WechatUser.ofNull()).getOpenId();
     }
 
 
     public boolean hasBindApp(String appId) {
+        if(useUnionId) {
+            return unionId.hasApp(appId);
+        }
+
         return wechatUserMap.containsKey(appId);
     }
 
@@ -83,6 +146,27 @@ public class WechatStudentUserBO extends StudentUserBO{
         return originWechatUserSet.stream()
                 .filter(x-> !wechatUserMap.containsValue(x))
                 .collect(Collectors.toList());
+    }
+
+
+    public void save() {
+
+        if (useUnionId) {
+            if (!newBindUnionId.isEmpty() && !revokeUnionId.isEmpty()) {
+                throw new IllegalStateException("unionId state error: 不能同时有新绑定的id和移除绑定绑定的id。" );
+            }
+
+            if (!newBindUnionId.isEmpty()) {
+                this.unionId = newBindUnionId;
+                this.newBindUnionId = UnionId.ofNull();
+            }
+
+            if (!revokeUnionId.isEmpty()) {
+                this.revokeUnionId = UnionId.ofNull();
+            }
+
+        }
+
     }
 
 }

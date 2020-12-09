@@ -387,3 +387,26 @@ CREATE TABLE `user_action_record`
     `gmt_modify`    datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
+
+CREATE TABLE `student_unionid` (
+                                   `id` int(11) NOT NULL AUTO_INCREMENT,
+                                   `account` int(11) NOT NULL,
+                                   `union_id` varchar(32) NOT NULL,
+                                   `gmt_create` datetime DEFAULT CURRENT_TIMESTAMP,
+                                   `gmt_modify` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                   PRIMARY KEY (`id`),
+                                   UNIQUE KEY `account_uinonid` (`account`,`union_id`),
+                                   UNIQUE KEY `u_account` (`account`) USING BTREE,
+                                   UNIQUE KEY `u_unionid` (`union_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `wechat_union_id`
+(
+    `id`         int(11)     NOT NULL AUTO_INCREMENT,
+    `union_id`   varchar(32) NOT NULL,
+    `app_id`     varchar(32) NOT NULL,
+    `open_id`    varchar(32) NOT NULL,
+    `gmt_create` datetime DEFAULT CURRENT_TIMESTAMP,
+    `gmt_modify` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `union_id` (`union_id`, `app_id`, `open_id`)
+) ENGINE = InnoDB;
