@@ -44,6 +44,10 @@ public class UnionId {
     public String getOpenId(String appId) {
         return this.wechatUserMap.getOrDefault(appId, WechatUser.ofNull()).getOpenId();
     }
+    public WechatUser getWechatUser(String appId) {
+
+        return wechatUserMap.getOrDefault(appId, WechatUser.ofNull());
+    }
 
     public boolean hasOpenId(WechatUser wechatUser) {
         return wechatUserMap.containsValue(wechatUser);

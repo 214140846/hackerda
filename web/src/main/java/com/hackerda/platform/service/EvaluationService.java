@@ -34,6 +34,12 @@ public class EvaluationService {
         return BooleanUtils.toBoolean(stringRedisTemplate.opsForSet().isMember(key, studentAccount.getAccount()));
     }
 
+    public void addFinish(StudentAccount studentAccount) {
+        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        String key = RedisKeys.FINISH_EVALUATION_SET.genKey(term.asKey());
+        stringRedisTemplate.opsForSet().add(key, studentAccount.getAccount());
+    }
+
     public void push(StudentAccount studentAccount) {
         Term term = DateUtils.getCurrentSchoolTime().getTerm();
         String key = RedisKeys.WAITING_EVALUATION_LIST.genKey(term.asKey());
@@ -59,7 +65,6 @@ public class EvaluationService {
 
         for (EvaluationPagePost pagePost : needToEvaluate) {
             evaluate(pagePost, evaluationSpider);
-            break;
         }
 
     }
