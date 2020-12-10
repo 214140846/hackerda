@@ -56,6 +56,10 @@ public class Term {
         return this.startYear + "-" + this.endYear + "-" + this.order+ "-1";
     }
 
+    public String asKey() {
+        return String.valueOf(startYear) + '-' + endYear + "-" + order;
+    }
+
     public static void main(String[] args) {
         Term term = new Term("2018-2019", 1);
         System.out.println(term);

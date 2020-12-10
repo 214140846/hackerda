@@ -1,6 +1,7 @@
 package com.hackerda.platform.domain.student;
 
 import com.hackerda.platform.domain.constant.SubscribeScene;
+import com.hackerda.platform.domain.wechat.UnionId;
 
 import java.util.Collection;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.List;
 public interface StudentRepository {
 
     WechatStudentUserBO findWetChatUser(StudentAccount account);
+
+    WechatStudentUserBO findWetChatUser(UnionId unionId);
 
     StudentUserBO find(StudentAccount account);
 

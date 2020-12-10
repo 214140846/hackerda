@@ -197,14 +197,7 @@ public class UrpCommonSpider extends UrpBaseSpider implements UrpSpider{
     }
 
 
-    private <T> T parseObject(String text, Class<T> clazz) {
-        try {
-            return JSON.parseObject(text, clazz);
-        } catch (JSONException e) {
-            throw new UrpException("json 解析异常", e);
-        }
 
-    }
 
     public static void main(String[] args) {
 

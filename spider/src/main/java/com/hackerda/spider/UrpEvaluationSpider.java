@@ -10,5 +10,7 @@ public interface UrpEvaluationSpider {
 
     String getEvaluationToken(EvaluationPagePost evaluationPagePost);
 
-    void evaluation(EvaluationPost evaluationPost);
+    void evaluate(EvaluationPost evaluationPost);
+
+    void login(String account, String password);
 }

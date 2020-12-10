@@ -31,6 +31,7 @@ public class SpiderExceptionHandler implements IExceptionHandler {
             example.createCriteria().andAccountEqualTo(Integer.parseInt(account));
 
             wechatOpenidStudentRelativeMapper.deleteByExample(example);
+            studentUserDao.deleteUnionIdRelative(Integer.parseInt(account));
         }
 
     }

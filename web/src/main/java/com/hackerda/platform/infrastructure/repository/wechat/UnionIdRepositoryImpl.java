@@ -69,4 +69,21 @@ public class UnionIdRepositoryImpl implements UnionIdRepository {
 
         return UnionId.ofRepo(unionIdList.get(0).getUnionId(), wechatUserList);
     }
+
+    @Override
+    public UnionId find(WechatUser wechatUser) {
+        WechatUnionIdExample example = new WechatUnionIdExample();
+        example.createCriteria().andAppIdEqualTo(wechatUser.getAppId());
+        example.createCriteria().andOpenIdEqualTo(wechatUser.getOpenId());
+
+        List<WechatUnionId> unionIdList = wechatUnionIdMapper.selectByExample(example);
+
+        WechatUnionId unionId = unionIdList.stream().findFirst().orElse(null);
+
+        if (unionId == null) {
+            return UnionId.ofNull();
+        }
+
+        return this.find(unionId.getUnionId());
+    }
 }

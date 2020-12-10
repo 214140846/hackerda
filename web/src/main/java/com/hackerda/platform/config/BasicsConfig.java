@@ -37,6 +37,15 @@ public class BasicsConfig {
     }
 
     @Bean
+    @Scope("prototype")
+    public UrpEvaluationSpider urpEvaluationSpider(RestTemplate searchSpiderTemplate,
+                                   CaptchaPredict captchaPredict, ICaptchaProvider<CaptchaImage> captchaProvider,
+                                   AccountCookiePersist<String> cookiePersist, IExceptionHandler spiderExceptionHandler){
+
+        return new UrpEvaluationSpiderImpl(searchSpiderTemplate, captchaPredict, captchaProvider, cookiePersist, spiderExceptionHandler);
+    }
+
+    @Bean
     public UrpSearchSpider uepSearchSpider(RestTemplate searchSpiderTemplate,
                                            CaptchaPredict captchaPredict, ICaptchaProvider<CaptchaImage> captchaProvider,
                                            AccountCookiePersist<String> cookiePersist){

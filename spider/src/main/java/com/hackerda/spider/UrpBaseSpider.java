@@ -225,6 +225,14 @@ public class UrpBaseSpider {
         }
     }
 
+    <T> T parseObject(String text, Class<T> clazz) {
+        try {
+            return JSON.parseObject(text, clazz);
+        } catch (JSONException e) {
+            throw new UrpException("json 解析异常", e);
+        }
+    }
+
     public boolean hasLogin(){
         String account = getAccount();
         if(account == null || account.length() == 0){

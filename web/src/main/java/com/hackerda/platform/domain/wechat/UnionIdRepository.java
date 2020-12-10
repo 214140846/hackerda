@@ -9,4 +9,6 @@ public interface UnionIdRepository {
     UnionId find(String unionId);
 
     UnionId find(StudentAccount studentAccount);
+
+    UnionId find(WechatUser wechatUser);
 }
