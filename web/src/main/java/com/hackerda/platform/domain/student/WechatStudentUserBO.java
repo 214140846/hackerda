@@ -116,6 +116,10 @@ public class WechatStudentUserBO extends StudentUserBO{
     }
 
     public boolean hasBindWechatUser(WechatUser wechatUser) {
+        if (useUnionId) {
+            return !unionId.isEmpty() && unionId.hasOpenId(wechatUser);
+        }
+
         return originWechatUserSet.contains(wechatUser) || wechatUserMap.containsValue(wechatUser);
     }
 
