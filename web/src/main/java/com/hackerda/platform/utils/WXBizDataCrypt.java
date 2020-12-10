@@ -52,7 +52,7 @@ public class WXBizDataCrypt {
             // 如果密钥不足16位，那么就补足.  这个if 中的内容很重要
             int base = 16;
             if (keyByte.length % base != 0) {
-                int groups = keyByte.length / base + (keyByte.length % base != 0 ? 1 : 0);
+                int groups = keyByte.length / base + 1;
                 byte[] temp = new byte[groups * base];
                 Arrays.fill(temp, (byte) 0);
                 System.arraycopy(keyByte, 0, temp, 0, keyByte.length);

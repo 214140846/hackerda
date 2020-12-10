@@ -105,10 +105,10 @@ public class StudentBindApp {
     private void bindUnionId(WechatStudentUserBO wechatStudentUserBO, UnionId unionId) {
         if(!wechatStudentUserBO.hasBindUnionId()) {
             wechatStudentUserBO.bindUnionId(unionId);
-            studentRepository.save(wechatStudentUserBO);
         } else if(!wechatStudentUserBO.getUnionId().equals(unionId)) {
             throw new BusinessException(ErrorCode.ACCOUNT_HAS_BIND, wechatStudentUserBO.getAccount() + "该学号已经被绑定");
         }
+        studentRepository.save(wechatStudentUserBO);
     }
 
 
