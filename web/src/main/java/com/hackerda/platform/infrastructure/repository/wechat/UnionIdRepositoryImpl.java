@@ -73,8 +73,9 @@ public class UnionIdRepositoryImpl implements UnionIdRepository {
     @Override
     public UnionId find(WechatUser wechatUser) {
         WechatUnionIdExample example = new WechatUnionIdExample();
-        example.createCriteria().andAppIdEqualTo(wechatUser.getAppId());
-        example.createCriteria().andOpenIdEqualTo(wechatUser.getOpenId());
+        example.createCriteria()
+                .andAppIdEqualTo(wechatUser.getAppId())
+                .andOpenIdEqualTo(wechatUser.getOpenId());
 
         List<WechatUnionId> unionIdList = wechatUnionIdMapper.selectByExample(example);
 
