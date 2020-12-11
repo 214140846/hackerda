@@ -8,55 +8,82 @@ import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.wechat.WechatMessageSender;
 import com.hackerda.platform.service.EvaluationService;
 import com.hackerda.spider.exception.PasswordUnCorrectException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.QueryTimeoutException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
-public class EvaluateTask {
+public class EvaluateTask implements Runnable{
 
     @Autowired
     private EvaluationService evaluationService;
     @Autowired
     private StudentRepository studentRepository;
-    @Value("wechat.mp.plus.templateId.evaluate")
+    @Value("${wechat.mp.plus.templateId.evaluate}")
     private String templateId;
+
     @Autowired
     private WechatMessageSender wechatMessageSender;
     @Autowired
     private WechatMpPlusProperties wechatMpPlusProperties;
-
-
+    @Getter
+    private boolean start;
 
     public void run() {
 
+        start = true;
         StudentAccount account;
-        while ((account = evaluationService.pop()) != null) {
-            try {
-                WechatStudentUserBO user = studentRepository.findWetChatUser(account);
-                evaluationService.evaluate(user);
 
-                if (evaluationService.hasFinish(user)) {
-                    evaluationService.addFinish(account);
+        try {
+            while ((account = evaluationService.pop()) != null) {
+                log.info("account {} start evaluate", account);
+                try {
+                    WechatStudentUserBO user = studentRepository.findWetChatUser(account);
+                    if (evaluationService.hasFinish(user)) {
+                        evaluationService.addFinish(account);
 
-                    sendMessage(user);
+                        sendMessage(user);
+                        log.info("account {} finish evaluate", account);
+                        continue;
+                    }
 
-                } else {
+                    evaluationService.evaluate(user);
+
+                    if (evaluationService.hasFinish(user)) {
+                        evaluationService.addFinish(account);
+
+                        sendMessage(user);
+                        log.info("account {} finish evaluate", account);
+                    } else {
+                        evaluationService.push(account);
+                    }
+                } catch (PasswordUnCorrectException ignored) {
+
+                } catch (Exception e) {
                     evaluationService.push(account);
+                    log.error("{} evaluate error", account, e);
                 }
-            } catch (PasswordUnCorrectException ignored) {
-
-            } catch (Exception e) {
-                evaluationService.push(account);
-                log.error("{} evaluate error", account, e);
             }
+        } catch (QueryTimeoutException exception) {
+            log.info("task QueryTimeoutException");
 
+        } finally {
+            start = false;
         }
 
+    }
+
+    public synchronized void start() {
+        if(!start) {
+            log.info("evaluate task start");
+            CompletableFuture.runAsync(this);
+        }
 
     }
 

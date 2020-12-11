@@ -6,6 +6,7 @@ import com.hackerda.platform.domain.constant.RedisKeys;
 import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.service.EvaluationService;
+import com.hackerda.platform.task.EvaluateTask;
 import com.hackerda.platform.utils.DateUtils;
 import com.hackerda.platform.utils.Term;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,8 @@ public class EvaluationHandler implements WxMpMessageHandler {
     private EvaluationService evaluationService;
     @Autowired
     private TextBuilder textBuilder;
+    @Autowired
+    private EvaluateTask evaluateTask;
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
@@ -39,8 +42,13 @@ public class EvaluationHandler implements WxMpMessageHandler {
             return textBuilder.build("评估已完成", wxMpXmlMessage, wxMpService);
         }
 
+        evaluationService.push(student.getAccount());
 
-        return textBuilder.build("评估中，评估完成后会我们会提醒你", wxMpXmlMessage, wxMpService);
+        if(!evaluateTask.isStart()) {
+            evaluateTask.start();
+        }
+
+        return textBuilder.build("评估中，自动教评完成后会通知你哦", wxMpXmlMessage, wxMpService);
     }
 
 }
