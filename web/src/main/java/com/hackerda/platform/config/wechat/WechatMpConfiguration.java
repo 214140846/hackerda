@@ -46,41 +46,10 @@ public class WechatMpConfiguration {
     private MiniProgramProperties miniProgramProperties;
 
     @Resource
-    private CourseMessageHandler courseMessageHandler;
-
-    @Resource
-    private MakeUpGradeHandler makeUpGradeHandler;
-
-    @Resource
-    private GradeMessageHandler gradeMessageHandler;
-
-    @Resource
     private OpenidMessageHandler openidMessageHandler;
 
     @Resource
-    private UnbindMessageHandler unbindMessageHandler;
-
-    @Resource
-    private EmptyRoomHandler emptyRoomHandler;
-
-    @Resource
-    private ExamMessageHandler examMessageHandler;
-
-    @Resource
     private WechatOpenIdInterceptor wechatOpenIdInterceptor;
-
-    @Resource
-    private UnsubscribeMessageHandler unsubscribeMessageHandler;
-
-    @Resource
-    private SubscribeMessageHandler subscribeMessageHandler;
-
-    @Resource
-    private StudentInfoInterceptor studentInfoInterceptor;
-
-
-    @Resource
-    private CourseRankHandler courseRankHandler;
 
     @Resource
     private SubscribeEventHandler subscribeEventHandler;
@@ -139,35 +108,6 @@ public class WechatMpConfiguration {
         final WxMessageRouter newRouter = new WxMessageRouter(wxMpService);
         newRouter
                 .rule()
-                .async(false)
-                .rContent("(课表|课程|今日课表)")
-                .interceptor(wechatOpenIdInterceptor)
-                .interceptor(studentInfoInterceptor)
-                .handler(courseMessageHandler)
-                .end()
-                .rule()
-                .async(false)
-                .rContent("订阅|课表推送|成绩推送|考试推送")
-                .interceptor(wechatOpenIdInterceptor)
-                .interceptor(studentInfoInterceptor)
-                .handler(subscribeMessageHandler)
-                .end()
-                .rule()
-                .async(true)
-                .interceptor(wechatOpenIdInterceptor)
-                .interceptor(studentInfoInterceptor)
-                .rContent("补考成绩.*?")
-                .handler(makeUpGradeHandler)
-                .end()
-                .rule()
-                .async(true)
-                .interceptor(wechatOpenIdInterceptor)
-                .interceptor(studentInfoInterceptor)
-                .rContent(".*?成绩.*?")
-                .handler(gradeMessageHandler)
-                .end()
-
-                .rule()
                     .async(false)
                     .interceptor(wechatOpenIdInterceptor)
                     .content("openid")
@@ -175,53 +115,12 @@ public class WechatMpConfiguration {
                     .end()
                 .rule()
                 .async(false)
-                .interceptor(wechatOpenIdInterceptor)
-                .interceptor(studentInfoInterceptor)
-                .rContent("解绑|解除绑定")
-                .handler(unbindMessageHandler)
-                .end()
-                .rule()
-                .async(true)
-                .rContent(".*?考试.*?")
-                .interceptor(wechatOpenIdInterceptor)
-                .interceptor(studentInfoInterceptor)
-                .handler(examMessageHandler)
-                .end()
-                .rule()
-                .async(false)
-                .rContent("空教室.*?")
-                .handler(emptyRoomHandler)
-                .end()
-                .rule()
-                .async(false)
-                .rContent("退订.*?")
-                .interceptor(wechatOpenIdInterceptor)
-                .interceptor(studentInfoInterceptor)
-                .handler(unsubscribeMessageHandler)
-                .async(false)
-                .rContent("课时排行|课时安排|课时排名|课表排行|科时排行|科时排名")
-                .interceptor(wechatOpenIdInterceptor)
-                .interceptor(studentInfoInterceptor)
-                .handler(courseRankHandler)
-                .end()
-
-                .rule()
-                .async(false)
-                .rContent("配对")
-                .interceptor(wechatOpenIdInterceptor)
-                .interceptor(studentInfoInterceptor)
-                .handler(courseMessageHandler)
-                .end()
-
-                .rule()
-                .async(false)
                 .event("subscribe")
                 .handler(subscribeEventHandler)
                 .end()
-
-
                 .rule()
                 .async(false)
+                .interceptor(wechatOpenIdInterceptor)
                 .event("CLICK")
                 .eventKey("evaluation")
                 .handler(evaluationHandler)

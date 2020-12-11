@@ -102,7 +102,7 @@ public class StudentBindApp {
 
     }
 
-    private void bindUnionId(WechatStudentUserBO wechatStudentUserBO, UnionId unionId) {
+    public void bindUnionId(WechatStudentUserBO wechatStudentUserBO, UnionId unionId) {
         if(!wechatStudentUserBO.hasBindUnionId()) {
             wechatStudentUserBO.bindUnionId(unionId);
         } else if(!wechatStudentUserBO.getUnionId().equals(unionId)) {

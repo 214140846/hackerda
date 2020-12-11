@@ -1,5 +1,6 @@
 package com.hackerda.platform.service.wechat.interceptor;
 
+import com.hackerda.platform.application.UnionIdApp;
 import com.hackerda.platform.builder.TextBuilder;
 import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
@@ -31,6 +32,8 @@ public class WechatOpenIdInterceptor implements WxMessageInterceptor {
 	private UnionIdRepository unionIdRepository;
 	@Autowired
 	private StudentRepository studentRepository;
+	@Autowired
+	private UnionIdApp unionIdApp;
 
 
 	@Override
@@ -40,34 +43,29 @@ public class WechatOpenIdInterceptor implements WxMessageInterceptor {
 
 		WechatUser wechatUser = new WechatUser(appId, openid);
 		UnionId unionId = unionIdRepository.find(wechatUser);
-		WechatStudentUserBO student;
-		if (unionId.isEmpty()) {
-			WxMpUser userInfo = getUserInfo(wxMpService, openid, wechatUser);
 
+		if (unionId.isEmpty()) {
+			WxMpUser userInfo = getUserInfo(wxMpService, wechatUser);
 			boolean subscribe = BooleanUtils.toBoolean(userInfo.getSubscribe());
 			context.put("subscribe", subscribe);
 			if (!subscribe) {
 				return false;
 			}
 
-			String userInfoUnionId = userInfo.getUnionId();
-			UnionId existUnionId = unionIdRepository.find(userInfoUnionId);
-			existUnionId.bindOpenid(wechatUser);
-			unionIdRepository.save(existUnionId);
+			unionId = unionIdApp.getUnionId(userInfo.getUnionId(), wechatUser);
 
-			student = studentRepository.findWetChatUser(existUnionId);
-		} else {
-			student = studentRepository.findWetChatUser(unionId);
 		}
 
+		WechatStudentUserBO student = studentRepository.findWetChatUser(unionId);
 		context.put("student", student);
 
 		return student != null;
 	}
 
-	private WxMpUser getUserInfo(WxMpService wxMpService, String openid, WechatUser wechatUser) {
+
+	private WxMpUser getUserInfo(WxMpService wxMpService, WechatUser wechatUser) {
 		try {
-			return wxMpService.getUserService().userInfo(openid);
+			return wxMpService.getUserService().userInfo(wechatUser.getOpenId());
 		} catch (WxErrorException e) {
 			log.error("{} get user info error", wechatUser, e);
 			throw new RuntimeException(e);

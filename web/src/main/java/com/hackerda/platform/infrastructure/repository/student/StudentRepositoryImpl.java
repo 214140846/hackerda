@@ -67,7 +67,13 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     @Override
     public WechatStudentUserBO findWetChatUser(UnionId unionId) {
-        return null;
+        Integer account = studentUserDao.selectAccountByUnionId(unionId.getUnionId());
+
+        if (account == null) {
+            return null;
+        }
+
+        return findWetChatUser(new StudentAccount(account));
     }
 
     @Override
