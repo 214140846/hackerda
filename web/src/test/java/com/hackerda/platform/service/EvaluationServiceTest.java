@@ -41,12 +41,12 @@ public class EvaluationServiceTest {
 
 //        evaluationService.evaluate(studentUserBO);
 
-        Term term = DateUtils.getCurrentSchoolTime().getTerm();
-        String key = RedisKeys.FINISH_EVALUATION_SET.genKey(term.asKey());
-        stringRedisTemplate.opsForSet().remove(key, new StudentAccount(2017023115).toString());
-
-        boolean b = evaluationService.hasFinish(new StudentAccount(2017023115));
-        System.out.println(b);
+//        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+//        String key = RedisKeys.FINISH_EVALUATION_SET.genKey(term.asKey());
+//        stringRedisTemplate.opsForSet().remove(key, new StudentAccount(2014025846).toString());
+//
+//        boolean b = evaluationService.hasFinish(new StudentAccount(2014025846));
+//        System.out.println(b);
 
     }
 }

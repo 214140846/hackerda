@@ -59,7 +59,7 @@ public class EvaluateTask implements Runnable{
                         evaluationService.addFinish(account);
 
                         sendMessage(user);
-                        log.info("account {} finish evaluate", account);
+                        log.info("account {} finish evaluate before", account);
                         continue;
                     }
 
@@ -71,6 +71,7 @@ public class EvaluateTask implements Runnable{
                         sendMessage(user);
                         log.info("account {} finish evaluate", account);
                     } else {
+                        log.info("account {} haven`t finish evaluate", account);
                         evaluationService.push(account);
                     }
                 } catch (PasswordUnCorrectException ignored) {
