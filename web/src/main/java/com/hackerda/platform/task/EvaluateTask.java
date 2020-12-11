@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -27,13 +28,22 @@ public class EvaluateTask implements Runnable{
     private StudentRepository studentRepository;
     @Value("${wechat.mp.plus.templateId.evaluate}")
     private String templateId;
+    @Value("${evaluate.task.start :false}")
+    private boolean autoStart;
 
     @Autowired
     private WechatMessageSender wechatMessageSender;
     @Autowired
     private WechatMpPlusProperties wechatMpPlusProperties;
     @Getter
-    private boolean start;
+    private boolean start = false;
+
+    @PostConstruct
+    public void initMethod(){
+        if (evaluationService.hasTask() && !start && autoStart) {
+            start();
+        }
+    }
 
     public void run() {
 

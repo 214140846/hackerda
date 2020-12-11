@@ -18,6 +18,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -73,6 +74,12 @@ public class EvaluationService {
         UrpEvaluationSpider evaluationSpider = getUrpEvaluationSpider();
         evaluationSpider.login(wechatStudentUserBO.getAccount().toString(), wechatStudentUserBO.getEnablePassword());
         return getEvaluationPagePost(evaluationSpider).size() == 0;
+    }
+
+    public boolean hasTask() {
+        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        String key = RedisKeys.WAITING_EVALUATION_LIST.genKey(term.asKey());
+        return Optional.ofNullable(stringRedisTemplate.opsForList().size(key)).orElse(0L) != 0;
     }
 
     private List<EvaluationPagePost> getEvaluationPagePost(UrpEvaluationSpider evaluationSpider) {
