@@ -36,7 +36,7 @@ public class EvaluateTask implements Runnable{
     @Autowired
     private WechatMpPlusProperties wechatMpPlusProperties;
     @Getter
-    private boolean start = false;
+    private volatile boolean start = false;
 
     @PostConstruct
     public void initMethod(){
@@ -75,7 +75,7 @@ public class EvaluateTask implements Runnable{
                         evaluationService.push(account);
                     }
                 } catch (PasswordUnCorrectException ignored) {
-
+                    log.info("account {} PasswordUnCorrect", account);
                 } catch (Exception e) {
                     evaluationService.push(account);
                     log.error("{} evaluate error", account, e);
