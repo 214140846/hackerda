@@ -136,16 +136,17 @@ public class WechatMpConfiguration {
         WxMenu menu = new WxMenu();
 
         List<WxMenuButton> buttons = new ArrayList<>();
-//        WxMenuButton button1 = new WxMenuButton();
-//        button1.setName("一键教评");
-//        button1.setType("click");
-//        button1.setKey("evaluation");
+        WxMenuButton button1 = new WxMenuButton();
+        button1.setName("一键教评");
+        button1.setType("click");
+        button1.setKey("evaluation");
 
         WxMenuButton button2 = new WxMenuButton();
         button2.setName("用户绑定");
-        button2.setType("view");
-        button2.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx541fd36e6b400648&redirect_uri" +
-                "=https://platform.hackerda.com/platform/bind/menu&response_type=code&scope=snsapi_base&state=wx541fd36e6b400648");
+        button2.setType("miniprogram");
+        button2.setAppId("wx05f7264e83fa40e9");
+        button2.setPagePath("pages/more/login");
+        button2.setUrl("http://mp.weixin.qq.com");
 
         WxMenuButton button3 = new WxMenuButton();
         button3.setName("成绩&考试");
@@ -154,7 +155,7 @@ public class WechatMpConfiguration {
         button3.setPagePath("pages/index/index");
         button3.setUrl("http://mp.weixin.qq.com");
 
-//        buttons.add(button1);
+        buttons.add(button1);
         buttons.add(button2);
         buttons.add(button3);
 

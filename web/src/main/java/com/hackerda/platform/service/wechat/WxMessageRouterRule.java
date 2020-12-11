@@ -1,5 +1,6 @@
 package com.hackerda.platform.service.wechat;
 
+import com.hackerda.platform.builder.TextBuilder;
 import com.hackerda.platform.service.wechat.interceptor.WxMessageInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.api.WxErrorExceptionHandler;
@@ -187,6 +188,8 @@ public class WxMessageRouterRule extends WxMpMessageRouterRule {
 		} catch (WxErrorException e) {
 			exceptionHandler.handle(e);
 			log.error("wechat handled error", e);
+		} catch (UnSubscribeException e) {
+			return new TextBuilder().build("未关注公众号，无法使用此功能", wxMessage, wxMpService);
 		}
 		return null;
 	}

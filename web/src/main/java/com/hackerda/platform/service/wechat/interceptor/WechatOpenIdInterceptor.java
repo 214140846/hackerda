@@ -7,6 +7,7 @@ import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.wechat.UnionId;
 import com.hackerda.platform.domain.wechat.UnionIdRepository;
 import com.hackerda.platform.domain.wechat.WechatUser;
+import com.hackerda.platform.service.wechat.UnSubscribeException;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -46,14 +47,10 @@ public class WechatOpenIdInterceptor implements WxMessageInterceptor {
 
 		if (unionId.isEmpty()) {
 			WxMpUser userInfo = getUserInfo(wxMpService, wechatUser);
-			boolean subscribe = BooleanUtils.toBoolean(userInfo.getSubscribe());
-			context.put("subscribe", subscribe);
-			if (!subscribe) {
-				return false;
+			if (!BooleanUtils.toBoolean(userInfo.getSubscribe())) {
+				throw new UnSubscribeException(wechatUser);
 			}
-
 			unionId = unionIdApp.getUnionId(userInfo.getUnionId(), wechatUser);
-
 		}
 
 		WechatStudentUserBO student = studentRepository.findWetChatUser(unionId);
@@ -74,11 +71,7 @@ public class WechatOpenIdInterceptor implements WxMessageInterceptor {
 
 	@Override
 	public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
-		if(!BooleanUtils.toBoolean((Boolean) context.get("subscribe"))) {
-			return new TextBuilder().build("未关注公众号，无法使用此功能", wxMessage, wxMpService);
-		}
-
-		return new TextBuilder().build("请先点击下方菜单登录", wxMessage, wxMpService);
+		return new TextBuilder().build("请先点击下方菜单绑定", wxMessage, wxMpService);
 	}
 
 }
