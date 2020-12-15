@@ -201,7 +201,7 @@ public class CommunityPostService {
      * @return
      */
     public PostDetailVO getPostByUserName(String userName, String postUserName, Integer startId, int count) {
-        List<PostDetailBO> detailBOList = posterRepository.findPostByUser(postUserName, startId, count);
+        List<PostDetailBO> detailBOList = posterRepository.findPostByUser(postUserName, startId, count, Lists.newArrayList(RecordStatus.Release, RecordStatus.Featured));
 
         return getPostDetailVO(userName, detailBOList);
 

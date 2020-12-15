@@ -26,7 +26,7 @@ public interface PosterRepository {
 
     List<PostDetailBO> findShowPostByLastReply(Date lastReplyTime, int count, List<RecordStatus> identityCategoryList);
 
-    List<PostDetailBO> findPostByUser(String userName, Integer start, int count);
+    List<PostDetailBO> findPostByUser(String userName, Integer start, int count, List<RecordStatus> identityCategoryList);
 
     List<PostDetailBO> findByStatus(List<RecordStatus> identityCategoryList);
 

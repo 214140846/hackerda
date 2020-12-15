@@ -171,7 +171,7 @@ public class PosterRepositoryImpl implements PosterRepository {
     }
 
     @Override
-    public List<PostDetailBO> findPostByUser(String userName, Integer startId, int count) {
+    public List<PostDetailBO> findPostByUser(String userName, Integer startId, int count, List<RecordStatus> identityCategoryList) {
         PostExample example = new PostExample();
         example.setOrderByClause("id desc");
         PostExample.Criteria criteria = example.createCriteria();
@@ -179,7 +179,8 @@ public class PosterRepositoryImpl implements PosterRepository {
         if(startId != null) {
             criteria.andIdLessThan(startId.longValue());
         }
-        criteria.andRecordStatusEqualTo(RecordStatus.Release.getCode());
+        criteria.andRecordStatusIn(identityCategoryList.stream().map(RecordStatus::getCode).collect(Collectors.toList()))
+                .andShowEqualTo(true);
         criteria.andUserNameEqualTo(userName);
         criteria.andIdentityCodeEqualTo(IdentityCategory.Community.getCode());
         PageHelper.startPage(0, count);

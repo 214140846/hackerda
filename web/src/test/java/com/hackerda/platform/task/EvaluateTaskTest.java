@@ -2,6 +2,7 @@ package com.hackerda.platform.task;
 
 import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentRepository;
+import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.service.EvaluationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -27,9 +28,11 @@ public class EvaluateTaskTest {
     @Test
     public void sendMessage() {
 
-//        WechatStudentUserBO wetChatUser = studentRepository.findWetChatUser(new StudentAccount(2014025838));
+        WechatStudentUserBO wetChatUser = studentRepository.findWetChatUser(new StudentAccount(2017025282));
+
+        System.out.println(wetChatUser.canLogin());
 //        evaluateTask.sendMessage(wetChatUser);
-        evaluationService.push(new StudentAccount(2014025838));
-        evaluateTask.start();
+//        evaluationService.push(new StudentAccount(2014025838));
+//        evaluateTask.start();
     }
 }
