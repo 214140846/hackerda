@@ -81,7 +81,7 @@ public class WechatAuthController {
 			WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
             MDC.put("openid", inMessage.getFromUser());
 
-			unionIdApp.saveUnionId(new WechatUser(appid, inMessage.getOpenId()));
+			unionIdApp.saveUnionId(new WechatUser(appid, inMessage.getFromUser()));
 
 			WxMpXmlOutMessage outMessage = this.route(inMessage, appid);
 			if (outMessage == null) {
