@@ -33,8 +33,6 @@ public class WechatOpenIdInterceptor implements WxMessageInterceptor {
 	private UnionIdRepository unionIdRepository;
 	@Autowired
 	private StudentRepository studentRepository;
-	@Autowired
-	private UnionIdApp unionIdApp;
 
 
 	@Override
@@ -45,28 +43,10 @@ public class WechatOpenIdInterceptor implements WxMessageInterceptor {
 		WechatUser wechatUser = new WechatUser(appId, openid);
 		UnionId unionId = unionIdRepository.find(wechatUser);
 
-		if (unionId.isEmpty()) {
-			WxMpUser userInfo = getUserInfo(wxMpService, wechatUser);
-			if (!BooleanUtils.toBoolean(userInfo.getSubscribe())) {
-				throw new UnSubscribeException(wechatUser);
-			}
-			unionId = unionIdApp.getUnionId(userInfo.getUnionId(), wechatUser);
-		}
-
 		WechatStudentUserBO student = studentRepository.findWetChatUser(unionId);
 		context.put("student", student);
 
 		return student != null;
-	}
-
-
-	private WxMpUser getUserInfo(WxMpService wxMpService, WechatUser wechatUser) {
-		try {
-			return wxMpService.getUserService().userInfo(wechatUser.getOpenId());
-		} catch (WxErrorException e) {
-			log.error("{} get user info error", wechatUser, e);
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Override

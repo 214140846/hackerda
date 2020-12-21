@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class GradeAutoUpdateTask extends BaseSubscriptionTask {
+public class GradeAutoUpdateTask  {
     //这里设置拒绝策略为调用者运行，这样可以降低产生任务的速率
     private static ExecutorService gradeAutoUpdatePool = new MDCThreadPool(8, 8,
             0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "gradeUpdate"));

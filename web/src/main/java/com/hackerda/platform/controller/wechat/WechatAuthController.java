@@ -1,12 +1,15 @@
 package com.hackerda.platform.controller.wechat;
 
+import com.hackerda.platform.application.UnionIdApp;
 import com.hackerda.platform.config.wechat.WechatMpConfiguration;
+import com.hackerda.platform.domain.wechat.WechatUser;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -22,6 +25,10 @@ public class WechatAuthController {
 
 	@Resource
 	private HttpSession httpSession;
+	@Autowired
+	private WechatMpConfiguration wechatMpConfiguration;
+	@Autowired
+	private UnionIdApp unionIdApp;
 
 	@GetMapping(produces = "text/plain;charset=utf-8")
 	public String authGet(@PathVariable String appid,
@@ -38,7 +45,7 @@ public class WechatAuthController {
             log.info("wechat portal response param error");
             return result;
 		}
-		final WxMpService wxMpService = WechatMpConfiguration.getMpServices().get(appid);
+		final WxMpService wxMpService = wechatMpConfiguration.getMpService(appid);
 		if (wxMpService.checkSignature(timestamp, nonce, signature)) {
             log.info("response echo: {}", echostr);
 		    return echostr;
@@ -61,7 +68,7 @@ public class WechatAuthController {
 				"\n接收微信请求：appid:{} [signature=[{}], encType=[{}], msgSignature=[{}],"
 						+ " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
 				appid, signature, encType, msgSignature, timestamp, nonce, requestBody);
-		final WxMpService wxService = WechatMpConfiguration.getMpServices().get(appid);
+		final WxMpService wxService = wechatMpConfiguration.getMpService(appid);
 
 		if (!wxService.checkSignature(timestamp, nonce, signature)) {
 			throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
@@ -73,6 +80,9 @@ public class WechatAuthController {
 
 			WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
             MDC.put("openid", inMessage.getFromUser());
+
+			unionIdApp.saveUnionId(new WechatUser(appid, inMessage.getOpenId()));
+
 			WxMpXmlOutMessage outMessage = this.route(inMessage, appid);
 			if (outMessage == null) {
 				return "success";
@@ -100,7 +110,7 @@ public class WechatAuthController {
 
 	WxMpXmlOutMessage route(WxMpXmlMessage message, String appid) {
 		try {
-			return WechatMpConfiguration.getRouters().get(appid).route(message);
+			return wechatMpConfiguration.getRouter(appid).route(message);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}

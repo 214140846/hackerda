@@ -57,14 +57,18 @@ public class WechatMpConfiguration {
     @Resource
     private EvaluationHandler evaluationHandler;
 
-    private static final Map<String, WxMpMessageRouter> routers = Maps.newHashMap();
-    private static final Map<String, WxMpService> mpServices = Maps.newHashMap();
+    private final Map<String, WxMpService> mpServicesMap = Maps.newHashMap();
+    private final Map<String, WxMpMessageRouter> routersMap = Maps.newHashMap();
 
     @Bean
     public WxMpService wxPlusService() {
         WxMpInMemoryConfigStorage plusConfig = wechatMpPlusProperties.getWxMpInMemoryConfigStorage();
         WxMpService wxPlusMpService = new WxMpServiceImpl();
         wxPlusMpService.setWxMpConfigStorage(plusConfig);
+
+        mpServicesMap.put(plusConfig.getAppId(), wxPlusMpService);
+        routersMap.put(plusConfig.getAppId(), this.newRouter(wxPlusMpService));
+
         return wxPlusMpService;
     }
 
@@ -73,21 +77,11 @@ public class WechatMpConfiguration {
         WxMpInMemoryConfigStorage proConfig = wechatMpProProperties.getWxMpInMemoryConfigStorage();
         WxMpService wxProMpService = new WxMpServiceImpl();
         wxProMpService.setWxMpConfigStorage(proConfig);
+
+        routersMap.put(proConfig.getAppId(), this.newRouter(wxProMpService));
+        mpServicesMap.put(proConfig.getAppId(), wxProMpService);
+
         return wxProMpService;
-    }
-
-    @Bean
-    public Object services(WxMpService wxPlusService, WxMpService wxProService) {
-        //plus的配置
-
-        routers.put(wechatMpPlusProperties.getAppId(), this.newRouter(wxPlusService));
-        mpServices.put(wechatMpPlusProperties.getAppId(), wxPlusService);
-
-        //pro的配置
-
-        routers.put(wechatMpProProperties.getAppId(), this.newRouter(wxProService));
-        mpServices.put(wechatMpProProperties.getAppId(), wxProService);
-        return Boolean.TRUE;
     }
 
     @Bean
@@ -126,13 +120,12 @@ public class WechatMpConfiguration {
                 .handler(evaluationHandler)
                 .end();
 
-        ;
         return newRouter;
     }
 
 
     public void setPlusMenu(){
-        WxMpService service = getMpServices().get(wechatMpPlusProperties.getAppId());
+        WxMpService service = getMpService(wechatMpPlusProperties.getAppId());
         WxMenu menu = new WxMenu();
 
         List<WxMenuButton> buttons = new ArrayList<>();
@@ -170,12 +163,13 @@ public class WechatMpConfiguration {
         }
     }
 
-    public static Map<String, WxMpMessageRouter> getRouters() {
-        return routers;
+
+    public WxMpMessageRouter getRouter(String appId) {
+        return routersMap.get(appId);
     }
 
-    public static Map<String, WxMpService> getMpServices() {
-        return mpServices;
+    public WxMpService getMpService(String appId) {
+        return mpServicesMap.get(appId);
     }
 
 }

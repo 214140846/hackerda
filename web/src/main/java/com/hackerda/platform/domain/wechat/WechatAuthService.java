@@ -1,6 +1,7 @@
 package com.hackerda.platform.domain.wechat;
 
 import com.hackerda.platform.infrastructure.wechat.model.AuthResponse;
+import me.chanjar.weixin.mp.bean.result.WxMpUser;
 
 public interface WechatAuthService {
 

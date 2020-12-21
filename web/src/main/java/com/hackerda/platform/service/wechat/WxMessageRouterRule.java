@@ -23,6 +23,7 @@ import java.util.*;
 public class WxMessageRouterRule extends WxMpMessageRouterRule {
 	private final List<WxMessageInterceptor> interceptors = new ArrayList<>();
     private final WxMessageRouter routerBuilder;
+	private boolean async = false;
 
 
     public WxMessageRouterRule(WxMessageRouter routerBuilder) {
@@ -157,6 +158,11 @@ public class WxMessageRouterRule extends WxMpMessageRouterRule {
     public WxMessageRouter next() {
 		return end();
     }
+
+    @Override
+	public boolean isAsync() {
+		return this.async;
+	}
 
 
 	@Override

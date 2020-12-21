@@ -28,7 +28,7 @@ import javax.annotation.Resource;
 
 @Slf4j
 @Service
-public class ExamSubscriptionTask extends BaseSubscriptionTask{
+public class ExamSubscriptionTask {
     private static final String MSG_TITLE = "考试时间";
     @Resource
     private WechatMpPlusProperties wechatMpPlusProperties;
@@ -56,15 +56,6 @@ public class ExamSubscriptionTask extends BaseSubscriptionTask{
 
 
 
-
-    /**
-     * 根据appid获取相应的wxMpService
-     * @param appid appid
-     * @return wxMpService
-     */
-    private WxMpService getWxMpService(String appid) {
-        return WechatMpConfiguration.getMpServices().get(appid);
-    }
 
     /**
      * 给并行流添加一个监视

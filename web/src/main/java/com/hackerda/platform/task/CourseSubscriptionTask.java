@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class CourseSubscriptionTask extends BaseSubscriptionTask {
+public class CourseSubscriptionTask {
 
     @Value("${scheduled.sendCourse}")
     private String updateSwitch;

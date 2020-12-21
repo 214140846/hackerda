@@ -40,7 +40,7 @@ public class WxMessageRouter extends WxMpMessageRouter {
         this.executorService = TtlExecutors.getTtlExecutorService(
                 new MDCThreadPool(7, 7, 0L, TimeUnit.SECONDS,
                         new LinkedBlockingQueue<>(), r -> new Thread(r, "WechatMessage")));
-        WxMessageDuplicateChecker messageDuplicateChecker = new WxMessageInMemoryDuplicateChecker();
+
         this.sessionManager = new StandardSessionManager();
         this.exceptionHandler = new LogExceptionHandler();
 	}
@@ -54,6 +54,7 @@ public class WxMessageRouter extends WxMpMessageRouter {
     List<WxMessageRouterRule> getRules() {
         return this.rules;
     }
+
 
     /**
      * 处理微信消息
@@ -95,9 +96,7 @@ public class WxMessageRouter extends WxMpMessageRouter {
             // 返回最后一个非异步的rule的执行结果
             if (rule.isAsync()) {
                 this.executorService.submit(() -> {
-                    WxMpXmlOutMessage message = rule.service(wxMessage, context, mpService, WxMessageRouter.this.sessionManager, WxMessageRouter.this.exceptionHandler);
-                    CustomerMessageService service = new CustomerMessageService(wxMessage, mpService);
-                    service.sendMessage(message);
+                    rule.service(wxMessage, context, mpService, WxMessageRouter.this.sessionManager, WxMessageRouter.this.exceptionHandler);
                 });
             } else {
                 res = rule.service(wxMessage, context, mpService, this.sessionManager, this.exceptionHandler);
