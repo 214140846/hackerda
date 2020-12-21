@@ -26,14 +26,14 @@ public class RoleScript {
     public void createRole() {
 
 
-        roleRepository.store(new PermissionBO("推荐", "recommend", 1));
-        roleRepository.store(new PermissionBO("置顶", "top", 1));
-
-        RoleBO roleBO = new RoleBO("管理员", "admin", 1);
-
-        roleBO.grantPermission(roleRepository.findPermissionByCode(PermissionBO.RECOMMEND));
-        roleBO.grantPermission(roleRepository.findPermissionByCode(PermissionBO.TOP));
-
+//        roleRepository.store(new PermissionBO("推荐", "recommend", 1));
+//        roleRepository.store(new PermissionBO("置顶", "top", 1));
+        roleRepository.store(new PermissionBO("删除", PermissionBO.DELETE, 1));
+//        RoleBO roleBO = new RoleBO("管理员", "admin", 1);
+        RoleBO roleBO = roleRepository.findByCode("admin");
+//        roleBO.grantPermission(roleRepository.findPermissionByCode(PermissionBO.RECOMMEND));
+//        roleBO.grantPermission(roleRepository.findPermissionByCode(PermissionBO.TOP));
+        roleBO.grantPermission(roleRepository.findPermissionByCode(PermissionBO.DELETE));
         roleRepository.store(roleBO);
 
         RoleBO superAdmin = roleRepository.findByCode("admin");

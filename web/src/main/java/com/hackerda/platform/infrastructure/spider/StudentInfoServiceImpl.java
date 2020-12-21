@@ -28,6 +28,7 @@ import com.hackerda.spider.support.search.classInfo.ClassInfoSearchResult;
 import com.hackerda.spider.support.search.classInfo.SearchClassInfoPost;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -49,6 +50,8 @@ public class StudentInfoServiceImpl implements StudentInfoService {
     private UrpSearchSpider urpSearchSpider;
     @Autowired
     private SpiderExceptionTransfer exceptionTransfer;
+    @Value("${student.useUnionId : true}")
+    private boolean useUnionId;
 
 
     @Override
@@ -92,6 +95,7 @@ public class StudentInfoServiceImpl implements StudentInfoService {
         user.setName(userInfo.getName());
         user.setMsgHasCheck(true);
         user.setSaveOrUpdate(true);
+        user.setUseUnionId(useUnionId);
 
         return user;
     }

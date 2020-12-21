@@ -100,13 +100,11 @@ public class DateUtils {
     public static String dateToChinese(Date date){
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(cal.get(Calendar.YEAR)).append("年")
-                .append(cal.get(Calendar.MONTH)+1).append("月")
-                .append(cal.get(Calendar.DAY_OF_MONTH)).append("日")
-                .append(cal.get(Calendar.HOUR_OF_DAY)).append("时")
-                .append(cal.get(Calendar.MINUTE)).append("分");
-        return buffer.toString();
+        return cal.get(Calendar.YEAR) + "年" +
+                (cal.get(Calendar.MONTH) + 1) + "月" +
+                cal.get(Calendar.DAY_OF_MONTH) + "日" +
+                cal.get(Calendar.HOUR_OF_DAY) + "时" +
+                cal.get(Calendar.MINUTE) + "分";
     }
 
     public static byte getDistinct() {

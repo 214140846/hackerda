@@ -4,6 +4,7 @@ import com.hackerda.platform.utils.DESUtil;
 import lombok.Data;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 @Data
 public class StudentUserBO {
@@ -30,6 +31,7 @@ public class StudentUserBO {
 
     private boolean msgHasCheck;
 
+    @ToStringExclude
     private String key;
 
     private boolean saveOrUpdate;
@@ -112,19 +114,6 @@ public class StudentUserBO {
                 .toHashCode();
     }
 
-    @Override
-    public String toString() {
-        return "StudentUserBO{" +
-                "account=" + account +
-                ", name='" + name + '\'' +
-                ", sex='" + sex + '\'' +
-                ", urpClassNum=" + urpClassNum +
-                ", isCorrect=" + isCorrect +
-                ", academyName='" + academyName + '\'' +
-                ", subjectName='" + subjectName + '\'' +
-                ", className='" + className + '\'' +
-                '}';
-    }
 
     public static void main(String[] args) {
         String decrypt = DESUtil.decrypt("mypa4b5Un3Zjzx3SRSH55vX/+pzgObjf", "2017023756" + "asd.@#$as!@#");

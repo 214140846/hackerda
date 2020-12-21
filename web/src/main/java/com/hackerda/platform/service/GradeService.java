@@ -26,7 +26,6 @@ public class GradeService {
         StudentUserBO wechatStudentUserBO = (StudentUserBO) SecurityUtils.getSubject().getPrincipal();
         GradeOverviewBO gradeOverview = gradeQueryApp.getGradeOverview(wechatStudentUserBO);
         return gradeTransfer.adapter2VO(gradeOverview);
-
     }
 
     public GradeResultVo getGrade(int account) {

@@ -14,8 +14,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Slf4j
 public class WebAppConfigurer implements WebMvcConfigurer {
 
-
-
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new TraceIDInterceptor()).addPathPatterns("/**");

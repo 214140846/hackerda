@@ -15,7 +15,8 @@ public class StudentUserAdapter {
 
     @Value("${student.password.salt}")
     private String key;
-
+    @Value("${student.useUnionId: true}")
+    private boolean useUnionId;
 
     public WechatStudentUserBO toBO(StudentUser studentUser) {
 
@@ -37,6 +38,7 @@ public class StudentUserAdapter {
         user.setName(studentUser.getName());
         user.setKey(key);
         user.setMsgHasCheck(studentUser.getHasCheck());
+        user.setUseUnionId(useUnionId);
 
         return user;
 

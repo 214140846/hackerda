@@ -41,7 +41,7 @@ public class EvaluateFinishMessage implements WechatTemplateMessage {
 
         WxMpTemplateData remark = new WxMpTemplateData();
         remark.setName("remark");
-        remark.setValue("如有疑问微信添加吴彦祖【hkdhd666】");
+        remark.setValue("如有疑问微信添加吴彦祖【hkdhdj666】");
 
         templateData.add(first);
         templateData.add(remark);

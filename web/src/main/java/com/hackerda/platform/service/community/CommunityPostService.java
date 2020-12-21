@@ -242,7 +242,13 @@ public class CommunityPostService {
     public CreateCommentResultVO deletePostById(String userName, int postId) {
         PostDetailBO post = posterRepository.findByPostById(postId);
         CreateCommentResultVO resultVO = new CreateCommentResultVO();
-        resultVO.setRelease(communityPostApp.deletePost(post, userName));
+
+        if(SecurityUtils.getSubject().isPermitted(PermissionBO.DELETE) || userName.equals(post.getUserName())) {
+            resultVO.setRelease(communityPostApp.deletePost(post));
+        } else {
+            resultVO.setRelease(false);
+        }
+
         return resultVO;
 
     }

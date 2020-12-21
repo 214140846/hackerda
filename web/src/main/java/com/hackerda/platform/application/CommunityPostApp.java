@@ -66,15 +66,10 @@ public class CommunityPostApp {
         posterRepository.save(postBO);
     }
 
-    public boolean deletePost(PostBO postBO, String userName) {
-        if(postBO.canDeleteByUser(userName)) {
-            postBO.delete();
-            posterRepository.update(postBO);
-            return true;
-        } else {
-            log.warn("user {} no access to delete post {}", userName, postBO);
-            return false;
-        }
+    public boolean deletePost(PostBO postBO) {
+        postBO.delete();
+        posterRepository.update(postBO);
+        return true;
     }
 
     /**

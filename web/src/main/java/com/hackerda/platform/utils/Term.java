@@ -18,8 +18,10 @@ public class Term {
     private int endYear;
     private int order;
 
-    public Term() {
-
+    public Term(String term) {
+        this.startYear = Integer.parseInt(term.substring(0, 4));
+        this.endYear = Integer.parseInt(term.substring(5, 9));
+        this.order = Integer.parseInt(term.substring(10, 11));
     }
 
     public Term(String termYear, int order) {
