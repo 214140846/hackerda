@@ -6,6 +6,7 @@ import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.application.event.EventPublisher;
 import com.hackerda.platform.infrastructure.database.model.StudentUser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Slf4j
 @Service
 public class GradeQueryApp {
 
@@ -56,6 +58,7 @@ public class GradeQueryApp {
         }
 
         if(isFormUser && gradeOverviewBO.currentTermGradeUpdate()) {
+            log.info("add grade fetch task urpNum {}", studentUser.getUrpClassNum());
             CompletableFuture.runAsync(() -> gradeFetchQueue.offer(new GradeFetchTask(true, studentUser)), executor);
         }
 

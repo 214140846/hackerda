@@ -146,8 +146,8 @@ public class GradeBO {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
 
-        Period period = Period.between(LocalDate.now(), operateTime);
-        return period.getDays() == 0;
+        Period period = Period.between(operateTime, LocalDate.now());
+        return period.getDays() >= 1;
 
     }
 

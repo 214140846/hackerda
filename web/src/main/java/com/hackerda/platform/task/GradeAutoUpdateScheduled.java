@@ -64,6 +64,7 @@ public class GradeAutoUpdateScheduled implements Runnable{
         GradeFetchTask task;
         try {
             while (start && (task = gradeFetchQueue.take()) != null) {
+                log.info("GradeAutoUpdateScheduled take task {}", task.getTigerStudent().getUrpClassNum());
                 if(!taskSet.contains(task)) {
                     taskSet.add(task);
 

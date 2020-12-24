@@ -38,7 +38,7 @@ public class AntiDuplicateLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> 
 
     @SneakyThrows
     @Override
-    public synchronized E take() {
+    public synchronized @NotNull E take() {
         E take = super.take();
         set.remove(take);
         return take;
