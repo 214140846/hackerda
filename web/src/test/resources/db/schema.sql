@@ -388,17 +388,20 @@ CREATE TABLE `user_action_record`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
 
-CREATE TABLE `student_unionid` (
-                                   `id` int(11) NOT NULL AUTO_INCREMENT,
-                                   `account` int(11) NOT NULL,
-                                   `union_id` varchar(32) NOT NULL,
-                                   `gmt_create` datetime DEFAULT CURRENT_TIMESTAMP,
-                                   `gmt_modify` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                   PRIMARY KEY (`id`),
-                                   UNIQUE KEY `account_uinonid` (`account`,`union_id`),
-                                   UNIQUE KEY `u_account` (`account`) USING BTREE,
-                                   UNIQUE KEY `u_unionid` (`union_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `student_unionid`
+(
+    `id`         int(11)     NOT NULL AUTO_INCREMENT,
+    `account`    int(11)     NOT NULL,
+    `union_id`   varchar(32) NOT NULL,
+    `gmt_create` datetime DEFAULT CURRENT_TIMESTAMP,
+    `gmt_modify` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `account_uinonid` (`account`, `union_id`),
+    UNIQUE KEY `u_account` (`account`) USING BTREE,
+    UNIQUE KEY `u_unionid` (`union_id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
 CREATE TABLE `wechat_union_id`
 (
     `id`         int(11)     NOT NULL AUTO_INCREMENT,
@@ -410,3 +413,43 @@ CREATE TABLE `wechat_union_id`
     PRIMARY KEY (`id`),
     UNIQUE KEY `union_id` (`union_id`, `app_id`, `open_id`)
 ) ENGINE = InnoDB;
+
+
+CREATE TABLE `grade`
+(
+    `id`                         int(10)      NOT NULL AUTO_INCREMENT,
+    `exam_id`                    int(11)      NOT NULL COMMENT '对应的考试编号',
+    `account`                    int(11)      NOT NULL COMMENT '学号',
+    `score`                      DECIMAL(8, 1) NOT NULL DEFAULT '-1.0' COMMENT '分数',
+    `credit`                     DECIMAL(8, 1) NOT NULL COMMENT '学分',
+    `grade_point`                double       NOT NULL COMMENT '根据gpa计算规则换算的数值',
+    `level_name`                 varchar(8)   NOT NULL DEFAULT '""' COMMENT '成绩等级名称 如“优秀”，“良好”等',
+    `level_point`                varchar(8)   NOT NULL DEFAULT '""' COMMENT '对应成绩等级的分数',
+    `rank`                       int(11)      NOT NULL COMMENT '排名',
+    `course_name`                varchar(255) NOT NULL COMMENT '课程名',
+    `course_number`              varchar(16)  NOT NULL DEFAULT '""' COMMENT '课程号',
+    `course_order`               varchar(4)   NOT NULL COMMENT '课序号，课程号相同时作为标识',
+    `course_property_code`       varchar(4)   NOT NULL COMMENT '课程类型代码',
+    `course_property_name`       varchar(10)  NOT NULL COMMENT '课程类型名称',
+    `exam_type_code`             varchar(4)   NOT NULL COMMENT '考试类型代码',
+    `exam_type_name`             varchar(4)   NOT NULL COMMENT '考试类名名称',
+    `study_hour`                 int(16)      NOT NULL COMMENT '学时',
+    `operate_time`               varchar(16)  NOT NULL COMMENT '操作时间',
+    `operator`                   varchar(16)  NOT NULL COMMENT '操作人，老师的id或者root',
+    `exam_time`                  varchar(8)   NOT NULL COMMENT '考试时间',
+    `unpassed_reason_code`       varchar(16)           DEFAULT NULL COMMENT '未通过原因编号',
+    `unpassed_reason_explain`    varchar(128)          DEFAULT NULL COMMENT '未通过原因解释',
+    `remark`                     varchar(128) NOT NULL DEFAULT '""' COMMENT '备注',
+    `replace_course_number`      varchar(16)           DEFAULT NULL COMMENT '替换课程编号',
+    `retake_course_mark`         varchar(16)           DEFAULT NULL COMMENT '重修课程标识',
+    `retakeCourse_mode_code`     varchar(16)           DEFAULT NULL COMMENT '重修课程模式编号',
+    `retake_course_mode_explain` varchar(128)          DEFAULT NULL COMMENT '重修课程模式解释',
+    `standard_point`             varchar(8)            DEFAULT NULL COMMENT '标准分数',
+    `term_year`                  varchar(255) NOT NULL,
+    `term_order`                 int(255)     NOT NULL,
+    `gmt_create`                 datetime              DEFAULT CURRENT_TIMESTAMP,
+    `gmt_modify`                 datetime              DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `grade_account` (`account`, `course_number`, `course_order`, `term_year`, `term_order`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;

@@ -8,6 +8,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 
 @Data
@@ -127,8 +131,26 @@ public class GradeBO {
             this.operateTime = this.operateTime + "00";
         }
         return DateUtils.localDateToDate(this.operateTime, DateUtils.PATTERN_WITHOUT_SPILT);
+    }
+
+    /**
+     * 是否是今天更新的成绩
+     * @return
+     */
+    public boolean isTodayUpdate() {
+
+        Calendar today = Calendar.getInstance();
+        today.setTime(new Date());
+
+        LocalDate operateTime = getOperateTime().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
+        Period period = Period.between(LocalDate.now(), operateTime);
+        return period.getDays() == 0;
 
     }
+
 
     public String getOperateTimeStr() {
         if (this.operateTime.length() == 12) {

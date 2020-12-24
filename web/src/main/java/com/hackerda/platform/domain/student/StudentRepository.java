@@ -10,6 +10,8 @@ public interface StudentRepository {
 
     WechatStudentUserBO findWetChatUser(StudentAccount account);
 
+    List<WechatStudentUserBO> findWetChatUser(Integer urpClassNum);
+
     WechatStudentUserBO findWetChatUser(UnionId unionId);
 
     StudentUserBO find(StudentAccount account);

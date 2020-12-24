@@ -48,12 +48,18 @@ public class StudentRepositoryImpl implements StudentRepository {
         }
         WechatStudentUserBO wechatStudentUserBO = studentUserAdapter.toBO(studentUser);
 
+        initWechatInfo(wechatStudentUserBO);
+
+        return wechatStudentUserBO;
+    }
+
+    private void initWechatInfo(WechatStudentUserBO wechatStudentUserBO) {
         if (wechatStudentUserBO.isUseUnionId()) {
-            UnionId unionId = unionIdRepository.find(account);
+            UnionId unionId = unionIdRepository.find(wechatStudentUserBO.getAccount());
             wechatStudentUserBO.setUnionId(unionId);
         } else {
             WechatOpenidStudentRelativeExample example = new WechatOpenidStudentRelativeExample();
-            example.createCriteria().andAccountEqualTo(studentUser.getAccount());
+            example.createCriteria().andAccountEqualTo(wechatStudentUserBO.getAccount().getInt());
 
             List<WechatUser> wechatUserList = wechatOpenidStudentRelativeMapper.selectByExample(example).stream()
                     .map(x -> new WechatUser(x.getAppid(), x.getOpenid()))
@@ -61,8 +67,18 @@ public class StudentRepositoryImpl implements StudentRepository {
 
             wechatStudentUserBO.setBindWechatUser(wechatUserList);
         }
+    }
 
-        return wechatStudentUserBO;
+    @Override
+    public List<WechatStudentUserBO> findWetChatUser(Integer urpClassNum) {
+        List<WechatStudentUserBO> studentUserBOList = studentUserDao.selectByClassNum(urpClassNum).stream()
+                .map(x -> studentUserAdapter.toBO(x)).collect(Collectors.toList());
+
+        for (WechatStudentUserBO wechatStudentUserBO : studentUserBOList) {
+            initWechatInfo(wechatStudentUserBO);
+        }
+
+        return studentUserBOList;
     }
 
     @Override

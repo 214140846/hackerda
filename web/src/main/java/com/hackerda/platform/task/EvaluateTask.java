@@ -95,7 +95,6 @@ public class EvaluateTask implements Runnable{
             log.info("evaluate task start");
             CompletableFuture.runAsync(this);
         }
-
     }
 
     void sendMessage(WechatStudentUserBO user) {
@@ -103,7 +102,7 @@ public class EvaluateTask implements Runnable{
         EvaluateFinishMessage message = new EvaluateFinishMessage(user.getUnionId().getWechatUser(appId),
                 templateId, user);
 
-        wechatMessageSender.sendTemplateMessage(message);
+        wechatMessageSender.sendTemplateMessageAsync(message);
     }
 
 }

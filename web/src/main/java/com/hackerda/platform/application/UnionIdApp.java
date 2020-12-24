@@ -51,9 +51,6 @@ public class UnionIdApp {
 
         if (unionId.isEmpty()) {
             WxMpUser userInfo = wechatMpService.getUserInfo(wechatUser);
-            if (!BooleanUtils.toBoolean(userInfo.getSubscribe())) {
-                throw new UnSubscribeException(wechatUser);
-            }
             getUnionId(userInfo.getUnionId(), wechatUser);
         }
     }

@@ -1,19 +1,18 @@
 package com.hackerda.platform.infrastructure.repository.grade;
 
 import com.hackerda.platform.MDCThreadPool;
-import com.hackerda.platform.domain.student.StudentUserBO;
-import com.hackerda.platform.domain.student.WechatStudentUserBO;
-import com.hackerda.platform.infrastructure.database.dao.GradeDao;
+import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.domain.grade.GradeBO;
 import com.hackerda.platform.domain.grade.GradeRepository;
 import com.hackerda.platform.domain.grade.TermGradeBO;
+import com.hackerda.platform.domain.student.StudentUserBO;
+import com.hackerda.platform.infrastructure.database.dao.GradeDao;
 import com.hackerda.platform.infrastructure.database.model.Grade;
-import com.hackerda.platform.utils.SchoolTime;
-import com.hackerda.platform.utils.Term;
-import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.infrastructure.repository.FetchScene;
 import com.hackerda.platform.infrastructure.repository.FetchStatusRecorder;
 import com.hackerda.platform.utils.DateUtils;
+import com.hackerda.platform.utils.SchoolTime;
+import com.hackerda.platform.utils.Term;
 import com.hackerda.spider.exception.PasswordUnCorrectException;
 import com.hackerda.spider.exception.UrpEvaluationException;
 import lombok.extern.slf4j.Slf4j;

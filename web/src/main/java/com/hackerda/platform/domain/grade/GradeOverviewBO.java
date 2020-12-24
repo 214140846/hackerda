@@ -103,6 +103,7 @@ public class GradeOverviewBO {
                     .stream()
                     .filter(GradeBO::hasScore)
                     .filter(x-> x.isUpdate() || x.isNewGrade())
+                    .filter(GradeBO::isTodayUpdate)
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();
@@ -122,6 +123,11 @@ public class GradeOverviewBO {
             return true;
         }
         return false;
+    }
+
+
+    public boolean currentTermGradeUpdate() {
+        return !CollectionUtils.isEmpty(getNeedToSendGrade());
     }
 
 }

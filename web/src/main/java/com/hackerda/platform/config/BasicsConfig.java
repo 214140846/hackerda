@@ -2,6 +2,11 @@
 package com.hackerda.platform.config;
 
 
+import com.hackerda.platform.domain.grade.GradeFetchTask;
+import com.hackerda.platform.domain.student.StudentUserBO;
+import com.hackerda.platform.infrastructure.AntiDuplicateLinkedBlockingQueue;
+import com.hackerda.platform.infrastructure.database.model.StudentUser;
+import com.hackerda.platform.task.GradeAutoUpdateScheduled;
 import com.hackerda.spider.*;
 import com.hackerda.spider.captcha.CaptchaImage;
 import com.hackerda.spider.captcha.ICaptchaProvider;
@@ -15,6 +20,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author zhouqinglai
@@ -51,6 +59,12 @@ public class BasicsConfig {
                                            AccountCookiePersist<String> cookiePersist){
 
         return new UrpSearchSpiderImpl(searchSpiderTemplate, captchaPredict, captchaProvider, cookiePersist);
+    }
+
+    @Bean
+    public BlockingQueue<GradeFetchTask> gradeFetchQueue(){
+
+         return new AntiDuplicateLinkedBlockingQueue<>(1024);
     }
 
 }

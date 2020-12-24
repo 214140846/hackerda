@@ -25,6 +25,13 @@ public class StudentUserDao {
         return studentUserExtMapper.selectByExample(studentUserExample);
     }
 
+    public List<StudentUser> selectByClassNum(Integer classNum) {
+        StudentUserExample studentUserExample = new StudentUserExample();
+        studentUserExample.createCriteria().andUrpclassNumEqualTo(classNum);
+
+        return studentUserExtMapper.selectByExample(studentUserExample);
+    }
+
     public void updatePasswordUnCorrect(Integer account){
         StudentUser student = new StudentUser();
         student.setAccount(account);

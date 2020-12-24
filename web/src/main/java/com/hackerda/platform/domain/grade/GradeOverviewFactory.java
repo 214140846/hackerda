@@ -29,7 +29,6 @@ public class GradeOverviewFactory {
             bo.setErrorCode(0);
         }
 
-
         GpaRanker.RankResult rankResult = gpaRanker.rank(student, bo.getGpa());
 
         bo.setGpaRank(rankResult.getRank());
