@@ -147,7 +147,7 @@ public class GradeBO {
                 .toLocalDate();
 
         Period period = Period.between(operateTime, LocalDate.now());
-        return period.getDays() >= 1;
+        return period.getDays() == 0;
 
     }
 

@@ -48,13 +48,21 @@ public class GradeQueryAppScript {
         UnionId ofNew = UnionId.ofNew("test");
         WechatUser wechatUser = new WechatUser("wx541fd36e6b400648", "oCxRO1G9N755dOY5dwcT5l3IlS3Y");
         ofNew.bindOpenid(wechatUser);
-        WechatStudentUserBO wechatStudentUserBO = studentBindApp.bindByUnionId(account, "1", ofNew, wechatUser);
         unionIdRepository.save(ofNew);
 
+        WechatStudentUserBO wechatStudentUserBO = studentBindApp.bindByUnionId(account, "1", ofNew, wechatUser);
+
+        StudentAccount account2 = new StudentAccount("2020026252");
+        UnionId ofNew2 = UnionId.ofNew("test2");
+
+        ofNew2.bindOpenid(wechatUser);
+        unionIdRepository.save(ofNew2);
+        WechatStudentUserBO wechatStudentUserBO2 = studentBindApp.bindByUnionId(account2, "1", ofNew2, wechatUser);
 
         StudentUserBO userBO = new StudentUserBO();
         userBO.setUrpClassNum(wechatStudentUserBO.getUrpClassNum());
-        gradeFetchQueue.add(new GradeFetchTask(true, userBO));
+        gradeQueryApp.getGradeOverview(wechatStudentUserBO2);
+//        gradeFetchQueue.offer(new GradeFetchTask(true, userBO));
 
 //        gradeQueryApp.getGradeOverview(wechatStudentUserBO);
         gradeAutoUpdateScheduled.run();

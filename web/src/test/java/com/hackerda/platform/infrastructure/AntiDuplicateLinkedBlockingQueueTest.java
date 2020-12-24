@@ -35,9 +35,9 @@ public class AntiDuplicateLinkedBlockingQueueTest {
 
         BlockingQueue<GradeFetchTask> queue = new AntiDuplicateLinkedBlockingQueue<>(5);
 
-        queue.add(new GradeFetchTask(true, studentRepository.find(new StudentAccount(2014025838))));
+        queue.offer(new GradeFetchTask(true, studentRepository.find(new StudentAccount(2014025838))));
 
-        queue.add(new GradeFetchTask(true, studentRepository.find(new StudentAccount(2014025846))));
+        queue.offer(new GradeFetchTask(true, studentRepository.find(new StudentAccount(2014025846))));
 
         assertThat(queue.size()).isEqualTo(1);
 
@@ -45,7 +45,7 @@ public class AntiDuplicateLinkedBlockingQueueTest {
 
         assertThat(queue.size()).isEqualTo(0);
 
-        queue.add(new GradeFetchTask(true, studentRepository.find(new StudentAccount(2014025846))));
+        queue.offer(new GradeFetchTask(true, studentRepository.find(new StudentAccount(2014025846))));
 
         assertThat(queue.size()).isEqualTo(1);
     }

@@ -3,6 +3,7 @@ package com.hackerda.platform.infrastructure;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -10,7 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class AntiDuplicateLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
 
-    private final Set<E> set = new HashSet<>();
+    private final Set<E> set = Collections.synchronizedSet(new HashSet<>());
 
     public AntiDuplicateLinkedBlockingQueue(int size) {
         super(size);
@@ -18,22 +19,20 @@ public class AntiDuplicateLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> 
 
     @SneakyThrows
     @Override
-    public synchronized void put(E e) {
+    public void put(E e) {
         if (!set.contains(e)) {
             set.add(e);
             super.put(e);
         }
     }
 
-    @SneakyThrows
     @Override
-    public synchronized boolean offer(@NotNull E e) {
+    public boolean offer(@NotNull E e) {
         if (!set.contains(e)) {
             set.add(e);
             super.offer(e);
         }
         return true;
-
     }
 
     @SneakyThrows
