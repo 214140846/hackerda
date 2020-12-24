@@ -49,10 +49,10 @@ public class WechatMessageSenderImpl implements WechatMessageSender {
         WxMpService wxService = wechatMpConfiguration.getMpService(appId);
         WxMpTemplateMessage wxMpTemplateMessage = wechatTemplateMessage.genMpTemplateMessage();
         try {
-            log.info("send message {}", wxMpTemplateMessage);
+            log.info("send message {}", wxMpTemplateMessage.toJson());
             wxService.getTemplateMsgService().sendTemplateMsg(wxMpTemplateMessage);
         } catch (WxErrorException e) {
-            log.error("message {} send error",wxMpTemplateMessage, e);
+            log.error("message {} send error",wxMpTemplateMessage.toJson(), e);
         }
     }
 

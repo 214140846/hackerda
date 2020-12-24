@@ -69,8 +69,8 @@ public class GradeAutoUpdateScheduled implements Runnable{
                     CompletableFuture<Void> future = CompletableFuture.runAsync(new GradeFetchTaskWrapper(task), gradeAutoUpdatePool);
 
                     GradeFetchTask finalTask = task;
-                    future.whenComplete((x, y)-> taskSet.remove(finalTask));
 
+                    future.whenComplete((x, y)-> taskSet.remove(finalTask));
                 }
             }
         } catch (Exception e) {
@@ -116,7 +116,8 @@ public class GradeAutoUpdateScheduled implements Runnable{
                                 .filter(x-> !x.getAccount().equals(gradeFetchTask.getTigerStudent().getAccount()))
                                 .collect(Collectors.toList());
             }
-
+            log.info("classNum {} fetch start, size {}",gradeFetchTask.getTigerStudent().getUrpClassNum(),
+                    wetChatUser.size());
             for (WechatStudentUserBO wechatStudentUserBO : wetChatUser) {
                 try {
                     GradeOverviewBO gradeOverview = gradeQueryApp.getGradeOverview(wechatStudentUserBO, false);
@@ -129,6 +130,9 @@ public class GradeAutoUpdateScheduled implements Runnable{
                     log.info("{} fetch grade error", wechatStudentUserBO.getAccount(), e);
                 }
             }
+
+            log.info("classNum {} fetch finish, size {}",gradeFetchTask.getTigerStudent().getUrpClassNum(),
+                    wetChatUser.size());
         }
     }
 
