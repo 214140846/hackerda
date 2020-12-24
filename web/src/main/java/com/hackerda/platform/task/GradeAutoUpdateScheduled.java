@@ -59,6 +59,7 @@ public class GradeAutoUpdateScheduled implements Runnable{
 //    @Scheduled(cron = "0 0/20 * * * ? ")
 
     public void run() {
+        log.info("GradeAutoUpdateScheduled run");
         start = true;
         GradeFetchTask task;
         try {
