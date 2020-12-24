@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class GradeQueryApp {
@@ -24,6 +28,8 @@ public class GradeQueryApp {
     private EventPublisher eventPublisher;
     @Autowired
     private Queue<GradeFetchTask> gradeFetchQueue;
+
+    private Executor executor = Executors.newSingleThreadExecutor();
 
 
     public GradeOverviewBO getGradeOverview(StudentUserBO studentUser) {
@@ -50,7 +56,7 @@ public class GradeQueryApp {
         }
 
         if(isFormUser && gradeOverviewBO.currentTermGradeUpdate()) {
-            gradeFetchQueue.offer(new GradeFetchTask(true, studentUser));
+            CompletableFuture.runAsync(() -> gradeFetchQueue.offer(new GradeFetchTask(true, studentUser)), executor);
         }
 
         return gradeOverviewBO;

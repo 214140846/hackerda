@@ -30,7 +30,7 @@ public class AntiDuplicateLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> 
     public synchronized boolean offer(@NotNull E e) {
         if (!set.contains(e)) {
             set.add(e);
-            super.put(e);
+            super.offer(e);
         }
         return true;
 

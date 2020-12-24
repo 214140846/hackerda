@@ -51,7 +51,7 @@ public class GradeAutoUpdateScheduled implements Runnable{
     @PostConstruct
     public void initMethod(){
         if (!start && autoStart) {
-            CompletableFuture.runAsync(this);
+            CompletableFuture.runAsync(this, gradeAutoUpdatePool);
         }
     }
 
