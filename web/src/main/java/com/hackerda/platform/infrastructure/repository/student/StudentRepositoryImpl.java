@@ -122,6 +122,9 @@ public class StudentRepositoryImpl implements StudentRepository {
         }
 
         if (studentUser.isUseUnionId()) {
+            if (!studentUser.getRevokeUnionId().isEmpty()) {
+                studentUserDao.deleteUnionIdRelative(studentUser.getAccount().getInt());
+            }
 
             if (!studentUser.getNewBindUnionId().isEmpty()) {
                 if(studentUserDao.selectAccountByUnionId(studentUser.getNewBindUnionId().getUnionId()) == null)  {
@@ -130,9 +133,7 @@ public class StudentRepositoryImpl implements StudentRepository {
                     studentUserDao.updateUnionIdRelative(studentUser.getAccount().getInt(), studentUser.getNewBindUnionId().getUnionId());
                 }
             }
-            if (!studentUser.getRevokeUnionId().isEmpty()) {
-                studentUserDao.deleteUnionIdRelative(studentUser.getAccount().getInt());
-            }
+
 
         } else {
             for (WechatUser wechatUser : studentUser.getNewBindWechatUser()) {

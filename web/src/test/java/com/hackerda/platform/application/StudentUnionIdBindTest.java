@@ -128,4 +128,20 @@ public class StudentUnionIdBindTest {
 
     }
 
+    @Test
+    public void testDuplicateBindInWhiteList() {
+
+        StudentAccount studentAccount = new StudentAccount("2014025838");
+        studentBindApp.bindByUnionId(studentAccount, "1", unionId, wechatUser);
+
+
+        studentBindApp.bindByUnionId(studentAccount, "1", unionId2, wechatUser);
+
+
+        assertThat(studentRepository.findWetChatUser(unionId2).getUnionId()).isEqualTo(unionId2);
+
+        assertThat(wechatActionRecordRepository.find(wechatUser).size()).isEqualTo(2);
+
+    }
+
 }

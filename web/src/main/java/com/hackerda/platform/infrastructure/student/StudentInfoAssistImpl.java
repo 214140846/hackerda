@@ -1,5 +1,6 @@
 package com.hackerda.platform.infrastructure.student;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hackerda.platform.domain.student.Action;
 import com.hackerda.platform.domain.student.StudentAccount;
@@ -27,6 +28,7 @@ public class StudentInfoAssistImpl implements StudentInfoAssist {
     private WechatActionRecordRepository wechatActionRecordRepository;
     @Value("${checkWechatCommentUser: false}")
     private boolean checkWechatCommentUser;
+    private List<StudentAccount> whiteList = Lists.newArrayList(new StudentAccount("2014025838"));
 
 
     @Override
@@ -60,5 +62,10 @@ public class StudentInfoAssistImpl implements StudentInfoAssist {
                 .collect(Collectors.toList());
 
         return !authLoginList.isEmpty();
+    }
+
+    @Override
+    public boolean whiteListAccount(StudentAccount account) {
+        return whiteList.contains(account);
     }
 }

@@ -55,6 +55,11 @@ public class StudentUserCommonUserBindTest {
             public boolean isCommonWechat(StudentAccount account, WechatUser wechatUser) {
                 return StudentUserCommonUserBindTest.this.studentInfoAssist.isCommonWechat(account, wechatUser);
             }
+
+            @Override
+            public boolean whiteListAccount(StudentAccount account) {
+                return false;
+            }
         };
         studentBindApp.setStudentInfoAssist(infoAssist);
     }

@@ -21,7 +21,7 @@ public class WechatStudentUserBO extends StudentUserBO{
     private Map<String, WechatUser> wechatUserMap = new HashMap<>(0);
 
     @Getter
-    private UnionId unionId;
+    private UnionId unionId = UnionId.ofNull();
 
     @Getter
     private UnionId newBindUnionId = UnionId.ofNull();
@@ -60,6 +60,7 @@ public class WechatStudentUserBO extends StudentUserBO{
         checkUseUnionId();
 
         if (!unionId.equals(this.unionId)) {
+            this.revokeUnionId = this.unionId;
             this.unionId = unionId;
             this.newBindUnionId = unionId;
         }
@@ -160,9 +161,6 @@ public class WechatStudentUserBO extends StudentUserBO{
     public void save() {
 
         if (useUnionId) {
-            if (!newBindUnionId.isEmpty() && !revokeUnionId.isEmpty()) {
-                throw new IllegalStateException("unionId state error: 不能同时有新绑定的id和移除绑定绑定的id。" );
-            }
 
             if (!newBindUnionId.isEmpty()) {
                 this.unionId = newBindUnionId;

@@ -103,7 +103,7 @@ public class StudentBindApp {
     }
 
     public void bindUnionId(WechatStudentUserBO wechatStudentUserBO, UnionId unionId) {
-        if(!wechatStudentUserBO.hasBindUnionId()) {
+        if(!wechatStudentUserBO.hasBindUnionId() || studentInfoAssist.whiteListAccount(wechatStudentUserBO.getAccount())) {
             wechatStudentUserBO.bindUnionId(unionId);
         } else if(!wechatStudentUserBO.getUnionId().equals(unionId)) {
             throw new BusinessException(ErrorCode.ACCOUNT_HAS_BIND, wechatStudentUserBO.getAccount() + "该学号已经被绑定");

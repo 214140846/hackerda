@@ -22,4 +22,6 @@ public interface StudentInfoAssist {
      * @return
      */
     boolean isCommonWechat(StudentAccount account, WechatUser wechatUser);
+
+    boolean whiteListAccount(StudentAccount account);
 }
