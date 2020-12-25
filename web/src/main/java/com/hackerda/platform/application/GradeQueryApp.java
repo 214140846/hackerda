@@ -31,9 +31,6 @@ public class GradeQueryApp {
     @Autowired
     private Queue<GradeFetchTask> gradeFetchQueue;
 
-    private Executor executor = Executors.newSingleThreadExecutor();
-
-
     public GradeOverviewBO getGradeOverview(StudentUserBO studentUser) {
         return getGradeOverview(studentUser, true);
     }
@@ -58,8 +55,7 @@ public class GradeQueryApp {
         }
 
         if(isFormUser && gradeOverviewBO.currentTermGradeUpdate()) {
-            log.info("add grade fetch task urpNum {}", studentUser.getUrpClassNum());
-            CompletableFuture.runAsync(() -> gradeFetchQueue.offer(new GradeFetchTask(true, studentUser)), executor);
+            gradeFetchQueue.offer(new GradeFetchTask(true, studentUser));
         }
 
         return gradeOverviewBO;
