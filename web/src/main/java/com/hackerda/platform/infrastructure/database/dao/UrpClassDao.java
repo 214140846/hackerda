@@ -35,6 +35,14 @@ public class UrpClassDao {
         return urpClassExtMapper.selectByExample(example).stream().findFirst().orElse(null);
     }
 
+    public List<UrpClass> selectByNumPrefix(String prefix){
+        UrpClassExample example = new UrpClassExample();
+        example.createCriteria()
+                .andClassNumLike(prefix+"%");
+
+        return urpClassExtMapper.selectByExample(example);
+    }
+
     public void insertSelective(UrpClass urpClass){
         urpClassExtMapper.insertSelective(urpClass);
     }
