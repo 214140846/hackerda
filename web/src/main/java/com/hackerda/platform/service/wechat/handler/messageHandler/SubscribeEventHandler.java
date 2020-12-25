@@ -46,11 +46,11 @@ public class SubscribeEventHandler implements WxMpMessageHandler {
 
         WechatStudentUserBO wetChatUser = studentRepository.findWetChatUser(unionId);
 
-        buffer.append("欢迎！\n\n");
+        buffer.append("感谢你的关注，我们在这已经等候多时了，很高兴遇见你~");
         if (wetChatUser == null) {
             buffer.append("为了更好的为你提供服务，请先点击下方的菜单的用户【用户绑定】");
         } else {
-            buffer.append("现在你已经拥有了成绩提醒的功能");
+            buffer.append("以后成绩更新以后，我们会第一时间通知你。");
         }
 
         buffer.append("\n\n").append("使用过程中有问题在后台留言，我们会尽快解决的");
