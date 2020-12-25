@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 
 import javax.annotation.Resource;
 
@@ -66,12 +67,9 @@ public class ExamTimeTableService {
         List<UrpExamTime> examTime;
         try {
             examTime = newUrpSpiderService.getExamTime(student);
-        } catch (UrpRequestException e) {
-            if (e.getCode() >= 500) {
-            	List<ExamTimetable> res=examTimetableDao.getExamByAccount(student.getAccount().toString());
-            	return transform(res);
-              }
-              throw e;
+        } catch (UrpRequestException | HttpServerErrorException e) {
+            List<ExamTimetable> res=examTimetableDao.getExamByAccount(student.getAccount().toString());
+            return transform(res);
         }
         List<Exam> examList=examTime.stream()
                 .filter(x -> StringUtils.isNotEmpty(x.getDate()))

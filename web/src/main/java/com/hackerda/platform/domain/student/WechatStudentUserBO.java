@@ -107,9 +107,6 @@ public class WechatStudentUserBO extends StudentUserBO{
         return wechatUserMap.getOrDefault(appId, WechatUser.ofNull()).getOpenId();
     }
 
-
-
-
     public boolean hasBindApp(String appId) {
         if(useUnionId) {
             return unionId.hasApp(appId);

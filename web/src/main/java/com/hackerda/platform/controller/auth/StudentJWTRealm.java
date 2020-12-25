@@ -84,18 +84,24 @@ public class StudentJWTRealm extends AuthorizingRealm {
             throw new AuthenticationException("token invalid");
         }
         try {
-            WechatStudentUserBO user = studentRepository.findWetChatUser(new StudentAccount(username));
-
-            if(user == null || !user.canLogin() || !user.hasBindApp(appId)) {
-                return null;
-            }
-            JwtUtils.verify(token, username, user.getOpenid(appId));
-            return new SimpleAuthenticationInfo(user, token, "JWTRealm");
+            return verifyToken(username, appId, token);
         }catch (JWTVerificationException e){
             throw new AuthenticationException(e);
         }catch (Exception e){
             log.error("verify token error", e);
             throw new AuthenticationException(e);
         }
+    }
+
+    AuthenticationInfo verifyToken(String userName, String appId, String token) {
+        WechatStudentUserBO user = studentRepository.findWetChatUser(new StudentAccount(userName));
+
+        if(user == null || !user.canLogin() || !user.hasBindApp(appId)) {
+            return null;
+        }
+        if(JwtUtils.verify(token, userName, user.getOpenid(appId))) {
+            return new SimpleAuthenticationInfo(user, token, "JWTRealm");
+        }
+        return null;
     }
 }
