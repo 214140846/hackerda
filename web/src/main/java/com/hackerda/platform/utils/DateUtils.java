@@ -5,7 +5,10 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -116,7 +119,16 @@ public class DateUtils {
     }
 
     public static void main(String[] args) {
-        Integer day = getCurrentDay();
-        System.out.println(day);
+        Date date = localDateToDate("20201126014800", DateUtils.PATTERN_WITHOUT_SPILT);
+        LocalDate operateTime = date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
+        Period period = Period.between(operateTime, LocalDate.now());
+
+        System.out.println(period.getDays());
+        System.out.println(period.getMonths());
+        System.out.println(period.getYears());
+
     }
 }
