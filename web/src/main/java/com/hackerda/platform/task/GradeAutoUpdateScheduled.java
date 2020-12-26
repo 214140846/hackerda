@@ -10,11 +10,14 @@ import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.wechat.WechatMessageSender;
 import com.hackerda.platform.domain.wechat.WechatTemplateMessage;
+import com.hackerda.platform.infrastructure.AntiDuplicateLinkedBlockingQueue;
 import com.hackerda.platform.infrastructure.database.dao.UrpClassDao;
 import com.hackerda.platform.infrastructure.database.model.UrpClass;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +37,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class GradeAutoUpdateScheduled implements Runnable{
-    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> queue = new AntiDuplicateLinkedBlockingQueue<>(1024);
 
     private final ExecutorService gradeAutoUpdatePool = new MDCThreadPool(8, 8,
             0L, TimeUnit.MILLISECONDS, queue, r -> new Thread(r, "gradeUpdate"));
@@ -86,20 +89,17 @@ public class GradeAutoUpdateScheduled implements Runnable{
 
     @VisibleForTesting
     public void addClassTask(String classNum) {
-        if (!taskSet.contains(classNum)) {
-            taskSet.add(classNum);
-            List<WechatStudentUserBO> fetchList = getFetchList(Integer.parseInt(classNum));
-            if (!CollectionUtils.isEmpty(fetchList)) {
-                Random r = new Random();
-                WechatStudentUserBO studentUserBO = fetchList.get(r.nextInt(fetchList.size()));
-                if(handleMessage(studentUserBO)) {
-                    GradeFetchTaskWrapper task = new GradeFetchTaskWrapper(fetchList.stream()
-                            .filter(x -> !x.getAccount().equals(studentUserBO.getAccount()))
-                            .collect(Collectors.toList()), classNum);
+        List<WechatStudentUserBO> fetchList = getFetchList(Integer.parseInt(classNum));
+        if (!CollectionUtils.isEmpty(fetchList)) {
+            Random r = new Random();
+            WechatStudentUserBO studentUserBO = fetchList.get(r.nextInt(fetchList.size()));
+            if(handleMessage(studentUserBO)) {
+                GradeFetchTaskWrapper task = new GradeFetchTaskWrapper(fetchList.stream()
+                        .filter(x -> !x.getAccount().equals(studentUserBO.getAccount()))
+                        .collect(Collectors.toList()), classNum);
 
-                    CompletableFuture<Void> future = CompletableFuture.runAsync(task, gradeAutoUpdatePool);
-                    future.whenComplete((x,y) -> taskSet.remove(classNum));
-                }
+                CompletableFuture<Void> future = CompletableFuture.runAsync(task, gradeAutoUpdatePool);
+                future.whenComplete((x,y) -> taskSet.remove(classNum));
             }
         }
     }
@@ -110,16 +110,7 @@ public class GradeAutoUpdateScheduled implements Runnable{
         GradeFetchTask task;
         try {
             while (start && (task = gradeFetchQueue.take()) != null) {
-                String s = task.getTigerStudent().getUrpClassNum().toString();
-                if(!taskSet.contains(s)) {
-                    taskSet.add(s);
-
-                    CompletableFuture<Void> future = CompletableFuture.runAsync(new GradeFetchTaskWrapper(task), gradeAutoUpdatePool);
-
-                    GradeFetchTask finalTask = task;
-
-                    future.whenComplete((x, y)-> taskSet.remove(finalTask.getTigerStudent().getUrpClassNum().toString()));
-                }
+                CompletableFuture.runAsync(new GradeFetchTaskWrapper(task), gradeAutoUpdatePool);
             }
         } catch (Exception e) {
             log.error("get task exception", e);
@@ -203,6 +194,26 @@ public class GradeAutoUpdateScheduled implements Runnable{
             }
 
             log.info("classNum {} fetch finish, size {}", this.urpClassNum, wetChatUser.size());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+
+            if (o == null || getClass() != o.getClass()) return false;
+
+            GradeFetchTaskWrapper that = (GradeFetchTaskWrapper) o;
+
+            return new EqualsBuilder()
+                    .append(urpClassNum, that.urpClassNum)
+                    .isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37)
+                    .append(urpClassNum)
+                    .toHashCode();
         }
     }
 
