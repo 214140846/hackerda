@@ -19,10 +19,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -74,8 +71,12 @@ public class StudentRepositoryImpl implements StudentRepository {
         List<WechatStudentUserBO> studentUserBOList = studentUserDao.selectByClassNum(urpClassNum).stream()
                 .map(x -> studentUserAdapter.toBO(x)).collect(Collectors.toList());
 
+        List<StudentAccount> accountList = studentUserBOList.stream().map(WechatStudentUserBO::getAccount).collect(Collectors.toList());
+
+        Map<StudentAccount, UnionId> map = unionIdRepository.find(accountList);
+
         for (WechatStudentUserBO wechatStudentUserBO : studentUserBOList) {
-            initWechatInfo(wechatStudentUserBO);
+            wechatStudentUserBO.setUnionId(map.getOrDefault(wechatStudentUserBO.getAccount(), UnionId.ofNull()));
         }
 
         return studentUserBOList;

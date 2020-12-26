@@ -7,6 +7,7 @@ import com.hackerda.spider.exception.UrpEvaluationException;
 import com.hackerda.spider.exception.UrpException;
 import com.hackerda.spider.exception.UrpRequestException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.connector.ClientAbortException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
@@ -27,27 +28,33 @@ public class ExceptionHandlerController {
 
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	@ExceptionHandler(UnauthorizedException.class)
-	public WebResponse handle401() {
+	public WebResponse<Void> handle401() {
 		return WebResponse.failUnauthorized("用户未授权");
 	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(UnauthenticatedException.class)
-	public WebResponse handle403(UnauthenticatedException e) {
+	public WebResponse<Void> handle403(UnauthenticatedException e) {
 		return WebResponse.failWithForbidden("身份认证失败");
 	}
 
 	@ExceptionHandler(BusinessException.class)
-	public WebResponse handleCommon(BusinessException e) {
+	public WebResponse<Void> handleCommon(BusinessException e) {
 		return WebResponse.fail(e.getErrorCode().getErrorCode(), e.getMsg());
 	}
 
 	@ExceptionHandler(MissingServletRequestParameterException.class)
-	public WebResponse handleCommon(MissingServletRequestParameterException e) {
+	public WebResponse<Void> handleCommon(MissingServletRequestParameterException e) {
 		return WebResponse.fail(ErrorCode.DATA_NOT_VALID.getErrorCode(), e.getMessage());
 	}
+
+	@ExceptionHandler(ClientAbortException.class)
+	public WebResponse<Void> brokePipe(MissingServletRequestParameterException e) {
+		return WebResponse.fail(ErrorCode.SYSTEM_ERROR.getErrorCode(), e.getMessage());
+	}
+
 	@ExceptionHandler(value = Exception.class)
-	public WebResponse handleException(Exception e) {
+	public WebResponse<Void> handleException(Exception e) {
 		if (e instanceof PasswordUnCorrectException) {
 			return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), e.getMessage());
 		}else if(e instanceof UrpRequestException) {
@@ -58,6 +65,7 @@ public class ExceptionHandlerController {
 			return WebResponse.fail(ErrorCode.URP_EXCEPTION.getErrorCode(), "教务网异常，请重试");
 		}
 		log.error("request fail", e);
+
 		return WebResponse.fail(ErrorCode.SYSTEM_ERROR.getErrorCode(), "服务器出了点小问题");
 	}
 }

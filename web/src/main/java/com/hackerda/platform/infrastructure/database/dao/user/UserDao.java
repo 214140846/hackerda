@@ -8,8 +8,10 @@ import com.hackerda.platform.infrastructure.database.model.UserExample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -58,6 +60,10 @@ public class UserDao {
     }
 
     public List<StudentPosterDO> selectStudentPosterByUserName(Collection<String> userName) {
+        if (CollectionUtils.isEmpty(userName)) {
+            return Collections.emptyList();
+        }
+
         return userExtMapper.selectStudentPosterByUserName(userName);
     }
 

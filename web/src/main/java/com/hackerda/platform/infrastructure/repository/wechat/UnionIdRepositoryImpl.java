@@ -5,6 +5,7 @@ import com.hackerda.platform.domain.wechat.UnionId;
 import com.hackerda.platform.domain.wechat.UnionIdRepository;
 import com.hackerda.platform.domain.wechat.WechatUser;
 import com.hackerda.platform.infrastructure.database.mapper.WechatUnionIdMapper;
+import com.hackerda.platform.infrastructure.database.model.AccountWechatUnionId;
 import com.hackerda.platform.infrastructure.database.model.WechatUnionId;
 import com.hackerda.platform.infrastructure.database.model.WechatUnionIdExample;
 import org.apache.commons.collections.CollectionUtils;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
@@ -68,6 +70,21 @@ public class UnionIdRepositoryImpl implements UnionIdRepository {
                 .collect(Collectors.toList());
 
         return UnionId.ofRepo(unionIdList.get(0).getUnionId(), wechatUserList);
+    }
+
+    @Override
+    public Map<StudentAccount, UnionId> find(List<StudentAccount> studentAccountList) {
+        Map<StudentAccount, List<AccountWechatUnionId>> accountListMap = wechatUnionIdMapper.selectByAccountList(studentAccountList.stream().map(StudentAccount::getInt).collect(Collectors.toList()))
+                .stream().collect(Collectors.groupingBy(x -> new StudentAccount(x.getAccount())));
+
+        return accountListMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+            List<WechatUser> wechatUserList = entry.getValue().stream()
+                    .map(x -> new WechatUser(x.getAppId(), x.getOpenId()))
+                    .collect(Collectors.toList());
+
+            return UnionId.ofRepo(entry.getValue().get(0).getUnionId(), wechatUserList);
+
+        }));
     }
 
     @Override

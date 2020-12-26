@@ -36,10 +36,10 @@ public class WebResponse<T> {
 		return new WebResponse<T>().setStatus(SUCCESS_CODE).setMessage("").setData(data);
 	}
 
-	public static WebResponse fail(Integer status, String message) {
+	public static WebResponse<Void> fail(Integer status, String message) {
 		Objects.requireNonNull(status);
 		Objects.requireNonNull(message);
-		return new WebResponse().setStatus(status).setMessage(message);
+		return new WebResponse<Void>().setStatus(status).setMessage(message);
 	}
 	public static <T> WebResponse<T> failUnauthorized(String message){
 		return new WebResponse<T>().setStatus(401).setMessage(message);

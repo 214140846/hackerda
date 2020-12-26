@@ -5,6 +5,7 @@ import com.hackerda.platform.domain.wechat.UnionId;
 import com.hackerda.platform.domain.wechat.WechatUser;
 import com.hackerda.platform.infrastructure.database.mapper.ext.StudentUserExtMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,6 +64,16 @@ public class UnionIdRepositoryImplTest {
         UnionId unionId = unionIdRepository.find(new StudentAccount(2014025838));
 
         assertThat(unionId.isEmpty()).isFalse();
+
+        Map<StudentAccount, UnionId> map = unionIdRepository.find(Lists.newArrayList(new StudentAccount(2014025838)));
+
+        assertThat(map.get(new StudentAccount(2014025838))).isEqualTo(unionId);
+
+        assertThat(map.get(new StudentAccount(2014025839))).isNull();
+
+        Map<StudentAccount, UnionId> map2 = unionIdRepository.find(Lists.newArrayList(new StudentAccount(2014025839)));
+
+        assertThat(map2.get(new StudentAccount(2014025839))).isNull();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.hackerda.platform.infrastructure.database.mapper;
 
+import com.hackerda.platform.infrastructure.database.model.AccountWechatUnionId;
 import com.hackerda.platform.infrastructure.database.model.WechatUnionId;
 import com.hackerda.platform.infrastructure.database.model.WechatUnionIdExample;
 import java.util.List;
@@ -34,4 +35,6 @@ public interface WechatUnionIdMapper {
     int updateByPrimaryKey(WechatUnionId record);
 
     List<WechatUnionId> selectByAccount(Integer account);
+
+    List<AccountWechatUnionId> selectByAccountList(List<Integer> accountList);
 }
