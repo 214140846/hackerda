@@ -14,6 +14,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.ResourceAccessException;
 
 /**
  * @author junrong.chen
@@ -53,7 +54,7 @@ public class ExceptionHandlerController {
 			return WebResponse.fail(ErrorCode.LOGIN_ERROR.getErrorCode(), "can`t verify user");
 		}else if(e instanceof UrpEvaluationException) {
 			return WebResponse.fail(ErrorCode.Evaluation_ERROR.getErrorCode(), "未完成评估");
-		}else if(e instanceof UrpException){
+		}else if(e instanceof UrpException || e instanceof ResourceAccessException){
 			return WebResponse.fail(ErrorCode.URP_EXCEPTION.getErrorCode(), "教务网异常，请重试");
 		}
 		log.error("request fail", e);

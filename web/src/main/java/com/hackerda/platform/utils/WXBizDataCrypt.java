@@ -71,7 +71,7 @@ public class WXBizDataCrypt {
             }
 
         } catch (Exception e) {
-            log.error("decryptData error", e);
+            log.error("decryptData error {}", e.getMessage());
         }
         return "";
     }

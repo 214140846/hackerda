@@ -55,6 +55,7 @@ public class GradeQueryApp {
         }
 
         if(isFormUser && gradeOverviewBO.currentTermGradeUpdate()) {
+            log.info("add task urpClassNum {}", studentUser.getUrpClassNum());
             gradeFetchQueue.offer(new GradeFetchTask(true, studentUser));
         }
 

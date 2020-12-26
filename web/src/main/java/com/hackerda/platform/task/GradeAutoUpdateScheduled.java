@@ -117,8 +117,6 @@ public class GradeAutoUpdateScheduled implements Runnable{
                     GradeFetchTask finalTask = task;
 
                     future.whenComplete((x, y)-> taskSet.remove(finalTask.getTigerStudent().getUrpClassNum().toString()));
-                } else {
-                    System.out.println(s + ": contain");
                 }
             }
         } catch (Exception e) {

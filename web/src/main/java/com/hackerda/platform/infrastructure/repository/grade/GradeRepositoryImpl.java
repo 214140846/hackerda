@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -146,6 +147,10 @@ public class GradeRepositoryImpl implements GradeRepository {
             else if (cause instanceof UrpEvaluationException) {
                 errorCode = ErrorCode.Evaluation_ERROR.getErrorCode();
                 msg = "评估未完成，无法查看成绩";
+            } else if(cause instanceof ResourceAccessException) {
+                errorCode = ErrorCode.READ_TIMEOUT.getErrorCode();
+                msg = cause.getMessage();
+                log.error("get grade timeout {}", cause.getMessage());
             } else {
                 errorCode = ErrorCode.SYSTEM_ERROR.getErrorCode();
                 msg = exception.getMessage();

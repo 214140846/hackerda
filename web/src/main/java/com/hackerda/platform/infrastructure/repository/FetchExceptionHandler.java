@@ -5,6 +5,7 @@ import com.hackerda.spider.exception.PasswordUnCorrectException;
 import com.hackerda.spider.exception.UrpEvaluationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -34,7 +35,7 @@ public class FetchExceptionHandler {
         else if (exception instanceof UrpEvaluationException) {
             return EVALUATION_ERROR;
         }
-        else if(exception instanceof TimeoutException) {
+        else if(exception instanceof TimeoutException || exception instanceof ResourceAccessException) {
             return READ_TIMEOUT;
         }else {
             log.error("spider fetch error", exception);
