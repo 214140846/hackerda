@@ -34,9 +34,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class GradeAutoUpdateScheduled implements Runnable{
-    //这里设置拒绝策略为调用者运行，这样可以降低产生任务的速率
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+
     private final ExecutorService gradeAutoUpdatePool = new MDCThreadPool(8, 8,
-            0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "gradeUpdate"));
+            0L, TimeUnit.MILLISECONDS, queue, r -> new Thread(r, "gradeUpdate"));
 
     @Autowired
     private GradeQueryApp gradeQueryApp;
@@ -71,6 +72,7 @@ public class GradeAutoUpdateScheduled implements Runnable{
         if(!autoStart) {
             return;
         }
+        log.info("fetch task queue size {}", queue.size());
 
         List<String> prefixList = Lists.newArrayList("2017", "2018", "2019", "2020");
 
