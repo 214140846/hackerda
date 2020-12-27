@@ -230,7 +230,8 @@ public class GradeRepositoryImpl implements GradeRepository {
         }
 
         // 课程得唯一id作为map的key
-        Function<GradeBO, String> keyMapper = grade -> grade.getCourseNumber() + grade.getCourseOrder();
+        Function<GradeBO, String> keyMapper =
+                grade -> grade.getCourseNumber() + grade.getCourseOrder()+grade.getTermYear()+grade.getTermOrder();
 
         // 这个逻辑是处理教务网同一个课程返回两个结果，那么选择有成绩的结果
         BinaryOperator<GradeBO> binaryOperator = (oldValue, newValue) -> {

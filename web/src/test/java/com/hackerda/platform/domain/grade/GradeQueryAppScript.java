@@ -112,11 +112,16 @@ public class GradeQueryAppScript {
     public void test3() {
 
 
-        List<String> prefixList = Lists.newArrayList("2017", "2018", "2019", "2020");
+        List<String> prefixList = Lists.newArrayList("2017");
 
         for (String prefix : prefixList) {
             List<String> classNumList = urpClassDao.selectByNumPrefix(prefix).stream().map(UrpClass::getClassNum).collect(Collectors.toList());
-            System.out.println(classNumList);
+            for (String s : classNumList) {
+                for (WechatStudentUserBO studentUserBO : studentRepository.findWetChatUser(Integer.parseInt(s))) {
+                    gradeQueryApp.getGradeOverview(studentUserBO);
+                }
+            }
+
         }
 
     }
