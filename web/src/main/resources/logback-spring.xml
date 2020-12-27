@@ -5,7 +5,7 @@
     <!-- 控制台设置 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}][%X{openid}] %-5level %logger{50} %line - %m%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] %-5level %logger{50} %line - %m%n</pattern>
         </encoder>
     </appender>
 
@@ -22,7 +22,7 @@
             <MaxHistory>10</MaxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}][%X{openid}] %-5level %logger{50} %line - %m%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] %-5level %logger{50} %line - %m%n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
@@ -44,7 +44,7 @@
             <MaxHistory>5</MaxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}][%X{openid}] %-5level %logger{50} %line - %m%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] %-5level %logger{50} %line - %m%n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
@@ -66,7 +66,28 @@
             <MaxHistory>5</MaxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}][%X{openid}] %-5level %logger{50} %line - %m%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] %-5level %logger{50} %line - %m%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="gradeTaskAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 文件路径 ，注意LOG_PATH是默认值，
+            它的配置对应application.properties里的logging.path值-->
+        <file>${LOG_PATH}/grade_task.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 文件名称 -->
+            <fileNamePattern>${LOG_PATH}/grade_task-%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <!-- 文件最大保存历史数量 -->
+            <MaxHistory>5</MaxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] %-5level %logger{50} %line - %m%n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
@@ -88,7 +109,7 @@
             <MaxHistory>5</MaxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}][%X{openid}] %-5level %logger{50} %line - %m%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] %-5level %logger{50} %line - %m%n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
@@ -97,6 +118,28 @@
         </filter>
     </appender>
 
+
+    <!-- INFO -->
+    <appender name="wechatSendMessageAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 文件路径 ，注意LOG_PATH是默认值，
+            它的配置对应application.properties里的logging.path值-->
+        <file>${LOG_PATH}/wechat_send_message.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 文件名称 -->
+            <fileNamePattern>${LOG_PATH}/wechat_send_message-%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <!-- 文件最大保存历史数量 -->
+            <MaxHistory>5</MaxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] %-5level %logger{50} %line - %m%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
 
     <!-- ERROR -->
     <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -108,10 +151,10 @@
             <fileNamePattern>${LOG_PATH}/error-%d{yyyy-MM-dd}.log
             </fileNamePattern>
             <!-- 文件最大保存历史数量 -->
-            <MaxHistory>15</MaxHistory>
+            <MaxHistory>5</MaxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}][%X{openid}] %-5level %logger{50} %line - %m%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] %-5level %logger{50} %line - %m%n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
@@ -154,6 +197,16 @@
     <logger name="com.hackerda.platform.task.EvaluateTask" additivity="false">
         <level value="INFO"/>
         <appender-ref ref="evaluateTaskAppender"/>
+    </logger>
+
+    <logger name="com.hackerda.platform.task.GradeAutoUpdateScheduled" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="gradeTaskAppender"/>
+    </logger>
+
+    <logger name="com.hackerda.platform.infrastructure.wechat.WechatMessageSenderImpl" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="wechatSendMessageAppender"/>
     </logger>
 
     <root level="DEBUG">

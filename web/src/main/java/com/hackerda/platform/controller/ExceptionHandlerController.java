@@ -49,7 +49,7 @@ public class ExceptionHandlerController {
 	}
 
 	@ExceptionHandler(ClientAbortException.class)
-	public WebResponse<Void> brokePipe(MissingServletRequestParameterException e) {
+	public WebResponse<Void> brokePipe(ClientAbortException e) {
 		return WebResponse.fail(ErrorCode.SYSTEM_ERROR.getErrorCode(), e.getMessage());
 	}
 
