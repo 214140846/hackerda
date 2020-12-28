@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class PostVO {
 
     private int identityCode;
 
-    private List<ImageInfoVO> imageInfoList;
+    private List<ImageInfoVO> imageInfoList = Collections.emptyList();
 
     /** 评论总数 **/
     private long commentCount = 0;
