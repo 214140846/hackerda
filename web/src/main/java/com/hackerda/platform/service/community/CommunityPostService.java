@@ -9,6 +9,7 @@ import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.user.AppUserBO;
 import com.hackerda.platform.domain.user.PermissionBO;
 import com.hackerda.platform.domain.wechat.WechatUser;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,14 +120,17 @@ public class CommunityPostService {
                 .setStatus(post.getStatus().getCode())
         ;
 
-        List<ImageInfoVO> imageInfoVOList = post.getImageInfoList().stream().map(imageInfo -> {
-            ImageInfoVO infoVO = new ImageInfoVO();
-            infoVO.setFileId(imageInfo.getFileId());
-            infoVO.setUrl(imageInfo.getPath());
-            return infoVO;
-        }).collect(Collectors.toList());
+        if(CollectionUtils.isNotEmpty(post.getImageInfoList())) {
+            List<ImageInfoVO> imageInfoVOList = post.getImageInfoList().stream().map(imageInfo -> {
+                ImageInfoVO infoVO = new ImageInfoVO();
+                infoVO.setFileId(imageInfo.getFileId());
+                infoVO.setUrl(imageInfo.getPath());
+                return infoVO;
+            }).collect(Collectors.toList());
 
-        postVO.setImageInfoList(imageInfoVOList);
+            postVO.setImageInfoList(imageInfoVOList);
+        }
+
 
         // 设置菜单视图
         Subject subject = SecurityUtils.getSubject();
