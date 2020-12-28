@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.HttpCookie;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Repository
@@ -248,7 +249,12 @@ public class PosterRepositoryImpl implements PosterRepository {
 
 
     private PostDetailBO getPostDetailBO(Post post, List<StudentPoster> studentPosterList) {
-        List<ImageInfo> imageInfoList = imageCache.getIfPresent(post.getId());
+        List<ImageInfo> imageInfoList;
+        try {
+            imageInfoList = imageCache.get(post.getId());
+        } catch (ExecutionException e) {
+            imageInfoList = Collections.emptyList();
+        }
 
         PostDetailBO postDetailBO = new PostDetailBO(post.getId(), post.getUserName(), post.getContent(), imageInfoList,
                 IdentityCategory.getByCode(post.getIdentityCode()), post.getPostTime(), post.getEquipment(), post.getShow());
