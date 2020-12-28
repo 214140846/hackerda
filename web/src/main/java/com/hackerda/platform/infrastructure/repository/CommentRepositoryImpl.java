@@ -132,8 +132,12 @@ public class CommentRepositoryImpl implements CommentRepository {
 
     private List<CommentDetailBO> toDetailBO(List<Comment> commentList ) {
 
+        List<String> collect = commentList.stream().map(Comment::getUserName).collect(Collectors.toList());
+        Map<String, StudentPoster> studentPosterMap = posterRepository.findStudentPosterByUserName(collect).stream().collect(Collectors.toMap(Poster::getUserName,
+                x -> x));
+
         List<CommentDetailBO> detailBOList = commentList.stream().map(x -> {
-            StudentPoster poster = posterRepository.findStudentPosterByUserName(x.getUserName());
+            StudentPoster poster = studentPosterMap.get(x.getUserName());
             IdentityCategory identity = IdentityCategory.getByCode(x.getIdentityCode());
             RecordStatus recordStatus = RecordStatus.getByCode(x.getRecordStatus());
 

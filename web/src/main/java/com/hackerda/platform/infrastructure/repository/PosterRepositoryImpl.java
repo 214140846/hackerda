@@ -1,6 +1,10 @@
 package com.hackerda.platform.infrastructure.repository;
 
 import com.github.pagehelper.PageHelper;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.hackerda.platform.domain.community.*;
 import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.user.Gender;
@@ -11,14 +15,13 @@ import com.hackerda.platform.infrastructure.database.model.ImageInfoDO;
 import com.hackerda.platform.infrastructure.database.model.Post;
 import com.hackerda.platform.infrastructure.database.model.PostExample;
 import com.hackerda.platform.infrastructure.database.model.StudentPosterDO;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.net.HttpCookie;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -30,6 +33,18 @@ public class PosterRepositoryImpl implements PosterRepository {
     private ImageDao imageDao;
     @Autowired
     private PostExtMapper postExtMapper;
+
+    private final LoadingCache<Long, List<ImageInfo>> imageCache = CacheBuilder.newBuilder()
+
+            .maximumSize(1000)
+            .build(new CacheLoader<Long, List<ImageInfo>>() {
+                @Override
+                public List<ImageInfo> load(@NotNull Long key) {
+                    return imageDao.selectByPostId(key).stream()
+                            .map(imageInfoDO -> new ImageInfo(imageInfoDO.getUrl(), imageInfoDO.getFileId(),
+                                    RecordStatus.getByCode(imageInfoDO.getRecordStatus()))).collect(Collectors.toList());
+                }
+            });
 
     @Override
     public StudentPoster findByStudentAccount(StudentAccount studentAccount) {
@@ -119,7 +134,8 @@ public class PosterRepositoryImpl implements PosterRepository {
     public PostDetailBO findByPostById(long id) {
         Post post = postExtMapper.selectByPrimaryKey(id);
 
-        return getPostDetailBO(post);
+        StudentPoster poster = findStudentPosterByUserName(post.getUserName());
+        return getPostDetailBO(post, Collections.singletonList(poster));
     }
 
     @Override
@@ -131,8 +147,7 @@ public class PosterRepositoryImpl implements PosterRepository {
         PostExample example = new PostExample();
 
         example.createCriteria().andIdIn(idList);
-
-        return postExtMapper.selectByExample(example).stream().map(this::getPostDetailBO).collect(Collectors.toList());
+        return getPostDetailList(example);
     }
 
 
@@ -148,9 +163,7 @@ public class PosterRepositoryImpl implements PosterRepository {
         criteria.andRecordStatusEqualTo(RecordStatus.Release.getCode())
                 .andShowEqualTo(true);
         PageHelper.startPage(0, limit);
-        List<Post> postList = postExtMapper.selectByExample(example);
-
-        return postList.stream().map(this::getPostDetailBO).collect(Collectors.toList());
+        return getPostDetailList(example);
 
     }
 
@@ -165,9 +178,7 @@ public class PosterRepositoryImpl implements PosterRepository {
         criteria.andRecordStatusIn(identityCategoryList.stream().map(RecordStatus::getCode).collect(Collectors.toList()))
                 .andShowEqualTo(true);
         PageHelper.startPage(0, count);
-        List<Post> postList = postExtMapper.selectByExample(example);
-
-        return postList.stream().map(this::getPostDetailBO).collect(Collectors.toList());
+        return getPostDetailList(example);
     }
 
     @Override
@@ -184,9 +195,7 @@ public class PosterRepositoryImpl implements PosterRepository {
         criteria.andUserNameEqualTo(userName);
         criteria.andIdentityCodeEqualTo(IdentityCategory.Community.getCode());
         PageHelper.startPage(0, count);
-        List<Post> postList = postExtMapper.selectByExample(example);
-
-        return postList.stream().map(this::getPostDetailBO).collect(Collectors.toList());
+        return getPostDetailList(example);
     }
 
     @Override
@@ -196,9 +205,16 @@ public class PosterRepositoryImpl implements PosterRepository {
                 .andRecordStatusIn(identityCategoryList.stream().map(RecordStatus::getCode)
                         .collect(Collectors.toList()));
 
-        List<Post> postList = postExtMapper.selectByExample(example);
+        return getPostDetailList(example);
+    }
 
-        return postList.stream().map(this::getPostDetailBO).collect(Collectors.toList());
+    @NotNull
+    private List<PostDetailBO> getPostDetailList(PostExample example) {
+        List<Post> postList = postExtMapper.selectByExample(example);
+        List<String> userNameList = postList.stream().map(Post::getUserName).collect(Collectors.toList());
+        List<StudentPoster> studentPosterList = findStudentPosterByUserName(userNameList);
+
+        return postList.stream().map(x-> this.getPostDetailBO(x, studentPosterList)).collect(Collectors.toList());
     }
 
     @Override
@@ -231,20 +247,18 @@ public class PosterRepositoryImpl implements PosterRepository {
     }
 
 
-    private PostDetailBO getPostDetailBO(Post post) {
-        List<ImageInfo> imageInfoList = imageDao.selectByPostId(post.getId()).stream()
-                .map(imageInfoDO -> new ImageInfo(imageInfoDO.getUrl(), imageInfoDO.getFileId(),
-                        RecordStatus.getByCode(imageInfoDO.getRecordStatus()))).collect(Collectors.toList());
+    private PostDetailBO getPostDetailBO(Post post, List<StudentPoster> studentPosterList) {
+        List<ImageInfo> imageInfoList = imageCache.getIfPresent(post.getId());
 
         PostDetailBO postDetailBO = new PostDetailBO(post.getId(), post.getUserName(), post.getContent(), imageInfoList,
                 IdentityCategory.getByCode(post.getIdentityCode()), post.getPostTime(), post.getEquipment(), post.getShow());
-
-        StudentPoster poster = this.findStudentPosterByUserName(post.getUserName());
+        Map<String, StudentPoster> studentPosterMap = studentPosterList.stream().collect(Collectors.toMap(Poster::getUserName,
+                x -> x));
 
         postDetailBO.setCommentCount(post.getCommentCount());
         postDetailBO.setViewCount(post.getViewCount());
         postDetailBO.setLikeCount(post.getLikeCount());
-        postDetailBO.setPostUser(poster);
+        postDetailBO.setPostUser(studentPosterMap.get(post.getUserName()));
         postDetailBO.setStatus(RecordStatus.getByCode(post.getRecordStatus()));
         postDetailBO.setLastReplyTime(post.getLastReplyTime());
         return postDetailBO;
