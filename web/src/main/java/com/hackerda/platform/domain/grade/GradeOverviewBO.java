@@ -1,7 +1,7 @@
 package com.hackerda.platform.domain.grade;
 
 import lombok.Data;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -52,6 +52,10 @@ public class GradeOverviewBO {
         }
         this.setOptionalCourseCredit(sumOptionalCredit);
 
+        if(CollectionUtils.isNotEmpty(termGradeList)) {
+            this.errorCode = termGradeList.get(0).getErrorCode();
+            this.errorMsg = termGradeList.get(0).getErrorMsg();
+        }
 
         if(sumCredit != 0){
             double f = sumGradePoint / sumCredit;

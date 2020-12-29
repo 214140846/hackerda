@@ -24,7 +24,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
 
 @Slf4j
-@ActiveProfiles("prod")
+@ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class GradeQueryAppScript {
@@ -57,16 +57,20 @@ public class GradeQueryAppScript {
 
         WechatStudentUserBO wechatStudentUserBO = studentBindApp.bindByUnionId(account, "1", ofNew, wechatUser);
 
-        StudentAccount account2 = new StudentAccount("2020026252");
-        UnionId ofNew2 = UnionId.ofNew("test2");
+//        StudentAccount account2 = new StudentAccount("2020026252");
+//        UnionId ofNew2 = UnionId.ofNew("test2");
+//
+//        ofNew2.bindOpenid(wechatUser);
+//        unionIdRepository.save(ofNew2);
+//        WechatStudentUserBO wechatStudentUserBO2 = studentBindApp.bindByUnionId(account2, "1", ofNew2, wechatUser);
+//
+//        StudentUserBO userBO = new StudentUserBO();
+//        userBO.setUrpClassNum(wechatStudentUserBO.getUrpClassNum());
+        GradeOverviewBO gradeOverview = gradeQueryApp.getGradeOverview(wechatStudentUserBO);
 
-        ofNew2.bindOpenid(wechatUser);
-        unionIdRepository.save(ofNew2);
-        WechatStudentUserBO wechatStudentUserBO2 = studentBindApp.bindByUnionId(account2, "1", ofNew2, wechatUser);
-
-        StudentUserBO userBO = new StudentUserBO();
-        userBO.setUrpClassNum(wechatStudentUserBO.getUrpClassNum());
-        gradeQueryApp.getGradeOverview(wechatStudentUserBO2);
+        wechatMessageSender.sendTemplateMessage(new GradeUpdateMessage(wechatUser,
+                gradeOverview.getTermGradeList().get(0).getGradeList().get(0),
+                wechatStudentUserBO));
 //        gradeFetchQueue.offer(new GradeFetchTask(true, userBO));
 
 //        gradeQueryApp.getGradeOverview(wechatStudentUserBO);

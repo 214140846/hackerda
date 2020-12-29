@@ -30,10 +30,8 @@ public class GradeTransfer {
                 .map(this::adapter2VO)
                 .collect(Collectors.toList()));
 
-        if(gradeOverviewBO.fetchSuccess()){
-            vo.setErrorCode(gradeOverviewBO.getErrorCode());
-            vo.setMessage(gradeOverviewBO.getErrorMsg());
-        }
+        vo.setErrorCode(gradeOverviewBO.getErrorCode());
+        vo.setMessage(gradeOverviewBO.getErrorMsg());
 
         return vo;
     }
