@@ -99,7 +99,6 @@ public class GradeQueryAppScript {
 
         StudentUserBO userBO = new StudentUserBO();
         userBO.setUrpClassNum(wechatStudentUserBO.getUrpClassNum());
-        gradeAutoUpdateScheduled.addClassTask(wechatStudentUserBO.getUrpClassNum().toString());
 //        gradeQueryApp.getGradeOverview(wechatStudentUserBO2);
         Thread.sleep(1000L);
         gradeFetchQueue.offer(new GradeFetchTask(true, userBO));

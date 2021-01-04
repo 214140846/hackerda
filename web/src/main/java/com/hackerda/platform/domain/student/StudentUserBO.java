@@ -2,6 +2,7 @@ package com.hackerda.platform.domain.student;
 
 import com.hackerda.platform.utils.DESUtil;
 import lombok.Data;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringExclude;
@@ -75,6 +76,10 @@ public class StudentUserBO {
         } else {
             return isCorrect;
         }
+    }
+
+    public boolean isPasswordCorrect () {
+        return BooleanUtils.toBoolean(this.isCorrect);
     }
 
 
