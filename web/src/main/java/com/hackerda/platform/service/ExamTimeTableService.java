@@ -1,5 +1,6 @@
 package com.hackerda.platform.service;
 
+import com.hackerda.platform.domain.SpiderSwitch;
 import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
@@ -19,6 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -44,15 +46,14 @@ public class ExamTimeTableService {
 
     @Resource
     private RoomService roomService;
-
-    @Resource
-    private StudentRepository studentRepository;
-
     @Autowired
     private ExamTimetableDao examTimetableDao;
     
     @Autowired
     private StudentExamTimeTableDao studentExamTimeTableDao;
+
+    @Autowired
+    private SpiderSwitch spiderSwitch;
 
     public List<Exam> getExamTimeListFromSpider(StudentUserBO student) {
 
@@ -121,10 +122,12 @@ public class ExamTimeTableService {
      * @param account
      * @return
      */
-    public List<Exam> getExamTimeList(int account) {
-        WechatStudentUserBO student = studentRepository.findWetChatUser(new StudentAccount(2019023695));
-
-        return getExamTimeListFromSpider(student);
+    public List<Exam> getExamTimeList(StudentUserBO student) {
+        if(spiderSwitch.fetchUrp()) {
+            return getExamTimeListFromSpider(student);
+        }
+        List<ExamTimetable> res=examTimetableDao.getExamByAccount(student.getAccount().toString());
+        return transform(res);
     }
 
     private Course getCourseFromExamText(String examText) {

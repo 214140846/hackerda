@@ -73,13 +73,4 @@ public class TimetableController {
         return WebResponse.success(Collections.emptyList());
     }
 
-    @GetMapping("/exam")
-    public WebResponse getExamTimeTableByStudent(@RequestParam(value = "account") String account) {
-        if (Objects.isNull(account)) {
-            return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号无效");
-        }
-
-        List<Exam> examTimeList = examTimeTableService.getExamTimeList(Integer.parseInt(account));
-        return WebResponse.success(examTimeList);
-    }
 }

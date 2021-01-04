@@ -1,6 +1,7 @@
 package com.hackerda.platform.infrastructure.repository.grade;
 
 import com.hackerda.platform.MDCThreadPool;
+import com.hackerda.platform.domain.SpiderSwitch;
 import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.domain.grade.GradeBO;
 import com.hackerda.platform.domain.grade.GradeRepository;
@@ -40,6 +41,8 @@ public class GradeRepositoryImpl implements GradeRepository {
     private GradeAdapter gradeAdapter;
     @Autowired
     private FetchStatusRecorder recorder;
+    @Autowired
+    private SpiderSwitch spiderSwitch;
     @Value("${spider.grade.timeout: 5000}")
     private int getGradeTimeout;
 
@@ -82,6 +85,9 @@ public class GradeRepositoryImpl implements GradeRepository {
 
     @Override
     public List<TermGradeBO> getAllByStudent(StudentUserBO student) {
+        if (!spiderSwitch.fetchUrp()) {
+            return gradeToTermGradeList(gradeDao.getGradeByAccount(student.getAccount().getInt()));
+        }
 
         CompletableFuture<List<TermGradeBO>> currentFuture =
                 CompletableFuture.supplyAsync(() -> {

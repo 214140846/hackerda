@@ -1,6 +1,7 @@
 package com.hackerda.platform.infrastructure.repository.course.timetable;
 
 import com.hackerda.platform.MDCThreadPool;
+import com.hackerda.platform.domain.SpiderSwitch;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.infrastructure.database.dao.ClassCourseTimetableDao;
@@ -44,6 +45,8 @@ public class CourseTimetableRepositoryImpl implements CourseTimetableRepository 
     private ClassCourseTimetableDao classCourseTimetableDao;
     @Autowired
     private CourseDao courseDao;
+    @Autowired
+    private SpiderSwitch spiderSwitch;
 
     private final Executor courseSpiderExecutor = new MDCThreadPool(7, 7, 0L, TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(), r -> new Thread(r, "courseSpider"));
@@ -59,7 +62,7 @@ public class CourseTimetableRepositoryImpl implements CourseTimetableRepository 
         List<CourseTimetableDetailDO> detailList = courseTimeTableDao.selectDetailByStudent(courseTimeTable);
         CourseTimeTableOverview overview = new CourseTimeTableOverview();
         overview.setPersonal(true);
-        if (!CollectionUtils.isEmpty(detailList)) {
+        if (!CollectionUtils.isEmpty(detailList) || !spiderSwitch.fetchUrp()) {
             setSuccessOverview(overview, detailList);
             return overview;
         }
@@ -85,7 +88,7 @@ public class CourseTimetableRepositoryImpl implements CourseTimetableRepository 
 
         CourseTimeTableOverview overview = new CourseTimeTableOverview();
 
-        if(!CollectionUtils.isEmpty(timetableList)) {
+        if(!CollectionUtils.isEmpty(timetableList) || !spiderSwitch.fetchUrp()) {
             setSuccessOverview(overview, timetableList);
             return overview;
         }
