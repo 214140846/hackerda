@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 public class SpiderSwitchImpl implements SpiderSwitch {
     @Override
     public boolean fetchUrp() {
-        return false;
+        return true;
     }
 }
