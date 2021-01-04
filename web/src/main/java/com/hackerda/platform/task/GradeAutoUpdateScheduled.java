@@ -3,6 +3,7 @@ package com.hackerda.platform.task;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hackerda.platform.MDCThreadPool;
+import com.hackerda.platform.domain.SpiderSwitch;
 import com.hackerda.platform.domain.grade.*;
 import com.hackerda.platform.application.GradeQueryApp;
 import com.hackerda.platform.domain.student.StudentRepository;
@@ -52,6 +53,8 @@ public class GradeAutoUpdateScheduled implements Runnable{
     private WechatMessageSender wechatMessageSender;
     @Autowired
     private UrpClassDao urpClassDao;
+    @Autowired
+    private SpiderSwitch spiderSwitch;
 
     private final Set<String> taskSet = Collections.synchronizedSet(new HashSet<>());
 
@@ -72,7 +75,7 @@ public class GradeAutoUpdateScheduled implements Runnable{
 
     @Scheduled(cron = "0 0/20 * * * ? ")
     public void simulation() {
-        if(!autoStart) {
+        if(!autoStart || !start) {
             return;
         }
         log.info("fetch task queue size {}", queue.size());

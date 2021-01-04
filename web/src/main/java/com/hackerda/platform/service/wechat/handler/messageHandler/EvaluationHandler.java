@@ -2,6 +2,7 @@ package com.hackerda.platform.service.wechat.handler.messageHandler;
 
 
 import com.hackerda.platform.builder.TextBuilder;
+import com.hackerda.platform.domain.SpiderSwitch;
 import com.hackerda.platform.domain.constant.RedisKeys;
 import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentUserBO;
@@ -32,6 +33,8 @@ public class EvaluationHandler implements WxMpMessageHandler {
     private TextBuilder textBuilder;
     @Autowired
     private EvaluateTask evaluateTask;
+    @Autowired
+    private SpiderSwitch spiderSwitch;
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> context, WxMpService wxMpService, WxSessionManager sessionManager) {
@@ -41,6 +44,11 @@ public class EvaluationHandler implements WxMpMessageHandler {
         if (evaluationService.hasFinish(student.getAccount())) {
             return textBuilder.build("评估已完成", wxMpXmlMessage, wxMpService);
         }
+
+        if (!spiderSwitch.fetchUrp()) {
+            return textBuilder.build("教务网已关闭，服务已暂停", wxMpXmlMessage, wxMpService);
+        }
+
 
         evaluationService.push(student.getAccount());
 
