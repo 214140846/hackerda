@@ -73,7 +73,7 @@ public class SchoolCommonController {
     public WebResponse getExamTimeTableByStudent() {
         StudentUserBO wechatStudentUserBO = (StudentUserBO) SecurityUtils.getSubject().getPrincipal();
 
-        List<Exam> examTimeList = examTimeTableService.getExamTimeListFromSpider(wechatStudentUserBO);
+        List<Exam> examTimeList = examTimeTableService.getExamTimeList(wechatStudentUserBO);
         return WebResponse.success(examTimeList);
     }
 }

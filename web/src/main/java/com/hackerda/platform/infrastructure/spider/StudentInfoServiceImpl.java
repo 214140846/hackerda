@@ -1,5 +1,6 @@
 package com.hackerda.platform.infrastructure.spider;
 
+import com.hackerda.platform.domain.SpiderSwitch;
 import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.domain.student.*;
 import com.hackerda.platform.domain.user.LifeCycleStatus;
@@ -50,15 +51,26 @@ public class StudentInfoServiceImpl implements StudentInfoService {
     private UrpSearchSpider urpSearchSpider;
     @Autowired
     private SpiderExceptionTransfer exceptionTransfer;
-    @Value("${student.useUnionId : true}")
+    @Autowired
+    private SpiderSwitch spiderSwitch;
+    @Value("${student.useUnionId: true}")
     private boolean useUnionId;
 
 
     @Override
     public boolean checkPasswordValid(String account, String enablePassword) {
         try {
-            newUrpSpiderService.checkStudentPassword(account, enablePassword);
-            return true;
+            if (spiderSwitch.fetchUrp()) {
+                newUrpSpiderService.checkStudentPassword(account, enablePassword);
+                return true;
+            } else {
+                StudentUserBO studentUserBO = studentRepository.find(new StudentAccount(account));
+                if (studentUserBO == null) {
+                    throw new BusinessException(ErrorCode.READ_TIMEOUT, "读取验证码超时");
+                }
+                return studentUserBO.getIsCorrect();
+            }
+
         }catch (PasswordUnCorrectException e) {
             return false;
         } catch (UrpTimeoutException | ResourceAccessException e) {
