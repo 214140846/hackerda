@@ -75,7 +75,6 @@ public class PreloadCaptchaProvider extends CaptchaProvider {
                     CaptchaImage image;
                     while (!Thread.interrupted() && (image = this.task()) != null ) {
                         if(image.isValid()) {
-                            logger.warn("preload captcha is empty");
                             queue.put(image);
                         }
                     }

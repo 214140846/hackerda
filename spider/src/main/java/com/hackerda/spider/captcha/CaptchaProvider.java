@@ -66,6 +66,7 @@ public class CaptchaProvider implements ICaptchaProvider<CaptchaImage> {
         byte[] body = entity.getBody();
 
         if (body == null) {
+            logger.warn("preload captcha is empty url {}", captchaUrl);
             return CaptchaImage.ofEmpty();
         }
 
