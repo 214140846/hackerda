@@ -77,7 +77,7 @@ public class SpiderConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ICaptchaProvider<CaptchaImage> captchaProvider(RestTemplate spiderTemplate){
-        return new PreloadCaptchaProvider(new RestTemplate(), "http://xsurp.usth.edu.cn/img/captcha" +
+        return new PreloadCaptchaProvider(new RestTemplate(), "http://test.hackerda.cn/img/captcha" +
                 ".jpg");
     }
 
