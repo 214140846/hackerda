@@ -71,15 +71,15 @@ public class PreloadCaptchaProvider extends CaptchaProvider {
     private void startPreLoad() {
         for (int x = 0; x < this.producerCount; x++) {
             executorService.submit(() -> {
-                CaptchaImage task = this.task();
+                CaptchaImage image = this.task();
                 while (!Thread.interrupted()) {
                     try {
-                        if(!task.isValid())
-                            queue.put(task);
-                        task = this.task();
+                        if(image.isValid())
+                            queue.put(image);
+                        image = this.task();
 
                     } catch (Throwable throwable) {
-                        logger.debug("preload captcha error", throwable);
+                        logger.error("preload captcha error", throwable);
                     }
                 }
             });

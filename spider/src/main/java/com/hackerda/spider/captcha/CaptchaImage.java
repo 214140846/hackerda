@@ -64,6 +64,6 @@ public class CaptchaImage {
     }
 
     public boolean isValid() {
-        return data.length == 0 || getCookie().isEmpty();
+        return data.length != 0 && !getCookie().isEmpty();
     }
 }
