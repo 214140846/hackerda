@@ -34,7 +34,7 @@ public class GradeAutoUpdateScheduledTest {
 
 //        gradeAutoUpdateScheduled.simulation();
 
-        StudentAccount account = new StudentAccount("2020026251");
+        StudentAccount account = new StudentAccount("2020030617");
         UnionId ofNew = UnionId.ofNew("test");
         WechatUser wechatUser = new WechatUser("wx541fd36e6b400648", "oCxRO1G9N755dOY5dwcT5l3IlS3Y");
         ofNew.bindOpenid(wechatUser);
@@ -42,12 +42,21 @@ public class GradeAutoUpdateScheduledTest {
 
         WechatStudentUserBO wechatStudentUserBO = studentBindApp.bindByUnionId(account, "1", ofNew, wechatUser);
 
-        GradeAutoUpdateScheduled.ClassFetchTask classFetchTask =
-                gradeAutoUpdateScheduled.new ClassFetchTask(wechatStudentUserBO.getUrpClassNum());
 
-        classFetchTask.run();
+        StudentAccount account2 = new StudentAccount("2020030618");
+        UnionId ofNew2 = UnionId.ofNew("test1");
+        WechatUser wechatUser1 = new WechatUser("wx541fd36e6b400648", "oCxRO1G9N755dOY5dwcT5l3IlS3Y");
+        ofNew2.bindOpenid(wechatUser1);
+        unionIdRepository.save(ofNew2);
 
-        gradeAutoUpdateScheduled.run();
+        WechatStudentUserBO wechatStudentUserBO1 = studentBindApp.bindByUnionId(account2, "1", ofNew2, wechatUser1);
+
+//        GradeAutoUpdateScheduled.ClassFetchTask classFetchTask =
+//                gradeAutoUpdateScheduled.new ClassFetchTask(wechatStudentUserBO.getUrpClassNum());
+//
+//        classFetchTask.run();
+//
+//        gradeAutoUpdateScheduled.run();
 
     }
 }

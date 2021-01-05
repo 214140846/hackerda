@@ -3,6 +3,7 @@ package com.hackerda.platform.infrastructure.repository;
 import com.hackerda.platform.domain.grade.GradeBO;
 import com.hackerda.platform.domain.grade.GradeRepository;
 import com.hackerda.platform.domain.grade.TermGradeBO;
+import com.hackerda.platform.domain.grade.TermGradeViewBO;
 import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.infrastructure.database.mapper.GradeMapper;
@@ -45,17 +46,17 @@ public class GradeRepositoryImplTest {
 
         WechatStudentUserBO user = studentUserRepository.findWetChatUser(new StudentAccount(2017025838));
 
-        List<TermGradeBO> termGradeBOList = gradeRepository.getAllByStudent(user);
+        TermGradeViewBO viewBO = gradeRepository.getAllByStudent(user);
 
-        GradeBO gradeBO = termGradeBOList.get(0).getGradeList().stream().findAny().orElse(null);
+        GradeBO gradeBO = viewBO.getTermGradeBOList().get(0).getGradeList().stream().findAny().orElse(null);
 
         if(gradeBO != null){
             gradeBO.setScore(-2.0);
             gradeRepository.update(Collections.singletonList(gradeBO));
         }
 
-        List<TermGradeBO> termGradeBOList2 = gradeRepository.getAllByStudent(user);
-        List<GradeBO> update = termGradeBOList2.get(0).getUpdate();
+        TermGradeViewBO viewBO1 = gradeRepository.getAllByStudent(user);
+        List<GradeBO> update = viewBO1.getTermGradeBOList().get(0).getUpdate();
 
         assert update.size() == 1;
     }
@@ -66,12 +67,12 @@ public class GradeRepositoryImplTest {
 
         WechatStudentUserBO user = studentUserRepository.findWetChatUser(new StudentAccount(2017025838));
 
-        List<TermGradeBO> termGradeBOList = gradeRepository.getAllByStudent(user);
+        List<TermGradeBO> termGradeBOList = gradeRepository.getAllByStudent(user).getTermGradeBOList();
 
         termGradeBOList.get(0).getGradeList().stream().findAny()
                 .ifPresent(gradeBO -> gradeRepository.delete(gradeBO));
 
-        List<TermGradeBO> termGradeBOList2 = gradeRepository.getAllByStudent(user);
+        List<TermGradeBO> termGradeBOList2 = gradeRepository.getAllByStudent(user).getTermGradeBOList();
         List<GradeBO> newGrade = termGradeBOList2.get(0).getNew();
 
         assert newGrade.size() == 1;

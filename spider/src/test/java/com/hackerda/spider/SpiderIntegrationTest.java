@@ -106,7 +106,7 @@ public class SpiderIntegrationTest {
         while ((image = captchaProvider.get()) != null){
 
             String s = image.getCookie().toString();
-            System.out.println(s + " " + image.isValid());
+            System.out.println(s + " " + image.isInvalid());
             Thread.sleep(1000L);
         }
     }

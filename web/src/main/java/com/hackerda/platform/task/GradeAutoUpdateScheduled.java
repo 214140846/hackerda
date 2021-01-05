@@ -79,7 +79,7 @@ public class GradeAutoUpdateScheduled implements Runnable{
 
     @Scheduled(cron = "0 0/20 * * * ? ")
     public void simulation() {
-        if(!autoStart || !start) {
+        if(!autoStart) {
             return;
         }
 
@@ -147,8 +147,10 @@ public class GradeAutoUpdateScheduled implements Runnable{
     }
 
     private List<WechatStudentUserBO> getFetchList(Integer urpClassNum) {
-        return studentRepository
-                .findWetChatUser(urpClassNum)
+        List<WechatStudentUserBO> wetChatUser = studentRepository
+                .findWetChatUser(urpClassNum);
+
+        return wetChatUser
                 .stream()
                 .filter(x-> x.hasBindApp("wx541fd36e6b400648"))
                 .filter(WechatStudentUserBO::isPasswordCorrect)
@@ -177,6 +179,7 @@ public class GradeAutoUpdateScheduled implements Runnable{
 
                 if(gradeOverviewBO == null || gradeOverviewBO.getErrorCode() == ErrorCode.READ_TIMEOUT.getErrorCode()) {
                     if (retryCount < 2) {
+                        log.info("classNum {} retry count {}", urpClassNum, retryCount);
                         classExecutor.submit(this);
                     }
                     retryCount ++;
@@ -192,7 +195,6 @@ public class GradeAutoUpdateScheduled implements Runnable{
                     }
                 }
             }
-            log.info("classNum {} finish size {}", urpClassNum, fetchList.size());
 
         }
     }

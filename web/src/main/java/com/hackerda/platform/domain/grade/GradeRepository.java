@@ -13,5 +13,5 @@ public interface GradeRepository {
 
     void delete(GradeBO grade);
 
-    List<TermGradeBO> getAllByStudent(StudentUserBO studentUser);
+    TermGradeViewBO getAllByStudent(StudentUserBO studentUser);
 }

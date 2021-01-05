@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class UrpBaseSpider {
 
-    final String ROOT = "http://test.hackerda.cn";
+    final String ROOT = "http://xsurp.usth.edu.cn";
     /**
      * 登录校验
      */

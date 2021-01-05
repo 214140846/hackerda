@@ -21,9 +21,9 @@ public class GradeOverviewFactory {
     public GradeOverviewBO create(StudentUserBO student) {
 
 
-        List<TermGradeBO> allByStudent = gradeRepository.getAllByStudent(student);
+        TermGradeViewBO termGradeViewBO = gradeRepository.getAllByStudent(student);
 
-        GradeOverviewBO bo = new GradeOverviewBO(allByStudent);
+        GradeOverviewBO bo = new GradeOverviewBO(termGradeViewBO);
 
         if(bo.fetchSuccess()){
             bo.setErrorCode(0);

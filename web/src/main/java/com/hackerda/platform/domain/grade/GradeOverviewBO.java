@@ -29,8 +29,8 @@ public class GradeOverviewBO {
 
     private String errorMsg;
 
-    public GradeOverviewBO (List<TermGradeBO> termGradeList) {
-        this.termGradeList = termGradeList;
+    public GradeOverviewBO (TermGradeViewBO termGradeViewBO) {
+        this.termGradeList = termGradeViewBO.getTermGradeBOList();
 
         double sumGradePoint = 0.0;
         double sumCredit = 0.0;
@@ -52,10 +52,8 @@ public class GradeOverviewBO {
         }
         this.setOptionalCourseCredit(sumOptionalCredit);
 
-        if(CollectionUtils.isNotEmpty(termGradeList)) {
-            this.errorCode = termGradeList.get(0).getErrorCode();
-            this.errorMsg = termGradeList.get(0).getErrorMsg();
-        }
+        this.errorCode = termGradeViewBO.getErrorCode();
+        this.errorMsg = termGradeViewBO.getErrorMsg();
 
         if(sumCredit != 0){
             double f = sumGradePoint / sumCredit;
