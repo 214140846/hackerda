@@ -66,7 +66,7 @@ public class CaptchaProvider implements ICaptchaProvider<CaptchaImage> {
         byte[] body = entity.getBody();
 
         if (body == null) {
-            throw new RuntimeException("image is null");
+            return CaptchaImage.ofEmpty();
         }
 
         HttpHeaders headers = entity.getHeaders();

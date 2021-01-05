@@ -9,10 +9,7 @@ import org.springframework.util.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpCookie;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author junrong.chen
@@ -61,6 +58,10 @@ public class CaptchaImage {
     public String encodeBase64() {
         Base64.Encoder encoder = Base64.getEncoder();
         return encoder.encodeToString(getData());
+    }
+
+    public static CaptchaImage ofEmpty() {
+        return new CaptchaImage(new byte[0], Collections.emptyList());
     }
 
     public boolean isValid() {
