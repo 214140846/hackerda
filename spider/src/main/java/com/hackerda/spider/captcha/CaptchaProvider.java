@@ -60,19 +60,23 @@ public class CaptchaProvider implements ICaptchaProvider<CaptchaImage> {
 
 
     protected CaptchaImage task() {
+        try {
+            ResponseEntity<byte[]> entity = restOperations.getForEntity(captchaUrl, byte[].class);
 
-        ResponseEntity<byte[]> entity = restOperations.getForEntity(captchaUrl, byte[].class);
+            byte[] body = entity.getBody();
 
-        byte[] body = entity.getBody();
+            if (body == null) {
+                logger.warn("preload captcha is empty url {}", captchaUrl);
+                return CaptchaImage.ofEmpty();
+            }
 
-        if (body == null) {
-            logger.warn("preload captcha is empty url {}", captchaUrl);
-            return CaptchaImage.ofEmpty();
+            HttpHeaders headers = entity.getHeaders();
+
+            return new CaptchaImage(body, getCookieFromHeader(headers));
+        } catch (Throwable throwable) {
+            logger.error("preload captcha error url {}", captchaUrl);
         }
-
-        HttpHeaders headers = entity.getHeaders();
-
-        return new CaptchaImage(body, getCookieFromHeader(headers));
+        return CaptchaImage.ofEmpty();
 
     }
 
