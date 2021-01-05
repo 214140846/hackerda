@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class UrpBaseSpider {
 
-    final String ROOT = "http://xsurp.usth.edu.cn";
+    final String ROOT = "http://test.hackerda.cn";
     /**
      * 登录校验
      */
@@ -81,7 +81,7 @@ public class UrpBaseSpider {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Referer","http://xsurp.usth.edu.cn/login");
-        headers.set("Host", "xsurp.usth.edu.cn");
+//        headers.set("Host", "xsurp.usth.edu.cn");
         headers.set("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
                 "Chrome/75.0.3770.100 Safari/537.36");
         headers.set("Upgrade-Insecure-Requests", "1");
