@@ -15,6 +15,7 @@ import com.hackerda.spider.cookie.AccountCookiePersist;
 import com.hackerda.spider.predict.CaptchaPredict;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -35,13 +36,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Import(SpiderConfiguration.class)
 public class BasicsConfig {
 
+    @Value("${school.server.url:http://xsurp.usth.edu.cn}")
+    private String server;
+
     @Bean
     @Scope("prototype")
     public UrpSpider urpBaseSpider(RestTemplate spiderTemplate,
                                    CaptchaPredict captchaPredict, ICaptchaProvider<CaptchaImage> captchaProvider,
                                    AccountCookiePersist<String> cookiePersist, IExceptionHandler spiderExceptionHandler){
 
-        return new UrpCommonSpider(spiderTemplate, captchaPredict, captchaProvider, cookiePersist, spiderExceptionHandler);
+        return new UrpCommonSpider(server, spiderTemplate, captchaPredict, captchaProvider, cookiePersist,
+                spiderExceptionHandler);
     }
 
     @Bean
@@ -50,7 +55,8 @@ public class BasicsConfig {
                                    CaptchaPredict captchaPredict, ICaptchaProvider<CaptchaImage> captchaProvider,
                                    AccountCookiePersist<String> cookiePersist, IExceptionHandler spiderExceptionHandler){
 
-        return new UrpEvaluationSpiderImpl(searchSpiderTemplate, captchaPredict, captchaProvider, cookiePersist, spiderExceptionHandler);
+        return new UrpEvaluationSpiderImpl(server, searchSpiderTemplate, captchaPredict, captchaProvider,
+                cookiePersist, spiderExceptionHandler);
     }
 
     @Bean
@@ -58,7 +64,7 @@ public class BasicsConfig {
                                            CaptchaPredict captchaPredict, ICaptchaProvider<CaptchaImage> captchaProvider,
                                            AccountCookiePersist<String> cookiePersist){
 
-        return new UrpSearchSpiderImpl(searchSpiderTemplate, captchaPredict, captchaProvider, cookiePersist);
+        return new UrpSearchSpiderImpl(server, searchSpiderTemplate, captchaPredict, captchaProvider, cookiePersist);
     }
 
     @Bean

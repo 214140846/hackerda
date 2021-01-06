@@ -23,11 +23,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class UrpBaseSpider {
 
-    final String ROOT = "http://xsurp.usth.edu.cn";
+    final String ROOT;
     /**
      * 登录校验
      */
-    private final String CHECK = ROOT + "/j_spring_security_check";
+    private final String CHECK;
 
     private final RestOperations client;
     private final CaptchaPredict captchaPredict;
@@ -46,14 +46,19 @@ public class UrpBaseSpider {
     String account = "";
 
 
-    public UrpBaseSpider(RestOperations client, CaptchaPredict captchaPredict,
+
+    public UrpBaseSpider(String server, RestOperations client, CaptchaPredict captchaPredict,
                          ICaptchaProvider<CaptchaImage> captchaProvider, AccountCookiePersist<String> cookiePersist) {
-        this(client, captchaPredict, captchaProvider , cookiePersist, null);
+
+        this(server, client, captchaPredict, captchaProvider , cookiePersist, null);
+
     }
 
-    public UrpBaseSpider(RestOperations client, CaptchaPredict captchaPredict,
+    public UrpBaseSpider(String server, RestOperations client, CaptchaPredict captchaPredict,
                          ICaptchaProvider<CaptchaImage> captchaProvider, AccountCookiePersist<String> cookiePersist,
                          IExceptionHandler exceptionHandler) {
+        this.ROOT = server;
+        this.CHECK = server + "/j_spring_security_check";
         this.client = client;
         this.captchaPredict = captchaPredict;
         this.captchaProvider = captchaProvider;

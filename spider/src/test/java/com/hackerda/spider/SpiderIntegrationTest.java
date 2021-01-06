@@ -106,7 +106,7 @@ public class SpiderIntegrationTest {
         while ((image = captchaProvider.get()) != null){
 
             String s = image.getCookie().toString();
-            System.out.println(s + " " + image.isInvalid());
+            System.out.println(s + " " + image.isValid());
             Thread.sleep(1000L);
         }
     }
@@ -120,7 +120,8 @@ public class SpiderIntegrationTest {
         public UrpSpider urpBaseSpider(RestTemplate client,
                                            CaptchaPredict captchaPredict,
                                        ICaptchaProvider<CaptchaImage> captchaProvider, AccountCookiePersist<String> cookiePersist){
-            return new UrpCommonSpider(client, captchaPredict, captchaProvider, cookiePersist);
+            return new UrpCommonSpider("http://xsurp.usth.edu.cn", client, captchaPredict, captchaProvider,
+                    cookiePersist);
         }
 
         @Bean

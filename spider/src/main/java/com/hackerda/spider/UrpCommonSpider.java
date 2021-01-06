@@ -53,15 +53,15 @@ public class UrpCommonSpider extends UrpBaseSpider implements UrpSpider{
     private static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
 
 
-    public UrpCommonSpider(RestOperations client, CaptchaPredict captchaPredict,
+    public UrpCommonSpider(String server, RestOperations client, CaptchaPredict captchaPredict,
                            ICaptchaProvider<CaptchaImage> captchaProvider, AccountCookiePersist<String> cookiePersist) {
-        super(client, captchaPredict, captchaProvider, cookiePersist);
+        super(server, client, captchaPredict, captchaProvider, cookiePersist);
     }
 
-    public UrpCommonSpider(RestOperations client, CaptchaPredict captchaPredict,
+    public UrpCommonSpider(String server, RestOperations client, CaptchaPredict captchaPredict,
                            ICaptchaProvider<CaptchaImage> captchaProvider, AccountCookiePersist<String> cookiePersist
             , IExceptionHandler exceptionHandler) {
-        super(client, captchaPredict, captchaProvider, cookiePersist, exceptionHandler);
+        super(server, client, captchaPredict, captchaProvider, cookiePersist, exceptionHandler);
     }
 
 

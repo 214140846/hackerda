@@ -199,10 +199,10 @@
         <appender-ref ref="evaluateTaskAppender"/>
     </logger>
 
-<!--    <logger name="com.hackerda.platform.task.GradeAutoUpdateScheduled" additivity="false">-->
-<!--        <level value="INFO"/>-->
-<!--        <appender-ref ref="gradeTaskAppender"/>-->
-<!--    </logger>-->
+    <logger name="com.hackerda.platform.task.GradeAutoUpdateScheduled" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="gradeTaskAppender"/>
+    </logger>
 
     <logger name="com.hackerda.platform.infrastructure.wechat.WechatMessageSenderImpl" additivity="false">
         <level value="INFO"/>

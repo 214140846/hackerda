@@ -29,6 +29,8 @@ public class SpiderConfiguration {
     private int connectTimeout;
     @Value("${spider.captcha.predict}")
     private String captchaPredict;
+    @Value("${school.server.url:http://xsurp.usth.edu.cn}")
+    private String server;
 
     @Bean
     public RestTemplate spiderTemplate(){
@@ -77,7 +79,7 @@ public class SpiderConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ICaptchaProvider<CaptchaImage> captchaProvider(RestTemplate spiderTemplate){
-        return new PreloadCaptchaProvider(spiderTemplate, "http://xsurp.usth.edu.cn/img/captcha" +
+        return new PreloadCaptchaProvider(spiderTemplate, server + "/img/captcha" +
                 ".jpg");
     }
 
