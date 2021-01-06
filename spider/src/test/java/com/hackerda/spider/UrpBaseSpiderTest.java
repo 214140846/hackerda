@@ -36,7 +36,7 @@ public class UrpBaseSpiderTest {
         when(provider.get())
                 .thenReturn(new CaptchaImage(new byte[0], Lists.newArrayList(new HttpCookie("j_session",
                         "session_address"))));
-        UrpBaseSpider spider = new UrpBaseSpider(null, predict, provider, cookiePersist) {
+        UrpBaseSpider spider = new UrpBaseSpider("",null, predict, provider, cookiePersist) {
 
             @Override
             protected <T> ResponseEntity<T> postFormData(HttpEntity<MultiValueMap<String, String>> request, String url, Class<T> resultType) {
@@ -68,7 +68,7 @@ public class UrpBaseSpiderTest {
         when(provider.get())
                 .thenReturn(new CaptchaImage(new byte[0], Lists.newArrayList(new HttpCookie("j_session",
                         "session_address"))));
-        UrpBaseSpider spider = new UrpBaseSpider(null, predict, provider, cookiePersist) {
+        UrpBaseSpider spider = new UrpBaseSpider("",null, predict, provider, cookiePersist) {
 
             @Override
             protected <T> ResponseEntity<T> postFormData(HttpEntity<MultiValueMap<String, String>> request, String url, Class<T> resultType) {
@@ -97,7 +97,7 @@ public class UrpBaseSpiderTest {
         when(provider.get())
                 .thenReturn(new CaptchaImage(new byte[0], Lists.newArrayList(new HttpCookie("j_session",
                         "session_address"))));
-        UrpBaseSpider spider = new UrpBaseSpider(null, predict, provider, cookiePersist) {
+        UrpBaseSpider spider = new UrpBaseSpider("",null, predict, provider, cookiePersist) {
 
             @Override
             protected <T> ResponseEntity<T> postFormData(HttpEntity<MultiValueMap<String, String>> request, String url, Class<T> resultType) {
@@ -129,7 +129,7 @@ public class UrpBaseSpiderTest {
         when(provider.get())
                 .thenReturn(new CaptchaImage(new byte[0], Lists.newArrayList(new HttpCookie("j_session",
                         "session_address"))));
-        UrpBaseSpider spider = new UrpBaseSpider(null, predict, provider, cookiePersist, handler);
+        UrpBaseSpider spider = new UrpBaseSpider("", null, predict, provider, cookiePersist, handler);
 
 
         spider.setAccount("dummy");

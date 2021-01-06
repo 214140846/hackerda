@@ -23,11 +23,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class UrpBaseSpider {
 
-    final String ROOT = "http://test.hackerda.cn";
+    final String ROOT;
     /**
      * 登录校验
      */
-    private final String CHECK = ROOT + "/j_spring_security_check";
+    private final String CHECK;
 
     private final RestOperations client;
     private final CaptchaPredict captchaPredict;
@@ -46,14 +46,19 @@ public class UrpBaseSpider {
     String account = "";
 
 
-    public UrpBaseSpider(RestOperations client, CaptchaPredict captchaPredict,
+
+    public UrpBaseSpider(String server, RestOperations client, CaptchaPredict captchaPredict,
                          ICaptchaProvider<CaptchaImage> captchaProvider, AccountCookiePersist<String> cookiePersist) {
-        this(client, captchaPredict, captchaProvider , cookiePersist, null);
+
+        this(server, client, captchaPredict, captchaProvider , cookiePersist, null);
+
     }
 
-    public UrpBaseSpider(RestOperations client, CaptchaPredict captchaPredict,
+    public UrpBaseSpider(String server, RestOperations client, CaptchaPredict captchaPredict,
                          ICaptchaProvider<CaptchaImage> captchaProvider, AccountCookiePersist<String> cookiePersist,
                          IExceptionHandler exceptionHandler) {
+        this.ROOT = server;
+        this.CHECK = server + "/j_spring_security_check";
         this.client = client;
         this.captchaPredict = captchaPredict;
         this.captchaProvider = captchaProvider;
@@ -88,7 +93,7 @@ public class UrpBaseSpider {
         headers.set(HttpHeaders.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;" +
                 "q=0.8," +
                 "application/signed-exchange;v=b3");
-        headers.setOrigin("http://xsurp.usth.edu.cn");
+//        headers.setOrigin("http://xsurp.usth.edu.cn");
         headers.set(HttpHeaders.COOKIE, cookieToString(preLoad.getCookie()));
 
 

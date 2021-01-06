@@ -23,12 +23,14 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class SpiderConfiguration {
 
-    @Value("${spider.timeout.request: 3000}")
+    @Value("${spider.timeout.request :500}")
     private int requestTimeout;
-    @Value("${spider.timeout.connect: 3000}")
+    @Value("${spider.timeout.connect :2000}")
     private int connectTimeout;
     @Value("${spider.captcha.predict}")
     private String captchaPredict;
+    @Value("${school.server.url:http://xsurp.usth.edu.cn}")
+    private String server;
 
     @Bean
     public RestTemplate spiderTemplate(){
@@ -77,7 +79,7 @@ public class SpiderConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ICaptchaProvider<CaptchaImage> captchaProvider(RestTemplate spiderTemplate){
-        return new PreloadCaptchaProvider(new RestTemplate(), "http://test.hackerda.cn/img/captcha" +
+        return new PreloadCaptchaProvider(spiderTemplate, server + "/img/captcha" +
                 ".jpg");
     }
 

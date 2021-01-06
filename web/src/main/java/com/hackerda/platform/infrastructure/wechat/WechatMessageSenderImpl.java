@@ -51,7 +51,7 @@ public class WechatMessageSenderImpl implements WechatMessageSender {
         try {
             log.info("send message {}", wxMpTemplateMessage.toJson());
             wxService.getTemplateMsgService().sendTemplateMsg(wxMpTemplateMessage);
-        } catch (WxErrorException e) {
+        } catch (Exception e) {
             log.error("message {} send error",wxMpTemplateMessage.toJson(), e);
         }
     }

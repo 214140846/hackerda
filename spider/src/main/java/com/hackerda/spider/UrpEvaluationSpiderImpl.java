@@ -26,12 +26,13 @@ public class UrpEvaluationSpiderImpl extends UrpBaseSpider implements UrpEvaluat
 
     private final String EVALUATION = ROOT + "/student/teachingEvaluation/teachingEvaluation/evaluation";
 
-    public UrpEvaluationSpiderImpl(RestOperations client,
+    public UrpEvaluationSpiderImpl(String server,
+                                   RestOperations client,
                                    CaptchaPredict captchaPredict,
                                    ICaptchaProvider<CaptchaImage> captchaProvider,
                                    AccountCookiePersist<String> cookiePersist,
                                    IExceptionHandler exceptionHandler) {
-        super(client, captchaPredict, captchaProvider, cookiePersist, exceptionHandler);
+        super(server, client, captchaPredict, captchaProvider, cookiePersist, exceptionHandler);
     }
 
     @Override

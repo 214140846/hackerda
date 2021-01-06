@@ -78,14 +78,14 @@ public class UrpSearchSpiderImpl extends UrpBaseSpider implements UrpSearchSpide
             = new TypeReference<List<List<CourseTimetableSearchResult>>>() {
     };
 
-    public UrpSearchSpiderImpl(RestOperations client, CaptchaPredict captchaPredict,
+    public UrpSearchSpiderImpl(String server, RestOperations client, CaptchaPredict captchaPredict,
                                ICaptchaProvider<CaptchaImage> captchaProvider) {
-        super(client, captchaPredict, captchaProvider, new MemoryCookiePersist<>());
+        super(server, client, captchaPredict, captchaProvider, new MemoryCookiePersist<>());
     }
 
-    public UrpSearchSpiderImpl(RestOperations client, CaptchaPredict captchaPredict,
+    public UrpSearchSpiderImpl(String server, RestOperations client, CaptchaPredict captchaPredict,
                                ICaptchaProvider<CaptchaImage> captchaProvider, AccountCookiePersist<String> cookiePersist) {
-        super(client, captchaPredict, captchaProvider, cookiePersist);
+        super(server, client, captchaPredict, captchaProvider, cookiePersist);
     }
 
 

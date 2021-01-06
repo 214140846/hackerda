@@ -24,7 +24,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
 
 @Slf4j
-@ActiveProfiles("prod")
+@ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class GradeQueryAppScript {
@@ -48,18 +48,79 @@ public class GradeQueryAppScript {
 
 
     @Test
+    public void test() {
+        StudentAccount account = new StudentAccount("2020026251");
+        UnionId ofNew = UnionId.ofNew("test");
+        WechatUser wechatUser = new WechatUser("wx541fd36e6b400648", "oCxRO1G9N755dOY5dwcT5l3IlS3Y");
+        ofNew.bindOpenid(wechatUser);
+        unionIdRepository.save(ofNew);
+
+        WechatStudentUserBO wechatStudentUserBO = studentBindApp.bindByUnionId(account, "1", ofNew, wechatUser);
+
+//        StudentAccount account2 = new StudentAccount("2020026252");
+//        UnionId ofNew2 = UnionId.ofNew("test2");
+//
+//        ofNew2.bindOpenid(wechatUser);
+//        unionIdRepository.save(ofNew2);
+//        WechatStudentUserBO wechatStudentUserBO2 = studentBindApp.bindByUnionId(account2, "1", ofNew2, wechatUser);
+//
+//        StudentUserBO userBO = new StudentUserBO();
+//        userBO.setUrpClassNum(wechatStudentUserBO.getUrpClassNum());
+        GradeOverviewBO gradeOverview = gradeQueryApp.getGradeOverview(wechatStudentUserBO);
+
+        wechatMessageSender.sendTemplateMessage(new GradeUpdateMessage(wechatUser,
+                gradeOverview.getTermGradeList().get(0).getGradeList().get(0),
+                wechatStudentUserBO));
+//        gradeFetchQueue.offer(new GradeFetchTask(true, userBO));
+
+//        gradeQueryApp.getGradeOverview(wechatStudentUserBO);
+        gradeAutoUpdateScheduled.run();
+
+//        System.out.println(gradeFetchQueue.size());
+
+    }
+
+    @Test
+    public void test2() throws InterruptedException {
+        StudentAccount account = new StudentAccount("2020026251");
+        UnionId ofNew = UnionId.ofNew("test");
+        WechatUser wechatUser = new WechatUser("wx541fd36e6b400648", "oCxRO1G9N755dOY5dwcT5l3IlS3Y");
+        ofNew.bindOpenid(wechatUser);
+        unionIdRepository.save(ofNew);
+
+        WechatStudentUserBO wechatStudentUserBO = studentBindApp.bindByUnionId(account, "1", ofNew, wechatUser);
+
+        StudentAccount account2 = new StudentAccount("2020026252");
+        UnionId ofNew2 = UnionId.ofNew("test2");
+
+        ofNew2.bindOpenid(wechatUser);
+        unionIdRepository.save(ofNew2);
+        WechatStudentUserBO wechatStudentUserBO2 = studentBindApp.bindByUnionId(account2, "1", ofNew2, wechatUser);
+
+        StudentUserBO userBO = new StudentUserBO();
+        userBO.setUrpClassNum(wechatStudentUserBO.getUrpClassNum());
+//        gradeQueryApp.getGradeOverview(wechatStudentUserBO2);
+        Thread.sleep(1000L);
+        gradeFetchQueue.offer(new GradeFetchTask(true, userBO));
+
+//        gradeQueryApp.getGradeOverview(wechatStudentUserBO);
+        gradeAutoUpdateScheduled.run();
+
+//        System.out.println(gradeFetchQueue.size());
+
+
+    }
+
+    @Test
     public void test3() {
 
 
-        List<String> prefixList = Lists.newArrayList("2018");
+        List<String> prefixList = Lists.newArrayList("2017");
 
         for (String prefix : prefixList) {
-            List<String> classNumList = urpClassDao.selectByNumPrefix(prefix).stream()
-                    .filter(x-> x.getSubjectNum().equals("080601"))
-                    .map(UrpClass::getClassNum).collect(Collectors.toList());
+            List<String> classNumList = urpClassDao.selectByNumPrefix(prefix).stream().map(UrpClass::getClassNum).collect(Collectors.toList());
             for (String s : classNumList) {
                 for (WechatStudentUserBO studentUserBO : studentRepository.findWetChatUser(Integer.parseInt(s))) {
-                    System.out.println(studentUserBO.getAccount());
                     gradeQueryApp.getGradeOverview(studentUserBO);
                 }
             }

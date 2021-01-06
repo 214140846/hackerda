@@ -39,7 +39,7 @@ public class GradeQueryApp {
     public GradeOverviewBO getGradeOverview(StudentUserBO studentUser, boolean isFormUser) {
 
         if(!studentUser.isMsgHasCheck()) {
-            return new GradeOverviewBO(Collections.emptyList());
+            return new GradeOverviewBO(TermGradeViewBO.ofEmpty());
         }
 
         GradeOverviewBO gradeOverviewBO = factory.create(studentUser);

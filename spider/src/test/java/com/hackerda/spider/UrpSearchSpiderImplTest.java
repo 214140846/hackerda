@@ -23,6 +23,7 @@ public class UrpSearchSpiderImplTest {
 
     private UrpSearchSpider urpSearchSpider;
 
+
     @Before
     public void before() {
         OkHttpClient client = new OkHttpClient.Builder()
@@ -37,7 +38,7 @@ public class UrpSearchSpiderImplTest {
         SchoolCaptchaPredictor predictor = new SchoolCaptchaPredictor(restTemplate, "http://spider.hackerda.cn/valid");
         PreloadCaptchaProvider provider = new PreloadCaptchaProvider(restTemplate, "http://xsurp.usth.edu.cn/img/captcha" +
                 ".jpg");
-        this.urpSearchSpider = new UrpSearchSpiderImpl(restTemplate, predictor, provider);
+        this.urpSearchSpider = new UrpSearchSpiderImpl("http://xsurp.usth.edu.cn", restTemplate, predictor, provider);
     }
 
 

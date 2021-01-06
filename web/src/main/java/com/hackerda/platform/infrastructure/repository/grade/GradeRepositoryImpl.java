@@ -6,6 +6,7 @@ import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.domain.grade.GradeBO;
 import com.hackerda.platform.domain.grade.GradeRepository;
 import com.hackerda.platform.domain.grade.TermGradeBO;
+import com.hackerda.platform.domain.grade.TermGradeViewBO;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.infrastructure.database.dao.GradeDao;
 import com.hackerda.platform.infrastructure.database.model.Grade;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BinaryOperator;
@@ -84,10 +86,12 @@ public class GradeRepositoryImpl implements GradeRepository {
     }
 
     @Override
-    public List<TermGradeBO> getAllByStudent(StudentUserBO student) {
+    public TermGradeViewBO getAllByStudent(StudentUserBO student) {
+
         if (!spiderSwitch.fetchUrp()) {
             return gradeToTermGradeList(gradeDao.getGradeByAccount(student.getAccount().getInt()));
         }
+
 
         CompletableFuture<List<TermGradeBO>> currentFuture =
                 CompletableFuture.supplyAsync(() -> {
@@ -117,11 +121,14 @@ public class GradeRepositoryImpl implements GradeRepository {
             exception = e;
         }
 
+        TermGradeViewBO termGradeViewBO = new TermGradeViewBO();
+        termGradeViewBO.setTermGradeBOList(gradeList);
+
         if(exception != null){
-            handleException(gradeList, exception);
+            handleException(termGradeViewBO, exception);
         }
 
-        return gradeList;
+        return termGradeViewBO;
     }
 
     private CompletableFuture<List<TermGradeBO>> getSchemeFuture(StudentUserBO student) {
@@ -140,7 +147,7 @@ public class GradeRepositoryImpl implements GradeRepository {
     }
 
 
-    private void handleException(List<TermGradeBO> termGradeList, Exception exception) {
+    private void handleException(TermGradeViewBO termGradeList, Exception exception) {
         int errorCode;
         String msg;
 
@@ -172,11 +179,8 @@ public class GradeRepositoryImpl implements GradeRepository {
             log.error("get grade error", exception);
         }
 
-        termGradeList.forEach(x-> {
-            x.setErrorCode(errorCode);
-            x.setFetchSuccess(false);
-            x.setErrorMsg(msg);
-        });
+        termGradeList.setErrorCode(errorCode);
+        termGradeList.setErrorMsg(msg);
 
     }
 

@@ -26,20 +26,10 @@ import static org.mockito.Mockito.*;
 public class UrpCommonSpiderTest {
 
 
-    @Autowired
-    private RestTemplate client;
-    @Autowired
-    private CaptchaPredict captchaPredict;
-    @Autowired
-    private ICaptchaProvider<CaptchaImage> captchaProvider;
-
-
-
     @Test
     public void login() {
 
         MemoryCookiePersist<String> cookiePersist = spy(new MemoryCookiePersist<>());
-        new UrpCommonSpider(client, captchaPredict, captchaProvider, cookiePersist);
 
     }
 

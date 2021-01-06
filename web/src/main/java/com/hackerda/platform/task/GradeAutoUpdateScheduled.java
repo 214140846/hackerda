@@ -1,6 +1,5 @@
 package com.hackerda.platform.task;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hackerda.platform.MDCThreadPool;
 import com.hackerda.platform.domain.SpiderSwitch;
@@ -17,18 +16,21 @@ import com.hackerda.platform.infrastructure.database.model.UrpClass;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -38,10 +40,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class GradeAutoUpdateScheduled implements Runnable{
-    private final BlockingQueue<Runnable> queue = new AntiDuplicateLinkedBlockingQueue<>(1024);
 
     private final ExecutorService gradeAutoUpdatePool = new MDCThreadPool(8, 8,
-            0L, TimeUnit.MILLISECONDS, queue, r -> new Thread(r, "gradeUpdate"));
+            0L, TimeUnit.MILLISECONDS, new AntiDuplicateLinkedBlockingQueue<>(10240), r -> new Thread(r, "gradeUpdate"));
+
+    private final ExecutorService classExecutor = new MDCThreadPool(2, 2,
+            0L, TimeUnit.MILLISECONDS, new AntiDuplicateLinkedBlockingQueue<>(1024), r -> new Thread(r, "classGradeUpdateCheck"));
+
 
     @Autowired
     private GradeQueryApp gradeQueryApp;
@@ -55,8 +60,6 @@ public class GradeAutoUpdateScheduled implements Runnable{
     private UrpClassDao urpClassDao;
     @Autowired
     private SpiderSwitch spiderSwitch;
-
-    private final Set<String> taskSet = Collections.synchronizedSet(new HashSet<>());
 
     @Value("${scheduled.gradeUpdate:false}")
     private boolean autoStart;
@@ -78,34 +81,17 @@ public class GradeAutoUpdateScheduled implements Runnable{
         if(!autoStart || !start) {
             return;
         }
-        log.info("fetch task queue size {}", queue.size());
 
         List<String> prefixList = Lists.newArrayList("2017", "2018", "2019", "2020");
 
         for (String prefix : prefixList) {
             List<String> classNumList = urpClassDao.selectByNumPrefix(prefix).stream().map(UrpClass::getClassNum).collect(Collectors.toList());
             for (String classNum : classNumList) {
-                addClassTask(classNum);
+                classExecutor.submit(new ClassFetchTask(Integer.parseInt(classNum)));
             }
         }
     }
 
-    @VisibleForTesting
-    public void addClassTask(String classNum) {
-        List<WechatStudentUserBO> fetchList = getFetchList(Integer.parseInt(classNum));
-        if (!CollectionUtils.isEmpty(fetchList)) {
-            Random r = new Random();
-            WechatStudentUserBO studentUserBO = fetchList.get(r.nextInt(fetchList.size()));
-            if(handleMessage(studentUserBO)) {
-                GradeFetchTaskWrapper task = new GradeFetchTaskWrapper(fetchList.stream()
-                        .filter(x -> !x.getAccount().equals(studentUserBO.getAccount()))
-                        .collect(Collectors.toList()), classNum);
-
-                CompletableFuture<Void> future = CompletableFuture.runAsync(task, gradeAutoUpdatePool);
-                future.whenComplete((x,y) -> taskSet.remove(classNum));
-            }
-        }
-    }
 
     public void run() {
         log.info("GradeAutoUpdateScheduled run");
@@ -113,7 +99,15 @@ public class GradeAutoUpdateScheduled implements Runnable{
         GradeFetchTask task;
         try {
             while (start && (task = gradeFetchQueue.take()) != null) {
-                CompletableFuture.runAsync(new GradeFetchTaskWrapper(task), gradeAutoUpdatePool);
+                StudentUserBO tigerStudent = task.getTigerStudent();
+                List<WechatStudentUserBO> userList = getFetchList(tigerStudent.getUrpClassNum())
+                        .stream()
+                        .filter(x -> x.getAccount().equals(tigerStudent.getAccount()))
+                        .collect(Collectors.toList());
+
+                for (WechatStudentUserBO user : userList) {
+                    gradeAutoUpdatePool.submit(new StudentFetchTask(user));
+                }
             }
         } catch (Exception e) {
             log.error("get task exception", e);
@@ -134,7 +128,7 @@ public class GradeAutoUpdateScheduled implements Runnable{
         this.start = false;
     }
 
-    private boolean handleMessage(WechatStudentUserBO wechatStudentUserBO) {
+    private GradeOverviewBO handleMessage(WechatStudentUserBO wechatStudentUserBO) {
         try {
             GradeOverviewBO gradeOverview = gradeQueryApp.getGradeOverview(wechatStudentUserBO, false);
             List<WechatTemplateMessage> messageList = gradeOverview.getNeedToSendGrade().stream()
@@ -143,60 +137,90 @@ public class GradeAutoUpdateScheduled implements Runnable{
                     .collect(Collectors.toList());
             wechatMessageSender.sendTemplateMessageAsync(messageList);
 
-            return !CollectionUtils.isEmpty(messageList);
+            return gradeOverview;
         } catch (Exception e) {
             log.info("{} fetch grade error", wechatStudentUserBO.getAccount(), e);
         }
 
-        return false;
+        return null;
     }
 
     private List<WechatStudentUserBO> getFetchList(Integer urpClassNum) {
-        return studentRepository
-                .findWetChatUser(urpClassNum)
-                .stream().filter(x-> x.hasBindApp("wx541fd36e6b400648"))
+        List<WechatStudentUserBO> wetChatUser = studentRepository
+                .findWetChatUser(urpClassNum);
+
+        return wetChatUser
+                .stream()
+                .filter(x-> x.hasBindApp("wx541fd36e6b400648"))
+                .filter(WechatStudentUserBO::isPasswordCorrect)
                 .collect(Collectors.toList());
     }
 
+
     @Data
-    private class GradeFetchTaskWrapper implements Runnable{
-        private int timeoutCount;
-        private GradeFetchTask gradeFetchTask;
-        private List<WechatStudentUserBO> wetChatUserList = Collections.emptyList();
-        private String urpClassNum;
+    class ClassFetchTask  implements Runnable{
 
-        GradeFetchTaskWrapper(GradeFetchTask gradeFetchTask) {
-            this.gradeFetchTask = gradeFetchTask;
-            this.urpClassNum = gradeFetchTask.getTigerStudent().getUrpClassNum().toString();
-        }
+        private final Integer urpClassNum;
+        private int retryCount = 0;
 
-        GradeFetchTaskWrapper(List<WechatStudentUserBO> wetChatUserList, String urpClassNum) {
-            this.wetChatUserList = wetChatUserList;
+        public ClassFetchTask(Integer urpClassNum) {
             this.urpClassNum = urpClassNum;
-
         }
 
         @Override
         public void run() {
-            UUID uuid = UUID.randomUUID();
-            MDC.put("traceId", "gradeUpdateTask-" + uuid.toString());
-            List<WechatStudentUserBO> wetChatUser;
+            List<WechatStudentUserBO> fetchList = getFetchList(urpClassNum);
+            log.info("classNum {} start size {}", urpClassNum, fetchList.size());
+            if (CollectionUtils.isNotEmpty(fetchList)) {
+                Random r = new Random();
+                WechatStudentUserBO studentUserBO = fetchList.get(r.nextInt(fetchList.size()));
+                GradeOverviewBO gradeOverviewBO = handleMessage(studentUserBO);
 
-            if (wetChatUserList.isEmpty()) {
-                wetChatUser =
-                        getFetchList(gradeFetchTask.getTigerStudent().getUrpClassNum()).stream()
-                                .filter(x-> !x.getAccount().equals(gradeFetchTask.getTigerStudent().getAccount()))
-                                .collect(Collectors.toList());
-            } else {
-                wetChatUser = wetChatUserList;
+                if(gradeOverviewBO == null || gradeOverviewBO.getErrorCode() == ErrorCode.READ_TIMEOUT.getErrorCode()) {
+                    if (retryCount < 2) {
+                        log.info("classNum {} retry count {}", urpClassNum, retryCount);
+                        classExecutor.submit(this);
+                    }
+                    retryCount ++;
+                }
+
+                else if(CollectionUtils.isNotEmpty(gradeOverviewBO.getNeedToSendGrade())) {
+                    List<WechatStudentUserBO> needToFetch = fetchList.stream()
+                            .filter(x -> !x.getAccount().equals(studentUserBO.getAccount()))
+                            .filter(WechatStudentUserBO :: isPasswordCorrect)
+                            .collect(Collectors.toList());
+                    for (WechatStudentUserBO user : needToFetch) {
+                        gradeAutoUpdatePool.submit(new StudentFetchTask(user));
+                    }
+                }
             }
 
-            log.info("classNum {} fetch start, size {}", this.urpClassNum, wetChatUser.size());
-            for (WechatStudentUserBO wechatStudentUserBO : wetChatUser) {
-                handleMessage(wechatStudentUserBO);
-            }
+        }
+    }
 
-            log.info("classNum {} fetch finish, size {}", this.urpClassNum, wetChatUser.size());
+    @Data
+    class StudentFetchTask implements Runnable {
+
+        private final WechatStudentUserBO wechatStudentUserBO;
+        private int retryCount = 0;
+
+        public StudentFetchTask(WechatStudentUserBO student) {
+            this.wechatStudentUserBO = student;
+        }
+
+        @Override
+        public void run() {
+
+            log.info("account {} start", wechatStudentUserBO.getAccount());
+            GradeOverviewBO gradeOverviewBO = handleMessage(wechatStudentUserBO);
+
+            if(gradeOverviewBO == null || gradeOverviewBO.getErrorCode() == ErrorCode.READ_TIMEOUT.getErrorCode()) {
+                if (retryCount < 2) {
+                    gradeAutoUpdatePool.submit(this);
+                }
+                retryCount++;
+            }
+            log.info("account {} finish", wechatStudentUserBO.getAccount());
         }
 
         @Override
@@ -205,17 +229,17 @@ public class GradeAutoUpdateScheduled implements Runnable{
 
             if (o == null || getClass() != o.getClass()) return false;
 
-            GradeFetchTaskWrapper that = (GradeFetchTaskWrapper) o;
+            StudentFetchTask that = (StudentFetchTask) o;
 
             return new EqualsBuilder()
-                    .append(urpClassNum, that.urpClassNum)
+                    .append(wechatStudentUserBO.getAccount(), that.wechatStudentUserBO.getAccount())
                     .isEquals();
         }
 
         @Override
         public int hashCode() {
             return new HashCodeBuilder(17, 37)
-                    .append(urpClassNum)
+                    .append(wechatStudentUserBO.getAccount())
                     .toHashCode();
         }
     }
