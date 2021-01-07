@@ -23,9 +23,9 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class SpiderConfiguration {
 
-    @Value("${spider.timeout.request :500}")
+    @Value("${spider.timeout.request:500}")
     private int requestTimeout;
-    @Value("${spider.timeout.connect :2000}")
+    @Value("${spider.timeout.connect:2000}")
     private int connectTimeout;
     @Value("${spider.captcha.predict}")
     private String captchaPredict;
