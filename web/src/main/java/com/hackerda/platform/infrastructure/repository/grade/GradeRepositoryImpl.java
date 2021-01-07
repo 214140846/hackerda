@@ -89,7 +89,9 @@ public class GradeRepositoryImpl implements GradeRepository {
     public TermGradeViewBO getAllByStudent(StudentUserBO student) {
 
         if (!spiderSwitch.fetchUrp()) {
-            return gradeToTermGradeList(gradeDao.getGradeByAccount(student.getAccount().getInt()));
+            TermGradeViewBO termGradeViewBO = new TermGradeViewBO();
+            termGradeViewBO.setTermGradeBOList(gradeToTermGradeList(gradeDao.getGradeByAccount(student.getAccount().getInt())));
+            return termGradeViewBO;
         }
 
 

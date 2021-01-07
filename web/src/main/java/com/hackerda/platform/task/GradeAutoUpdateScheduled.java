@@ -2,9 +2,11 @@ package com.hackerda.platform.task;
 
 import com.google.common.collect.Lists;
 import com.hackerda.platform.MDCThreadPool;
-import com.hackerda.platform.domain.SpiderSwitch;
-import com.hackerda.platform.domain.grade.*;
 import com.hackerda.platform.application.GradeQueryApp;
+import com.hackerda.platform.domain.constant.ErrorCode;
+import com.hackerda.platform.domain.grade.GradeFetchTask;
+import com.hackerda.platform.domain.grade.GradeOverviewBO;
+import com.hackerda.platform.domain.grade.GradeUpdateMessage;
 import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
@@ -58,8 +60,6 @@ public class GradeAutoUpdateScheduled implements Runnable{
     private WechatMessageSender wechatMessageSender;
     @Autowired
     private UrpClassDao urpClassDao;
-    @Autowired
-    private SpiderSwitch spiderSwitch;
 
     @Value("${scheduled.gradeUpdate:false}")
     private boolean autoStart;
