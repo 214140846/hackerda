@@ -111,4 +111,8 @@ public class CommentBO {
         this.status = RecordStatus.Delete;
     }
 
+    public boolean isTriggerBySelf() {
+        return userName.equals(replyUserName);
+    }
+
 }

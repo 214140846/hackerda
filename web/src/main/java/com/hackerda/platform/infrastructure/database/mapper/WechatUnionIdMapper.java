@@ -37,4 +37,6 @@ public interface WechatUnionIdMapper {
     List<WechatUnionId> selectByAccount(Integer account);
 
     List<AccountWechatUnionId> selectByAccountList(List<Integer> accountList);
+
+    List<WechatUnionId> selectByUserName(String userName);
 }

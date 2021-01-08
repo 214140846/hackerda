@@ -9,6 +9,7 @@ import com.hackerda.platform.infrastructure.database.model.AccountWechatUnionId;
 import com.hackerda.platform.infrastructure.database.model.WechatUnionId;
 import com.hackerda.platform.infrastructure.database.model.WechatUnionIdExample;
 import org.apache.commons.collections.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,15 +63,7 @@ public class UnionIdRepositoryImpl implements UnionIdRepository {
     @Override
     public UnionId find(StudentAccount studentAccount) {
         List<WechatUnionId> unionIdList = wechatUnionIdMapper.selectByAccount(studentAccount.getInt());
-        if (CollectionUtils.isEmpty(unionIdList)) {
-            return UnionId.ofNull();
-        }
-
-        List<WechatUser> wechatUserList = unionIdList.stream()
-                .map(x -> new WechatUser(x.getAppId(), x.getOpenId()))
-                .collect(Collectors.toList());
-
-        return UnionId.ofRepo(unionIdList.get(0).getUnionId(), wechatUserList);
+        return getUnionIdBO(unionIdList);
     }
 
     @Override
@@ -108,5 +101,24 @@ public class UnionIdRepositoryImpl implements UnionIdRepository {
         }
 
         return this.find(unionId.getUnionId());
+    }
+
+    @Override
+    public UnionId findByUserName(String userName) {
+        List<WechatUnionId> unionIdList = wechatUnionIdMapper.selectByUserName(userName);
+        return getUnionIdBO(unionIdList);
+    }
+
+    @NotNull
+    private UnionId getUnionIdBO(List<WechatUnionId> unionIdList) {
+        if (CollectionUtils.isEmpty(unionIdList)) {
+            return UnionId.ofNull();
+        }
+
+        List<WechatUser> wechatUserList = unionIdList.stream()
+                .map(x -> new WechatUser(x.getAppId(), x.getOpenId()))
+                .collect(Collectors.toList());
+
+        return UnionId.ofRepo(unionIdList.get(0).getUnionId(), wechatUserList);
     }
 }

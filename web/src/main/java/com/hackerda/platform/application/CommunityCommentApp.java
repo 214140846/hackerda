@@ -2,15 +2,20 @@ package com.hackerda.platform.application;
 
 import com.hackerda.platform.application.event.EventPublisher;
 import com.hackerda.platform.domain.community.*;
+import com.hackerda.platform.domain.message.CommentNoticeMessage;
 import com.hackerda.platform.domain.message.MessageBO;
 import com.hackerda.platform.domain.message.MessageRepository;
 import com.hackerda.platform.domain.message.MessageTriggerSource;
+import com.hackerda.platform.domain.wechat.UnionId;
+import com.hackerda.platform.domain.wechat.UnionIdRepository;
+import com.hackerda.platform.domain.wechat.WechatMessageSender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,6 +38,10 @@ public class CommunityCommentApp {
     private EventPublisher eventPublisher;
     @Autowired
     private MessageRepository messageRepository;
+    @Autowired
+    private UnionIdRepository unionIdRepository;
+    @Autowired
+    private WechatMessageSender wechatMessageSender;
 
 
     public void addComment(CommentBO commentBO) {
@@ -48,6 +57,10 @@ public class CommunityCommentApp {
         if(commentBO.isRelease()) {
             eventPublisher.addCommentEvent(commentBO, true);
             posterRepository.updateLastReplyTime(commentBO.getPostId(), new Date());
+
+            if (!commentBO.isTriggerBySelf()) {
+                sendCommentMessage(commentBO.getReplyUserName(), commentBO);
+            }
         }
 
     }
@@ -67,6 +80,25 @@ public class CommunityCommentApp {
             }
 
         }
+    }
+
+
+    /**
+     * 这里用用户id，而不直接指定微信appId的原因，后面这个逻辑可能兼容发送小程序消息和服务号消息
+     *  @param receiverUserName 接收者用户的id
+     * @param commentBO 提醒的评论消息
+     * @return
+     */
+    public CompletableFuture<Void> sendCommentMessage(String receiverUserName, CommentBO commentBO) {
+        UnionId unionId = unionIdRepository.findByUserName(receiverUserName);
+
+        if (unionId.hasApp("wx541fd36e6b400648")) {
+            CommentNoticeMessage message = new CommentNoticeMessage(unionId.getWechatUser("wx541fd36e6b400648"), commentBO);
+            return wechatMessageSender.sendTemplateMessageAsync(message);
+        }
+
+        return CompletableFuture.runAsync(() -> {});
+
     }
 
     public boolean deleteComment(String userName, CommentBO commentBO) {

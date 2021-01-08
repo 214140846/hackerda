@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.ResourceAccessException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -52,14 +53,8 @@ public class ExceptionHandlerController {
 	}
 
 	@ExceptionHandler(ClientAbortException.class)
-	public void brokePipe(ClientAbortException e, HttpServletResponse response) {
-
-		try {
-			response.getOutputStream().close();
-		} catch (Throwable ioException) {
-			log.error("shutdown outputStream error", ioException);
-		}
-
+	public void brokePipe(ClientAbortException e, HttpServletRequest request) {
+		log.warn("ClientAbort path {}", request.getRequestURI());
 	}
 
 	@ExceptionHandler(value = Exception.class)

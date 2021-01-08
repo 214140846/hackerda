@@ -1,12 +1,13 @@
 package com.hackerda.platform.domain.wechat;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface WechatMessageSender {
 
-    void sendTemplateMessageAsync(WechatTemplateMessage wechatTemplateMessage);
+    CompletableFuture<Void> sendTemplateMessageAsync(WechatTemplateMessage wechatTemplateMessage);
 
-    void sendTemplateMessageAsync(List<WechatTemplateMessage> wechatTemplateMessageList);
+    CompletableFuture<Void> sendTemplateMessageAsync(List<WechatTemplateMessage> wechatTemplateMessageList);
 
     void sendTemplateMessage(WechatTemplateMessage wechatTemplateMessage);
 

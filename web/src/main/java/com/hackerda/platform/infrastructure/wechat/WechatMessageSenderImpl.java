@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -27,19 +29,21 @@ public class WechatMessageSenderImpl implements WechatMessageSender {
             0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "wechatMessagePool"));
 
     @Override
-    public void sendTemplateMessageAsync(WechatTemplateMessage wechatTemplateMessage) {
-
-        wechatMessagePool.submit(() -> {
-            sendTemplateMessage(wechatTemplateMessage);
-        });
+    public CompletableFuture<Void> sendTemplateMessageAsync(WechatTemplateMessage wechatTemplateMessage) {
+        return CompletableFuture.runAsync(() -> sendTemplateMessage(wechatTemplateMessage), wechatMessagePool);
 
     }
 
     @Override
-    public void sendTemplateMessageAsync(List<WechatTemplateMessage> wechatTemplateMessageList) {
+    @SuppressWarnings("unchecked")
+    public CompletableFuture<Void> sendTemplateMessageAsync(List<WechatTemplateMessage> wechatTemplateMessageList) {
         for (WechatTemplateMessage message : wechatTemplateMessageList) {
             this.sendTemplateMessageAsync(message);
         }
+
+        CompletableFuture<Void>[] completableFutures =
+                wechatTemplateMessageList.stream().map(this::sendTemplateMessageAsync).toArray(CompletableFuture[]::new);
+        return CompletableFuture.allOf(completableFutures);
 
     }
 
@@ -49,11 +53,12 @@ public class WechatMessageSenderImpl implements WechatMessageSender {
         WxMpService wxService = wechatMpConfiguration.getMpService(appId);
         WxMpTemplateMessage wxMpTemplateMessage = wechatTemplateMessage.genMpTemplateMessage();
         try {
-            log.info("send message {}", wxMpTemplateMessage.toJson());
-            wxService.getTemplateMsgService().sendTemplateMsg(wxMpTemplateMessage);
+            String msg = wxService.getTemplateMsgService().sendTemplateMsg(wxMpTemplateMessage);
+            log.info("send message {} success  msg {}", wxMpTemplateMessage.toJson(), msg);
         } catch (Exception e) {
             log.error("message {} send error",wxMpTemplateMessage.toJson(), e);
         }
+
     }
 
     @Override

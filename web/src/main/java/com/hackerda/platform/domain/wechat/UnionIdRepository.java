@@ -16,4 +16,6 @@ public interface UnionIdRepository {
     Map<StudentAccount, UnionId> find(List<StudentAccount> studentAccountList);
 
     UnionId find(WechatUser wechatUser);
+
+    UnionId findByUserName(String userName);
 }

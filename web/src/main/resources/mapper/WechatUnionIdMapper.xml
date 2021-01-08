@@ -253,6 +253,15 @@
             </foreach>
         </where>
     </select>
+    <select id="selectByUserName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select w.*
+        from wechat_union_id w
+                join student_unionid su on su.union_id = w.union_id
+                join user_student us on us.student_account = su.account
+
+        where us.user_name = #{userName}
+
+    </select>
 
 
 </mapper>
