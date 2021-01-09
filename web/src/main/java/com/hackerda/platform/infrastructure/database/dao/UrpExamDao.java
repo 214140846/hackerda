@@ -1,7 +1,7 @@
 package com.hackerda.platform.infrastructure.database.dao;
 
 import com.hackerda.platform.infrastructure.database.mapper.UrpExamMapper;
-import com.hackerda.platform.utils.Term;
+import com.hackerda.platform.domain.time.Term;
 import com.hackerda.platform.infrastructure.database.model.UrpExam;
 import com.hackerda.platform.infrastructure.database.model.example.UrpExamExample;
 import org.springframework.stereotype.Service;

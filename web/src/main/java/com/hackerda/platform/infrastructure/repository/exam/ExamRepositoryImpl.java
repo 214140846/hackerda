@@ -8,7 +8,7 @@ import com.hackerda.platform.infrastructure.database.mapper.StudentExamTimetable
 import com.hackerda.platform.infrastructure.database.model.StudentExamTimetableExample;
 import com.hackerda.platform.infrastructure.database.model.example.ExamTimetable;
 import com.hackerda.platform.infrastructure.database.model.example.ExamTimetableExample;
-import com.hackerda.platform.utils.Term;
+import com.hackerda.platform.domain.time.Term;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

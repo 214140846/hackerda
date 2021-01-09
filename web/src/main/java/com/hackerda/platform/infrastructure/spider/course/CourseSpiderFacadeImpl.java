@@ -68,7 +68,7 @@ public class CourseSpiderFacadeImpl implements CourseSpiderFacade {
                 .setAcademyCode(result.getAcademyCode())
                 .setAcademyName(getAcademyName(result))
                 .setTeacherName(result.getTeacherNameList())
-                .setTeacherAccount(result.getTermNumber())
+                .setTeacherAccount("")
                 .setCourseType(result.getCourseTypeName())
                 .setCourseTypeCode(result.getCourseTypeCode())
                 .setExamType(result.getExamTypeName())

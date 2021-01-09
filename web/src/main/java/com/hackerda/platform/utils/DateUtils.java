@@ -1,5 +1,7 @@
 package com.hackerda.platform.utils;
 
+import com.hackerda.platform.domain.time.SchoolTime;
+import com.hackerda.platform.domain.time.Term;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

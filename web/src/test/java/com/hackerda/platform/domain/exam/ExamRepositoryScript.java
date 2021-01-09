@@ -5,9 +5,8 @@ import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.wechat.UnionId;
 import com.hackerda.platform.domain.wechat.UnionIdRepository;
 import com.hackerda.platform.domain.wechat.WechatMessageSender;
-import com.hackerda.platform.domain.wechat.WechatUser;
 import com.hackerda.platform.infrastructure.repository.exam.ExamRepositoryImpl;
-import com.hackerda.platform.utils.Term;
+import com.hackerda.platform.domain.time.Term;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.junit.Assert.*;
 
 @Slf4j
 @ActiveProfiles("prod")

@@ -3,10 +3,11 @@ package com.hackerda.platform.config.wechat;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.hackerda.platform.domain.WechatPlatform;
-import com.hackerda.platform.service.wechat.interceptor.StudentInfoInterceptor;
-import com.hackerda.platform.service.wechat.interceptor.WechatOpenIdInterceptor;
 import com.hackerda.platform.service.wechat.WxMessageRouter;
-import com.hackerda.platform.service.wechat.handler.messageHandler.*;
+import com.hackerda.platform.service.wechat.handler.messageHandler.EvaluationHandler;
+import com.hackerda.platform.service.wechat.handler.messageHandler.OpenidMessageHandler;
+import com.hackerda.platform.service.wechat.handler.messageHandler.SubscribeEventHandler;
+import com.hackerda.platform.service.wechat.interceptor.WechatOpenIdInterceptor;
 import me.chanjar.weixin.common.bean.menu.WxMenu;
 import me.chanjar.weixin.common.bean.menu.WxMenuButton;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -19,7 +20,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;

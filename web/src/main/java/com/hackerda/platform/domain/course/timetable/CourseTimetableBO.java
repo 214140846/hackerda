@@ -1,7 +1,7 @@
 package com.hackerda.platform.domain.course.timetable;
 
 import com.hackerda.platform.domain.course.CourseBO;
-import com.hackerda.platform.utils.Term;
+import com.hackerda.platform.domain.time.Term;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;

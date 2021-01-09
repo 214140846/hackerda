@@ -13,8 +13,8 @@ import com.hackerda.platform.infrastructure.database.model.Grade;
 import com.hackerda.platform.infrastructure.repository.FetchScene;
 import com.hackerda.platform.infrastructure.repository.FetchStatusRecorder;
 import com.hackerda.platform.utils.DateUtils;
-import com.hackerda.platform.utils.SchoolTime;
-import com.hackerda.platform.utils.Term;
+import com.hackerda.platform.domain.time.SchoolTime;
+import com.hackerda.platform.domain.time.Term;
 import com.hackerda.spider.exception.PasswordUnCorrectException;
 import com.hackerda.spider.exception.UrpEvaluationException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BinaryOperator;

@@ -3,7 +3,6 @@ package com.hackerda.platform.infrastructure.spider;
 import com.hackerda.platform.infrastructure.database.dao.StudentUserDao;
 import com.hackerda.platform.infrastructure.database.mapper.WechatOpenidStudentRelativeMapper;
 import com.hackerda.platform.infrastructure.database.model.WechatOpenidStudentRelativeExample;
-import com.hackerda.platform.service.OpenIdService;
 import com.hackerda.spider.IExceptionHandler;
 import com.hackerda.spider.exception.PasswordUnCorrectException;
 import org.springframework.stereotype.Component;

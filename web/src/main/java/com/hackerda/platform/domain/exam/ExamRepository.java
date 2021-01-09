@@ -1,6 +1,6 @@
 package com.hackerda.platform.domain.exam;
 
-import com.hackerda.platform.utils.Term;
+import com.hackerda.platform.domain.time.Term;
 
 import java.util.List;
 

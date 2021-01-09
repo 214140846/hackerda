@@ -2,10 +2,9 @@ package com.hackerda.platform.infrastructure.database.dao;
 
 import com.hackerda.platform.infrastructure.database.model.UrpClassroom;
 import com.hackerda.platform.utils.DateUtils;
-import com.hackerda.platform.utils.Term;
+import com.hackerda.platform.domain.time.Term;
 import com.hackerda.spider.UrpSearchSpider;
 import com.hackerda.spider.support.search.SearchResult;
-import com.hackerda.spider.support.search.classroom.SearchResultWrapper;
 import com.hackerda.spider.support.search.emptyroom.EmptyRoomRecord;
 import com.hackerda.spider.support.search.emptyroom.SearchEmptyRoomPost;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

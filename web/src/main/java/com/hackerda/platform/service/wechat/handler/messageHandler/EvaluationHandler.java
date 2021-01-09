@@ -3,22 +3,16 @@ package com.hackerda.platform.service.wechat.handler.messageHandler;
 
 import com.hackerda.platform.builder.TextBuilder;
 import com.hackerda.platform.domain.SpiderSwitch;
-import com.hackerda.platform.domain.constant.RedisKeys;
-import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.service.EvaluationService;
 import com.hackerda.platform.task.EvaluateTask;
-import com.hackerda.platform.utils.DateUtils;
-import com.hackerda.platform.utils.Term;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

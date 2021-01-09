@@ -1,7 +1,7 @@
 package com.hackerda.platform.domain.exam;
 
 import com.hackerda.platform.domain.student.StudentAccount;
-import com.hackerda.platform.utils.Term;
+import com.hackerda.platform.domain.time.Term;
 import lombok.Data;
 
 import java.util.Date;

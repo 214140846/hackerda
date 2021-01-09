@@ -5,12 +5,11 @@ import com.hackerda.platform.infrastructure.database.model.StudentExamTimetable;
 import com.hackerda.platform.infrastructure.database.model.StudentExamTimetableExample;
 import com.hackerda.platform.infrastructure.database.model.example.ExamTimetable;
 import com.hackerda.platform.utils.DateUtils;
-import com.hackerda.platform.utils.Term;
+import com.hackerda.platform.domain.time.Term;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;

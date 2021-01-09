@@ -1,16 +1,13 @@
 package com.hackerda.platform.service;
 
 import com.hackerda.platform.domain.SpiderSwitch;
-import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentUserBO;
-import com.hackerda.platform.domain.student.WechatStudentUserBO;
-import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.infrastructure.database.dao.ExamTimetableDao;
 import com.hackerda.platform.infrastructure.database.dao.StudentExamTimeTableDao;
 import com.hackerda.platform.infrastructure.database.model.*;
 import com.hackerda.platform.infrastructure.database.model.example.ExamTimetable;
 import com.hackerda.platform.utils.DateUtils;
-import com.hackerda.platform.utils.Term;
+import com.hackerda.platform.domain.time.Term;
 import com.hackerda.spider.exception.PasswordUnCorrectException;
 import com.hackerda.spider.exception.UrpRequestException;
 import com.hackerda.spider.support.UrpExamTime;
@@ -18,9 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 

@@ -1,8 +1,7 @@
 package com.hackerda.platform.domain.course.timetable;
 
-import com.hackerda.platform.domain.course.timetable.CourseTimetableBO;
 import com.hackerda.platform.utils.DateUtils;
-import com.hackerda.platform.utils.Term;
+import com.hackerda.platform.domain.time.Term;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
 

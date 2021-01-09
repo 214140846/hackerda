@@ -20,25 +20,13 @@ public class CourseTimetableQueryAppTest {
 
     @Autowired
     private CourseTimetableQueryApp courseTimetableQueryApp;
-    @Autowired
-    private TruncateMapper truncateMapper;
 
 
     @Test
     public void getByAccount() {
-        truncateMapper.course();
-        truncateMapper.classCourseTimetable();
-        truncateMapper.courseTimetable();
-        truncateMapper.studentCourseTimetable();
 
+        CourseTimeTableOverview view = courseTimetableQueryApp.getByClassId("2020010012", "2020-2021", 2);
+        System.out.println(view);
 
-        CourseTimeTableOverview account1 = courseTimetableQueryApp.getByAccount(2017025838, "2019-2020", 2);
-
-        assertThat(account1.isFetchSuccess()).isTrue();
-
-        CourseTimeTableOverview account2 = courseTimetableQueryApp.getByAccount(2017025838, "2019-2020", 2);
-
-        assertThat(account2.isFetchSuccess()).isFalse();
-        assertThat(account2.getNewList().size() == 0).isTrue();
     }
 }

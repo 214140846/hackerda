@@ -1,4 +1,4 @@
-package com.hackerda.platform.utils;
+package com.hackerda.platform.domain.time;
 
 import lombok.Data;
 

@@ -4,7 +4,7 @@ import com.hackerda.platform.infrastructure.database.mapper.ext.CourseTimetableE
 import com.hackerda.platform.infrastructure.database.model.*;
 import com.hackerda.platform.infrastructure.database.model.example.CourseTimetableExample;
 import com.hackerda.platform.utils.DateUtils;
-import com.hackerda.platform.utils.SchoolTime;
+import com.hackerda.platform.domain.time.SchoolTime;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
