@@ -3,6 +3,7 @@ package com.hackerda.platform.service;
 import com.hackerda.platform.domain.course.timetable.CourseTimeTableOverview;
 import com.hackerda.platform.application.CourseTimetableQueryApp;
 import com.hackerda.platform.domain.student.StudentUserBO;
+import com.hackerda.platform.domain.time.SchoolTimeManager;
 import com.hackerda.platform.domain.time.Term;
 import com.hackerda.platform.controller.vo.CourseTimeTableVo;
 import com.hackerda.platform.controller.vo.CourseTimetableOverviewVO;
@@ -26,6 +27,8 @@ public class CourseTimeTableService {
 
     @Autowired
     private CourseTimetableQueryApp courseTimetableQueryApp;
+    @Autowired
+    private SchoolTimeManager schoolTimeManager;
 
 
     public CourseTimetableOverviewVO getCurrentTermCourseTimeTableByStudent() {
@@ -38,7 +41,7 @@ public class CourseTimeTableService {
 
     public CourseTimetableOverviewVO getCurrentTermCourseTimeTableByStudent(int account) {
 
-        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        Term term = schoolTimeManager.getCourseTimeTableTerm();
 
         CourseTimeTableOverview timeTableOverview = courseTimetableQueryApp.getByAccount(account, term.getTermYear(), term.getOrder());
 
