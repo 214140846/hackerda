@@ -50,6 +50,15 @@ public class Term {
         }
     }
 
+
+    public Term getNextTerm() {
+        if (order == 1) {
+            return new Term(this.startYear, this.endYear, this.order+ 1);
+        } else {
+            return new Term(this.startYear+1, this.endYear+1, 1);
+        }
+    }
+
     public String getTermYear(){
         return this.startYear + "-" + this.endYear;
     }
@@ -60,11 +69,6 @@ public class Term {
 
     public String asKey() {
         return String.valueOf(startYear) + '-' + endYear + "-" + order;
-    }
-
-    public static void main(String[] args) {
-        Term term = new Term("2018-2019", 1);
-        System.out.println(term);
     }
 
 }

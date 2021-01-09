@@ -2,13 +2,14 @@ package com.hackerda.platform.service;
 
 import com.hackerda.platform.domain.course.timetable.CourseTimeTableOverview;
 import com.hackerda.platform.application.CourseTimetableQueryApp;
+import com.hackerda.platform.domain.student.StudentAccount;
+import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.time.SchoolTimeManager;
 import com.hackerda.platform.domain.time.Term;
 import com.hackerda.platform.controller.vo.CourseTimeTableVo;
 import com.hackerda.platform.controller.vo.CourseTimetableOverviewVO;
 import com.hackerda.platform.controller.vo.CourseVO;
-import com.hackerda.platform.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,21 +30,30 @@ public class CourseTimeTableService {
     private CourseTimetableQueryApp courseTimetableQueryApp;
     @Autowired
     private SchoolTimeManager schoolTimeManager;
+    @Autowired
+    private StudentRepository studentRepository;
 
 
     public CourseTimetableOverviewVO getCurrentTermCourseTimeTableByStudent() {
 
         StudentUserBO wechatStudentUserBO = (StudentUserBO) SecurityUtils.getSubject().getPrincipal();
 
-        return getCurrentTermCourseTimeTableByStudent(wechatStudentUserBO.getAccount().getInt());
+        Term term = schoolTimeManager.getCourseTimeTableTerm();
+
+        CourseTimeTableOverview timeTableOverview = courseTimetableQueryApp.getByStudent(wechatStudentUserBO, term.getTermYear(),
+                term.getOrder());
+
+        return toVO(timeTableOverview);
     }
 
 
     public CourseTimetableOverviewVO getCurrentTermCourseTimeTableByStudent(int account) {
 
+        StudentUserBO studentUserBO = studentRepository.find(new StudentAccount(account));
+
         Term term = schoolTimeManager.getCourseTimeTableTerm();
 
-        CourseTimeTableOverview timeTableOverview = courseTimetableQueryApp.getByAccount(account, term.getTermYear(), term.getOrder());
+        CourseTimeTableOverview timeTableOverview = courseTimetableQueryApp.getByStudent(studentUserBO, term.getTermYear(), term.getOrder());
 
         return toVO(timeTableOverview);
     }

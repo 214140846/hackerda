@@ -10,15 +10,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CourseTimetableQueryApp {
-
-    @Autowired
-    private StudentRepository studentRepository;
     @Autowired
     private CourseTimetableRepository courseTimetableRepository;
 
-    public CourseTimeTableOverview getByAccount(int account, String termYear, int termOrder){
-
-        StudentUserBO studentUserBO = studentRepository.find(new StudentAccount(account));
+    public CourseTimeTableOverview getByStudent(StudentUserBO studentUserBO, String termYear, int termOrder){
 
         CourseTimeTableOverview timeTableOverview = null;
 
