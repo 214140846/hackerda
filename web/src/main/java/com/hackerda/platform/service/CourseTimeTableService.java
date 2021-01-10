@@ -40,8 +40,7 @@ public class CourseTimeTableService {
 
         Term term = schoolTimeManager.getCourseTimeTableTerm();
 
-        CourseTimeTableOverview timeTableOverview = courseTimetableQueryApp.getByStudent(wechatStudentUserBO, term.getTermYear(),
-                term.getOrder());
+        CourseTimeTableOverview timeTableOverview = courseTimetableQueryApp.getByStudent(wechatStudentUserBO, term);
 
         return toVO(timeTableOverview);
     }
@@ -53,7 +52,7 @@ public class CourseTimeTableService {
 
         Term term = schoolTimeManager.getCourseTimeTableTerm();
 
-        CourseTimeTableOverview timeTableOverview = courseTimetableQueryApp.getByStudent(studentUserBO, term.getTermYear(), term.getOrder());
+        CourseTimeTableOverview timeTableOverview = courseTimetableQueryApp.getByStudent(studentUserBO, term);
 
         return toVO(timeTableOverview);
     }

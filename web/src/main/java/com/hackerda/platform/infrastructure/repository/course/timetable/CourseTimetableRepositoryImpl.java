@@ -4,6 +4,7 @@ import com.hackerda.platform.MDCThreadPool;
 import com.hackerda.platform.domain.SpiderSwitch;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
+import com.hackerda.platform.domain.time.Term;
 import com.hackerda.platform.infrastructure.database.dao.ClassCourseTimetableDao;
 import com.hackerda.platform.infrastructure.database.dao.CourseDao;
 import com.hackerda.platform.infrastructure.database.dao.CourseTimeTableDao;
@@ -32,10 +33,6 @@ import java.util.stream.Collectors;
 public class CourseTimetableRepositoryImpl implements CourseTimetableRepository {
 
     @Autowired
-    private CourseTimetableSpiderFacade courseTimetableSpiderFacade;
-    @Autowired
-    private FetchExceptionHandler fetchExceptionHandler;
-    @Autowired
     private CourseTimeTableDao courseTimeTableDao;
     @Autowired
     private CourseTimetableAdapter courseTimetableAdapter;
@@ -45,86 +42,36 @@ public class CourseTimetableRepositoryImpl implements CourseTimetableRepository 
     private ClassCourseTimetableDao classCourseTimetableDao;
     @Autowired
     private CourseDao courseDao;
-    @Autowired
-    private SpiderSwitch spiderSwitch;
-
-    private final Executor courseSpiderExecutor = new MDCThreadPool(7, 7, 0L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(), r -> new Thread(r, "courseSpider"));
 
     @Override
-    public CourseTimeTableOverview getByAccount(StudentUserBO wechatStudentUserBO, String termYear, int termOrder) {
+    public CourseTimeTableOverview getByAccount(StudentUserBO wechatStudentUserBO, Term term) {
 
         StudentCourseTimeTable courseTimeTable = new StudentCourseTimeTable()
                 .setStudentId(wechatStudentUserBO.getAccount().getInt())
-                .setTermYear(termYear)
-                .setTermOrder(termOrder);
+                .setTermYear(term.getTermYear())
+                .setTermOrder(term.getOrder());
 
         List<CourseTimetableDetailDO> detailList = courseTimeTableDao.selectDetailByStudent(courseTimeTable);
-        CourseTimeTableOverview overview = new CourseTimeTableOverview();
-        overview.setPersonal(true);
-        if (!CollectionUtils.isEmpty(detailList) || !spiderSwitch.fetchUrp()) {
-            setSuccessOverview(overview, detailList);
-            return overview;
-        }
+        List<CourseTimetableBO> collect = detailList.stream().map(x -> courseTimetableAdapter.toBO(x)).collect(Collectors.toList());
 
-        CompletableFuture<List<CourseTimetableBO>> future =
-                CompletableFuture.supplyAsync(() -> courseTimetableSpiderFacade.getCurrentTermTableByAccount(wechatStudentUserBO)
-                        .stream().map(x -> courseTimetableAdapter.toBO(x)).collect(Collectors.toList()), courseSpiderExecutor);
-
-        return getCourseTimeTableOverview(overview, future);
+        return CourseTimeTableOverview.fromRepo(collect, true);
 
     }
 
 
     @Override
-    public CourseTimeTableOverview getByClassId(String classId, String termYear, int termOrder) {
+    public CourseTimeTableOverview getByClassId(String classId, Term term) {
 
         ClassCourseTimetable relative = new ClassCourseTimetable()
                 .setClassId(classId)
-                .setTermYear(termYear)
-                .setTermOrder(termOrder);
+                .setTermYear(term.getTermYear())
+                .setTermOrder(term.getOrder());
 
         List<CourseTimetableDetailDO> timetableList = courseTimeTableDao.selectDetailByClassId(relative);
+        List<CourseTimetableBO> collect = timetableList.stream().map(x -> courseTimetableAdapter.toBO(x)).collect(Collectors.toList());
 
-        CourseTimeTableOverview overview = new CourseTimeTableOverview();
+        return CourseTimeTableOverview.fromRepo(collect, false);
 
-        if(!CollectionUtils.isEmpty(timetableList) || !spiderSwitch.fetchUrp()) {
-            setSuccessOverview(overview, timetableList);
-            return overview;
-        }
-
-        CompletableFuture<List<CourseTimetableBO>> future =
-                CompletableFuture.supplyAsync(() -> courseTimetableSpiderFacade.getByClassID(termYear, termOrder, classId)
-                        .stream().map(x -> courseTimetableAdapter.toBO(x)).collect(Collectors.toList()), courseSpiderExecutor);
-
-        return getCourseTimeTableOverview(overview, future);
-
-    }
-
-    private void setSuccessOverview(CourseTimeTableOverview overview, List<CourseTimetableDetailDO> timetableList){
-        List<CourseTimetableBO> timetableBOList = timetableList.stream().map(x -> courseTimetableAdapter.toBO(x)).collect(Collectors.toList());
-
-        overview.setFinishFetch(true);
-        overview.setCourseTimetableBOList(timetableBOList);
-        overview.setCurrentTerm(true);
-    }
-
-    private CourseTimeTableOverview getCourseTimeTableOverview(CourseTimeTableOverview overview, CompletableFuture<List<CourseTimetableBO>> future) {
-        try {
-            List<CourseTimetableBO> tableForSpider = future.get(6000L, TimeUnit.MILLISECONDS);
-
-            overview.setCourseTimetableBOList(tableForSpider);
-            overview.setFetchSuccess(true);
-            return overview;
-
-        } catch (Throwable e) {
-            ExceptionMsg handle = fetchExceptionHandler.handle(e);
-            overview.setErrorCode(handle.getErrorCode());
-            overview.setErrorMsg(handle.getMsg());
-            overview.setFetchSuccess(false);
-
-            return overview;
-        }
     }
 
 

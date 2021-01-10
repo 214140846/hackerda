@@ -1,6 +1,5 @@
 package com.hackerda.platform.domain.course.timetable;
 
-import com.hackerda.platform.utils.DateUtils;
 import com.hackerda.platform.domain.time.Term;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
@@ -19,7 +18,7 @@ public class CourseTimeTableOverview {
 
     private boolean fetchSuccess;
 
-    private boolean finishFetch;
+    private boolean fromRepository;
 
     private String errorMsg;
 
@@ -27,22 +26,33 @@ public class CourseTimeTableOverview {
 
     public List<CourseTimetableBO> getNewList(){
 
-        if(finishFetch || !fetchSuccess){
+        if(fromRepository || !fetchSuccess){
             return Collections.emptyList();
         }
         return courseTimetableBOList;
     }
 
-    public boolean isCurrentTerm() {
-        if(isEmpty()){
-            return false;
-        }
-
-        Term term = DateUtils.getCurrentSchoolTime().getTerm();
-        return courseTimetableBOList.get(0).getTerm().equals(term);
-    }
-
     public boolean isEmpty(){
         return CollectionUtils.isEmpty(courseTimetableBOList);
+    }
+
+    public Term getTerm() {
+
+        if (isEmpty()) {
+            throw new UnsupportedOperationException("table is empty");
+        }
+
+        return courseTimetableBOList.get(0).getTerm();
+
+    }
+
+
+    public static CourseTimeTableOverview fromRepo(List<CourseTimetableBO> courseTimetableBOList, boolean isPersonal) {
+        CourseTimeTableOverview overview = new CourseTimeTableOverview();
+        overview.setCourseTimetableBOList(courseTimetableBOList);
+        overview.fromRepository = true;
+        overview.errorCode = 0;
+        overview.isPersonal = isPersonal;
+        return overview;
     }
 }

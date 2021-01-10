@@ -1,6 +1,7 @@
 package com.hackerda.platform.domain.course.timetable;
 
 import com.hackerda.platform.application.CourseTimetableQueryApp;
+import com.hackerda.platform.domain.time.Term;
 import com.hackerda.platform.infrastructure.database.mapper.ext.TruncateMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class CourseTimetableQueryAppTest {
     @Test
     public void getByAccount() {
 
-        CourseTimeTableOverview view = courseTimetableQueryApp.getByClassId("2020010012", "2020-2021", 2);
+        CourseTimeTableOverview view = courseTimetableQueryApp.getByClassId("2020010012", new Term("2020-2021", 2));
         System.out.println(view);
 
     }

@@ -1,51 +1,62 @@
 package com.hackerda.platform.application;
 
 import com.hackerda.platform.domain.course.timetable.CourseTimeTableOverview;
+import com.hackerda.platform.domain.course.timetable.CourseTimetableBO;
 import com.hackerda.platform.domain.course.timetable.CourseTimetableRepository;
+import com.hackerda.platform.domain.course.timetable.CourseTimetableSpiderService;
 import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.student.StudentUserBO;
+import com.hackerda.platform.domain.time.SchoolTime;
+import com.hackerda.platform.domain.time.Term;
+import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.field.PreciseDateTimeField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CourseTimetableQueryApp {
     @Autowired
     private CourseTimetableRepository courseTimetableRepository;
+    @Autowired
+    private CourseTimetableSpiderService courseTimetableSpiderService;
 
-    public CourseTimeTableOverview getByStudent(StudentUserBO studentUserBO, String termYear, int termOrder){
 
-        CourseTimeTableOverview timeTableOverview = null;
+    public CourseTimeTableOverview getByStudent(StudentUserBO studentUserBO, Term term){
 
-        if(studentUserBO.isMsgHasCheck()) {
-            timeTableOverview = courseTimetableRepository.getByAccount(studentUserBO, termYear, termOrder);
+        if(!studentUserBO.isMsgHasCheck()) {
+            return getByClassId(studentUserBO.getUrpClassNum().toString(), term);
         }
 
-        if(timeTableOverview == null ||timeTableOverview.isEmpty() || !timeTableOverview.isCurrentTerm()){
-            timeTableOverview = courseTimetableRepository.getByClassId(studentUserBO.getUrpClassNum().toString(), termYear,
-                    termOrder);
+        CourseTimeTableOverview byAccount = courseTimetableRepository.getByAccount(studentUserBO, term);
+
+        if(!byAccount.isEmpty()) {
+            return byAccount;
         }
 
-        if(timeTableOverview.isCurrentTerm()) {
-            if(timeTableOverview.isPersonal()){
-                courseTimetableRepository.saveByStudent(timeTableOverview.getNewList(), studentUserBO);
-            }else {
-                courseTimetableRepository.saveByClass(timeTableOverview.getNewList(), studentUserBO.getUrpClassNum().toString());
-            }
+        CourseTimeTableOverview fetch = courseTimetableSpiderService.fetchByStudent(studentUserBO);
+        if (!fetch.isEmpty() && fetch.getTerm().equals(term)) {
+            courseTimetableRepository.saveByStudent(fetch.getNewList(), studentUserBO);
+            return fetch;
         }
 
-
-
-        return timeTableOverview;
+        return getByClassId(studentUserBO.getUrpClassNum().toString(), term);
     }
 
-    public CourseTimeTableOverview getByClassId(String classId, String termYear, int termOrder) {
+    public CourseTimeTableOverview getByClassId(String classId, Term term) {
 
-        CourseTimeTableOverview timeTableOverview = courseTimetableRepository.getByClassId(classId,
-                termYear, termOrder);
+        CourseTimeTableOverview byClassId = courseTimetableRepository.getByClassId(classId, term);
 
-        courseTimetableRepository.saveByClass(timeTableOverview.getNewList(), classId);
+        if(!byClassId.isEmpty()) {
+            return byClassId;
+        }
 
-        return timeTableOverview;
+        CourseTimeTableOverview overview = courseTimetableSpiderService.fetchByClassId(classId, term);
+
+        courseTimetableRepository.saveByClass(overview.getNewList(), classId);
+        return overview;
+
     }
 }
