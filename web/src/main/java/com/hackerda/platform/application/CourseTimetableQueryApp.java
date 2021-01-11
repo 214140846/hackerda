@@ -14,7 +14,14 @@ import org.joda.time.field.PreciseDateTimeField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Service
 public class CourseTimetableQueryApp {
@@ -22,6 +29,8 @@ public class CourseTimetableQueryApp {
     private CourseTimetableRepository courseTimetableRepository;
     @Autowired
     private CourseTimetableSpiderService courseTimetableSpiderService;
+
+    private final Map<String, ReentrantLock> lockMap = new ConcurrentHashMap<>();
 
 
     public CourseTimeTableOverview getByStudent(StudentUserBO studentUserBO, Term term){
@@ -47,16 +56,37 @@ public class CourseTimetableQueryApp {
 
     public CourseTimeTableOverview getByClassId(String classId, Term term) {
 
-        CourseTimeTableOverview byClassId = courseTimetableRepository.getByClassId(classId, term);
+        ReentrantLock lock = getClassLock(classId, term);
 
-        if(!byClassId.isEmpty()) {
-            return byClassId;
+        try {
+            if (lock.tryLock(8000L, TimeUnit.MILLISECONDS)) {
+                try {
+                    CourseTimeTableOverview byClassId = courseTimetableRepository.getByClassId(classId, term);
+
+                    if(!byClassId.isEmpty()) {
+                        return byClassId;
+                    }
+
+                    CourseTimeTableOverview overview = courseTimetableSpiderService.fetchByClassId(classId, term);
+                    courseTimetableRepository.saveByClass(overview.getNewList(), classId);
+                    return overview;
+                } finally {
+                    lock.unlock();
+                }
+
+            } else {
+                return CourseTimeTableOverview.fromRepo(Collections.emptyList(), false);
+            }
+        } catch (InterruptedException e) {
+            return CourseTimeTableOverview.fromRepo(Collections.emptyList(), false);
         }
 
-        CourseTimeTableOverview overview = courseTimetableSpiderService.fetchByClassId(classId, term);
+    }
 
-        courseTimetableRepository.saveByClass(overview.getNewList(), classId);
-        return overview;
+    private synchronized ReentrantLock getClassLock(String classId, Term term) {
+        ReentrantLock newLock = new ReentrantLock();
+        ReentrantLock lock = lockMap.putIfAbsent(classId + term.asKey(), newLock);
 
+        return lock != null ? lock : newLock;
     }
 }

@@ -80,7 +80,7 @@
     </select>
 
     <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
-        insert into course_timetable
+        insert ignore into course_timetable
         (<include refid="com.hackerda.platform.infrastructure.database.mapper.CourseTimetableMapper.Base_Column_List"/>)
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">

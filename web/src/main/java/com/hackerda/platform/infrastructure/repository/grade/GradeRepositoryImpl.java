@@ -164,7 +164,7 @@ public class GradeRepositoryImpl implements GradeRepository {
             } else if(cause instanceof ResourceAccessException) {
                 errorCode = ErrorCode.READ_TIMEOUT.getErrorCode();
                 msg = cause.getMessage();
-                log.error("get grade timeout {}", cause.getMessage());
+                log.warn("get grade timeout {}", cause.getMessage());
             } else {
                 errorCode = ErrorCode.SYSTEM_ERROR.getErrorCode();
                 msg = exception.getMessage();
