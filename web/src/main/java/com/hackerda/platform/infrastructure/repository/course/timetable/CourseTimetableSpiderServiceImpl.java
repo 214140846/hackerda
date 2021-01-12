@@ -6,10 +6,8 @@ import com.hackerda.platform.domain.course.timetable.CourseTimetableBO;
 import com.hackerda.platform.domain.course.timetable.CourseTimetableSpiderService;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.time.Term;
-import com.hackerda.platform.infrastructure.database.model.CourseTimetableDetailDO;
 import com.hackerda.platform.infrastructure.repository.ExceptionMsg;
 import com.hackerda.platform.infrastructure.repository.FetchExceptionHandler;
-import com.hackerda.platform.infrastructure.repository.course.CourseAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +38,7 @@ public class CourseTimetableSpiderServiceImpl implements CourseTimetableSpiderSe
                         classId)
                         .stream().map(x -> courseTimetableAdapter.toBO(x)).collect(Collectors.toList()), courseSpiderExecutor);
 
-        return getCourseTimeTableOverview(future);
+        return getCourseTimeTableOverview(future, false);
     }
 
     @Override
@@ -49,27 +47,21 @@ public class CourseTimetableSpiderServiceImpl implements CourseTimetableSpiderSe
                 CompletableFuture.supplyAsync(() -> courseTimetableSpiderFacade.getCurrentTermTableByAccount(student)
                         .stream().map(x -> courseTimetableAdapter.toBO(x)).collect(Collectors.toList()), courseSpiderExecutor);
 
-        return getCourseTimeTableOverview(future);
+        return getCourseTimeTableOverview(future, true);
     }
 
-    private CourseTimeTableOverview getCourseTimeTableOverview(CompletableFuture<List<CourseTimetableBO>> future) {
-
-        CourseTimeTableOverview overview = new CourseTimeTableOverview();
+    private CourseTimeTableOverview getCourseTimeTableOverview(CompletableFuture<List<CourseTimetableBO>> future,
+                                                               boolean isPersonal) {
 
         try {
             List<CourseTimetableBO> tableForSpider = future.get(6000L, TimeUnit.MILLISECONDS);
 
-            overview.setCourseTimetableBOList(tableForSpider);
-            overview.setFetchSuccess(true);
-            return overview;
+            return CourseTimeTableOverview.ofFetchSuccess(tableForSpider, isPersonal);
 
         } catch (Throwable e) {
             ExceptionMsg handle = fetchExceptionHandler.handle(e);
-            overview.setErrorCode(handle.getErrorCode());
-            overview.setErrorMsg(handle.getMsg());
-            overview.setFetchSuccess(false);
 
-            return overview;
+            return CourseTimeTableOverview.ofFetchFail(handle.getErrorCode(), handle.getMsg(), isPersonal);
         }
     }
 }

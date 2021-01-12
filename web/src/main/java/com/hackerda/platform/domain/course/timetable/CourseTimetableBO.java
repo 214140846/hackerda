@@ -5,15 +5,18 @@ import com.hackerda.platform.domain.time.Term;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 
 @Data
 @Accessors(chain = true)
-public class CourseTimetableBO {
+public class CourseTimetableBO implements Comparable<CourseTimetableBO>{
 
     @EqualsAndHashCode.Exclude
     private Integer id;
+
+    private int index;
 
     private CourseBO courseBO;
 
@@ -59,5 +62,26 @@ public class CourseTimetableBO {
 
     public Term getTerm() {
         return new Term(termYear, termOrder);
+    }
+
+    /**
+     * 星期一第一节：1
+     * 星期一第二节：3
+     * 星期二第一节：13
+     * @return 课程排序的序号
+     */
+    public int getOrder() {
+        return (classDay-1) * 12 + classOrder;
+    }
+
+    @Override
+    public int compareTo(@NotNull CourseTimetableBO o) {
+
+        if(this.getOrder() != o.getOrder()) {
+            return Integer.compare(this.getOrder(), o.getOrder());
+        }
+
+        return Integer.compare(this.startWeek, o.startWeek);
+
     }
 }

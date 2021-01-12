@@ -2,10 +2,14 @@ package com.hackerda.platform.controller.vo;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @Accessors(chain = true)
-public class CourseTimeTableVo {
+public class CourseTimeTableVO implements Comparable<CourseTimeTableVO>{
+
+    private Integer index;
+
     private String roomName;
 
     private String roomNumber;
@@ -35,4 +39,9 @@ public class CourseTimeTableVo {
     private Integer termOrder;
 
     private CourseVO course;
+
+    @Override
+    public int compareTo(@NotNull CourseTimeTableVO o) {
+        return Integer.compare(index, o.index);
+    }
 }

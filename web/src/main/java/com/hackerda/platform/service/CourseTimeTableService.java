@@ -1,5 +1,8 @@
 package com.hackerda.platform.service;
 
+import com.hackerda.platform.controller.WebResponse;
+import com.hackerda.platform.controller.vo.TermVO;
+import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.domain.course.timetable.CourseTimeTableOverview;
 import com.hackerda.platform.application.CourseTimetableQueryApp;
 import com.hackerda.platform.domain.student.StudentAccount;
@@ -7,9 +10,10 @@ import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.time.SchoolTimeManager;
 import com.hackerda.platform.domain.time.Term;
-import com.hackerda.platform.controller.vo.CourseTimeTableVo;
+import com.hackerda.platform.controller.vo.CourseTimeTableVO;
 import com.hackerda.platform.controller.vo.CourseTimetableOverviewVO;
 import com.hackerda.platform.controller.vo.CourseVO;
+import com.hackerda.spider.exception.PasswordUnCorrectException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +46,10 @@ public class CourseTimeTableService {
 
         CourseTimeTableOverview timeTableOverview = courseTimetableQueryApp.getByStudent(wechatStudentUserBO, term);
 
+        if (timeTableOverview.getErrorCode() == ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode()){
+            throw new PasswordUnCorrectException("账号或密码错误");
+        }
+
         return toVO(timeTableOverview);
     }
 
@@ -67,9 +75,16 @@ public class CourseTimeTableService {
             return vo;
         }
 
-        List<CourseTimeTableVo> collect = timeTableOverview.getCourseTimetableBOList().stream().map(x -> {
+        vo.setTermRestList(timeTableOverview.getTermRestList());
+        vo.setTermShowList(timeTableOverview.getTermShowList());
+        Term term = timeTableOverview.getTerm();
+        vo.setTerm(new TermVO(term.getStartYear(), term.getEndYear(), term.getOrder()));
 
-            CourseTimeTableVo tableVo = new CourseTimeTableVo();
+        List<CourseTimeTableVO> collect = timeTableOverview.getCourseTimetableBOList().stream().map(x -> {
+
+            CourseTimeTableVO tableVo = new CourseTimeTableVO();
+
+            tableVo.setIndex(x.getIndex());
 
             tableVo.setRoomName(x.getRoomName());
             tableVo.setRoomNumber(x.getRoomNumber());
@@ -98,7 +113,9 @@ public class CourseTimeTableService {
             tableVo.setCourse(courseVO);
 
             return tableVo;
-        }).collect(Collectors.toList());
+        })
+                .sorted()
+                .collect(Collectors.toList());
 
         vo.setCourseTimetableVOList(collect);
 

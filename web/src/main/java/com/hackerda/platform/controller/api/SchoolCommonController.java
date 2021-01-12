@@ -50,7 +50,7 @@ public class SchoolCommonController {
 
     @RequiresAuthentication
     @RequestMapping(value = "/timetable")
-    public WebResponse getTimeTableV2() {
+    public WebResponse getTimeTable() {
 
         CourseTimetableOverviewVO vo = courseTimeTableService.getCurrentTermCourseTimeTableByStudent();
         if (vo.getErrorCode() == ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode()){
@@ -60,8 +60,17 @@ public class SchoolCommonController {
     }
 
     @RequiresAuthentication
+    @RequestMapping(value = "/timetableV2")
+    public WebResponse<CourseTimetableOverviewVO> getTimeTableV2() {
+
+        CourseTimetableOverviewVO vo = courseTimeTableService.getCurrentTermCourseTimeTableByStudent();
+
+        return WebResponse.success(vo);
+    }
+
+    @RequiresAuthentication
     @RequestMapping(value = "/unbind")
-    public WebResponse appUnbind(@RequestParam(value = "account", required = false) String account,
+    public WebResponse<String> appUnbind(@RequestParam(value = "account", required = false) String account,
                                  @RequestParam(value = "appId") String appId) {
 
         userAuthorizeService.appStudentRevokeAuthorize(account, appId);
@@ -70,7 +79,7 @@ public class SchoolCommonController {
 
     @RequiresAuthentication
     @GetMapping("/exam")
-    public WebResponse getExamTimeTableByStudent() {
+    public WebResponse<List<Exam>> getExamTimeTableByStudent() {
         StudentUserBO wechatStudentUserBO = (StudentUserBO) SecurityUtils.getSubject().getPrincipal();
 
         List<Exam> examTimeList = examTimeTableService.getExamTimeList(wechatStudentUserBO);
