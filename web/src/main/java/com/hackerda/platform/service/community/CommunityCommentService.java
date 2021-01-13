@@ -86,8 +86,11 @@ public class CommunityCommentService {
             commentVO.setPostTime(x.getPostTime());
             commentVO.setLikeCount(x.getLikeCount());
             commentVO.setPostUser(userNamePosterMap.get(x.getUserName()));
-            
-            if(!x.isRoot() && idMap.get(x.getReplyCommentId()) != null) {
+
+            if(!x.isRoot()) {
+                if(idMap.get(x.getReplyCommentId()) == null) {
+                    return null;
+                }
                 CommentDetailBO replyDetailBO = idMap.get(x.getReplyCommentId());
                 commentVO.setReplyUser(userNamePosterMap.get(replyDetailBO.getUserName()));
             }
@@ -99,7 +102,7 @@ public class CommunityCommentService {
             long size = likeCountService.likeCount(LikeType.Comment, x.getId());
             commentVO.setLikeCount(size);
             return commentVO;
-        }).collect(Collectors.toList());
+        }).filter(Objects::nonNull).collect(Collectors.toList());
 
         return new CommentDetailVO(commentList);
 
