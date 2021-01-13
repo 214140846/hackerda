@@ -83,6 +83,16 @@ public class StudentUserBO {
     }
 
 
+    public void updateClassInfo(Integer urpClassNum, String academyName, String subjectName, String className) {
+        this.urpClassNum = urpClassNum;
+        this.academyName = academyName;
+        this.subjectName = subjectName;
+        this.className = className;
+
+        this.saveOrUpdate = true;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

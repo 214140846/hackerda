@@ -2,6 +2,7 @@ package com.hackerda.platform.application;
 
 import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.domain.student.Action;
+import com.hackerda.platform.domain.student.StudentInfoService;
 import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.wechat.ActionRecord;
@@ -18,6 +19,8 @@ public class CreateStudentApp {
     private StudentRepository studentRepository;
     @Autowired
     private WechatActionRecordRepository wechatActionRecordRepository;
+    @Autowired
+    private StudentInfoService studentInfoService;
 
     public WechatStudentUserBO createStudentUser(WechatStudentUserBO wechatStudentUserBO, WechatUser wechatUser) {
 
@@ -34,6 +37,22 @@ public class CreateStudentApp {
 
         wechatActionRecordRepository.save(new ActionRecord(wechatUser, Action.CreateStudent, wechatStudentUserBO.getAccount()));
         return wechatStudentUserBO;
+
+    }
+
+
+    public void updateStudentInfo(WechatStudentUserBO wechatStudentUserBO) {
+
+        WechatStudentUserBO studentInfo = studentInfoService.getStudentInfo(wechatStudentUserBO.getAccount(), wechatStudentUserBO.getEnablePassword());
+
+        wechatStudentUserBO.updateClassInfo(studentInfo.getUrpClassNum(), studentInfo.getAcademyName(),
+                studentInfo.getSubjectName(), studentInfo.getClassName());
+
+        studentRepository.save(wechatStudentUserBO);
+
+        wechatActionRecordRepository.save(new ActionRecord(wechatStudentUserBO.getUnionId().getWechatUser("wx05f7264e83fa40e9"), Action.UpdateStudentInfo,
+                wechatStudentUserBO.getAccount()));
+
 
     }
 }

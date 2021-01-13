@@ -24,6 +24,8 @@ public enum Action {
 
     CreateStudent(6),
 
+    UpdateStudentInfo(7),
+
     ;
 
 
