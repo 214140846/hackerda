@@ -115,6 +115,14 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
+    public void save(StudentUserBO studentUser) {
+        if(studentUser.isSaveOrUpdate()) {
+            studentUserDao.saveOrUpdate(studentUserAdapter.toDO(studentUser));
+            studentUser.save();
+        }
+    }
+
+    @Override
     @Transactional
     public void save(WechatStudentUserBO studentUser) {
 

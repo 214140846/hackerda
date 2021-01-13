@@ -20,6 +20,8 @@ public interface StudentRepository {
 
     List<WechatStudentUserBO> getSubscribe(SubscribeScene subscribeScene);
 
+    void save(StudentUserBO studentUser);
+
     void save(WechatStudentUserBO studentUser);
 
 }

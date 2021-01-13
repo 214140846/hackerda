@@ -1,6 +1,7 @@
 package com.hackerda.platform.service;
 
 import com.hackerda.platform.application.CreateStudentApp;
+import com.hackerda.platform.application.UnionIdApp;
 import com.hackerda.platform.controller.request.CreateStudentRequest;
 import com.hackerda.platform.controller.vo.StudentUserDetailVO;
 import com.hackerda.platform.controller.vo.student.AcademyVO;
@@ -12,6 +13,7 @@ import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentFactory;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.user.Gender;
+import com.hackerda.platform.domain.wechat.UnionId;
 import com.hackerda.platform.domain.wechat.WechatUser;
 import com.hackerda.platform.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,19 +31,29 @@ public class CreateStudentService {
     private StudentFactory studentFactory;
     @Autowired
     private CreateStudentApp createStudentApp;
+    @Autowired
+    private UnionIdApp unionIdApp;
 
     public StudentUserDetailVO createStudentUser(CreateStudentRequest createStudentRequest) {
 
         Gender gender = createStudentRequest.getGender().equals("男") ? Gender.Man : Gender.Woman;
 
-        WechatStudentUserBO studentUserBO = studentFactory.createByClazzNum(new StudentAccount(createStudentRequest.getAccount()),
+        WechatStudentUserBO studentUserBO = studentFactory.create(new StudentAccount(createStudentRequest.getAccount()),
                 createStudentRequest.getName(), gender, createStudentRequest.getClazzNum());
 
-
-        createStudentApp.createStudentUser(studentUserBO, new WechatUser(createStudentRequest.getAppId(),
+        UnionId unionId = unionIdApp.getUnionId(createStudentRequest.getUnionId(), new WechatUser(createStudentRequest.getAppId(),
                 createStudentRequest.getOpenid()));
 
+        createStudentApp.createStudentUser(studentUserBO, unionId);
+
         return getVO(studentUserBO, createStudentRequest.getAppId());
+    }
+
+    public StudentUserDetailVO updateStudentUser(WechatStudentUserBO studentUserBO) {
+
+        createStudentApp.updateStudentInfo(studentUserBO);
+
+        return getVO(studentUserBO, "wx05f7264e83fa40e9");
     }
 
     private StudentUserDetailVO getVO(WechatStudentUserBO studentUser, String appId){

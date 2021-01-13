@@ -22,7 +22,7 @@ public class UnionIdApp {
     @Autowired
     private WechatMpService wechatMpService;
 
-    public UnionId getUnionId (String unionId, WechatUser wechatUser) {
+    public UnionId getUnionId(String unionId, WechatUser wechatUser) {
 
         UnionId savedUnionId = unionIdRepository.find(unionId);
 

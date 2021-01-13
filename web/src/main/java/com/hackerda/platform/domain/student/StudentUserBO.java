@@ -92,6 +92,10 @@ public class StudentUserBO {
         this.saveOrUpdate = true;
     }
 
+    public void save () {
+        this.saveOrUpdate = false;
+    }
+
 
     @Override
     public boolean equals(Object o) {

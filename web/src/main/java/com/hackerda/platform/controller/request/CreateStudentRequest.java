@@ -16,4 +16,6 @@ public class CreateStudentRequest {
     private String openid;
 
     private String appId;
+
+    private String unionId;
 }

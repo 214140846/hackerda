@@ -9,7 +9,9 @@ import com.hackerda.platform.exception.BusinessException;
 import com.hackerda.platform.infrastructure.database.dao.UrpClassDao;
 import com.hackerda.platform.infrastructure.database.model.StudentUser;
 import com.hackerda.platform.infrastructure.database.model.UrpClass;
+import com.hackerda.platform.utils.DESUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
@@ -21,11 +23,13 @@ public class StudentFactoryImpl implements StudentFactory {
     private UrpClassDao urpClassDao;
     @Autowired
     private StudentUserAdapter adapter;
+    @Value("${student.password.salt}")
+    private String key;
 
 
     @Override
-    public WechatStudentUserBO createByClazzNum(StudentAccount account, String name, Gender gender,
-                                                String urpClazzNum) {
+    public WechatStudentUserBO create(StudentAccount account, String name, Gender gender,
+                                      String urpClazzNum) {
 
         UrpClass urpClass = urpClassDao.selectByClassNumber(urpClazzNum);
 
@@ -44,6 +48,32 @@ public class StudentFactoryImpl implements StudentFactory {
         studentUser.setHasCheck(false);
         String uuid = UUID.randomUUID().toString();
         studentUser.setPassword(uuid);
+        studentUser.setIsCorrect(false);
+        studentUser.setEthnic("");
+        WechatStudentUserBO userBO = adapter.toBO(studentUser);
+        userBO.setSaveOrUpdate(true);
+
+        return userBO;
+    }
+
+    @Override
+    public WechatStudentUserBO create(StudentAccount account, String password, String name, Gender gender, String urpClazzNum) {
+        UrpClass urpClass = urpClassDao.selectByClassNumber(urpClazzNum);
+
+        if(urpClass == null) {
+            throw new BusinessException(ErrorCode.NO_DATA, urpClazzNum + "班级号没有数据");
+        }
+
+        StudentUser studentUser = new StudentUser();
+        studentUser.setAcademyName(urpClass.getAcademyName());
+        studentUser.setClassName(urpClass.getClassName());
+        studentUser.setSubjectName(urpClass.getSubjectName());
+        studentUser.setUrpclassNum(Integer.parseInt(urpClass.getClassNum()));
+        studentUser.setAccount(account.getInt());
+        studentUser.setName(name);
+        studentUser.setSex(gender.getDesc());
+        studentUser.setHasCheck(false);
+        studentUser.setPassword(DESUtil.encrypt(password, account.toString() + key));
         studentUser.setIsCorrect(false);
         studentUser.setEthnic("");
         WechatStudentUserBO userBO = adapter.toBO(studentUser);

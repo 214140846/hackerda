@@ -4,6 +4,7 @@ import com.hackerda.platform.controller.request.CreateStudentRequest;
 import com.hackerda.platform.controller.vo.AppUserVO;
 import com.hackerda.platform.controller.vo.StudentUserDetailVO;
 import com.hackerda.platform.controller.vo.UserInfoVO;
+import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.service.CreateStudentService;
 import com.hackerda.platform.service.community.UserService;
 import com.hackerda.platform.service.rbac.UserAuthorizeService;
@@ -59,6 +60,21 @@ public class UserInfoAggregator {
     public UserInfoVO createStudent(CreateStudentRequest createStudentRequest) {
 
         StudentUserDetailVO detailVO = createStudentService.createStudentUser(createStudentRequest);
+
+        AppUserVO appUserVO = userService.getUserByStudentAccount(detailVO.getAccount().toString());
+
+        UserInfoVO infoVO = new UserInfoVO();
+
+        infoVO.setStudentInfo(detailVO);
+        infoVO.setUserInfo(appUserVO);
+
+        return infoVO;
+
+    }
+
+    public UserInfoVO updateStudentInfo(WechatStudentUserBO wechatStudentUserBO) {
+
+        StudentUserDetailVO detailVO = createStudentService.updateStudentUser(wechatStudentUserBO);
 
         AppUserVO appUserVO = userService.getUserByStudentAccount(detailVO.getAccount().toString());
 

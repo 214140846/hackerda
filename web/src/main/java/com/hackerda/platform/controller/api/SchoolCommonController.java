@@ -1,11 +1,14 @@
 package com.hackerda.platform.controller.api;
 
 
+import com.hackerda.platform.aggregator.UserInfoAggregator;
 import com.hackerda.platform.controller.WebResponse;
+import com.hackerda.platform.controller.vo.UserInfoVO;
 import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.controller.vo.CourseTimetableOverviewVO;
 import com.hackerda.platform.controller.vo.GradeResultVo;
 import com.hackerda.platform.domain.student.StudentUserBO;
+import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.infrastructure.database.model.Exam;
 import com.hackerda.platform.service.CourseTimeTableService;
 import com.hackerda.platform.service.ExamTimeTableService;
@@ -35,6 +38,8 @@ public class SchoolCommonController {
     private UserAuthorizeService userAuthorizeService;
     @Autowired
     private ExamTimeTableService examTimeTableService;
+    @Autowired
+    private UserInfoAggregator userInfoAggregator;
 
     @RequiresAuthentication
     @RequestMapping(value = "/grade")
@@ -84,5 +89,13 @@ public class SchoolCommonController {
 
         List<Exam> examTimeList = examTimeTableService.getExamTimeList(wechatStudentUserBO);
         return WebResponse.success(examTimeList);
+    }
+
+    @RequiresAuthentication
+    @GetMapping("/updateStudentInfo")
+    public WebResponse<UserInfoVO> updateStudentInfo() {
+        WechatStudentUserBO wechatStudentUserBO = (WechatStudentUserBO) SecurityUtils.getSubject().getPrincipal();
+
+        return WebResponse.success(userInfoAggregator.updateStudentInfo(wechatStudentUserBO));
     }
 }

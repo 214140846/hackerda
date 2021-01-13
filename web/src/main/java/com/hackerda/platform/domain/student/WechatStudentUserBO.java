@@ -156,7 +156,7 @@ public class WechatStudentUserBO extends StudentUserBO{
 
 
     public void save() {
-
+        super.save();
         if (useUnionId) {
 
             if (!newBindUnionId.isEmpty()) {
