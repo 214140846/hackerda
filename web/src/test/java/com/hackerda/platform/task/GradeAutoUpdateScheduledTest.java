@@ -32,7 +32,6 @@ public class GradeAutoUpdateScheduledTest {
     @Test
     public void simulation() {
 
-//        gradeAutoUpdateScheduled.simulation();
 
         StudentAccount account = new StudentAccount("2020030617");
         UnionId ofNew = UnionId.ofNew("test");

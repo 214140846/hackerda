@@ -7,6 +7,7 @@ import com.hackerda.platform.service.wechat.WxMessageRouter;
 import com.hackerda.platform.service.wechat.handler.messageHandler.EvaluationHandler;
 import com.hackerda.platform.service.wechat.handler.messageHandler.OpenidMessageHandler;
 import com.hackerda.platform.service.wechat.handler.messageHandler.SubscribeEventHandler;
+import com.hackerda.platform.service.wechat.handler.messageHandler.UnSubscribeEventHandler;
 import com.hackerda.platform.service.wechat.interceptor.WechatOpenIdInterceptor;
 import me.chanjar.weixin.common.bean.menu.WxMenu;
 import me.chanjar.weixin.common.bean.menu.WxMenuButton;
@@ -16,6 +17,7 @@ import me.chanjar.weixin.mp.api.WxMpMenuService;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -53,6 +55,9 @@ public class WechatMpConfiguration {
 
     @Resource
     private SubscribeEventHandler subscribeEventHandler;
+
+    @Autowired
+    private UnSubscribeEventHandler unSubscribeEventHandler;
 
     @Resource
     private EvaluationHandler evaluationHandler;
@@ -111,6 +116,11 @@ public class WechatMpConfiguration {
                 .async(false)
                 .event("subscribe")
                 .handler(subscribeEventHandler)
+                .end()
+                .rule()
+                .async(false)
+                .event("unsubscribe")
+                .handler(unSubscribeEventHandler)
                 .end()
                 .rule()
                 .async(false)
