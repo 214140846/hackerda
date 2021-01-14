@@ -6,6 +6,7 @@ import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.wechat.WechatMessageSender;
+import com.hackerda.platform.domain.wechat.WechatUser;
 import com.hackerda.platform.service.EvaluationService;
 import com.hackerda.spider.exception.PasswordUnCorrectException;
 import lombok.Getter;
@@ -99,10 +100,15 @@ public class EvaluateTask implements Runnable{
 
     void sendMessage(WechatStudentUserBO user) {
         String appId = wechatMpPlusProperties.getAppId();
-        EvaluateFinishMessage message = new EvaluateFinishMessage(user.getUnionId().getWechatUser(appId),
-                templateId, user);
 
-        wechatMessageSender.sendTemplateMessageAsync(message);
+        WechatUser wechatUser = user.getUnionId().getWechatUser(appId);
+
+        if(wechatUser.isSubscribe()) {
+            EvaluateFinishMessage message = new EvaluateFinishMessage(wechatUser,
+                    templateId, user);
+
+            wechatMessageSender.sendTemplateMessageAsync(message);
+        }
     }
 
 }

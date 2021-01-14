@@ -123,6 +123,15 @@ public class WechatStudentUserBO extends StudentUserBO{
         return originWechatUserSet.contains(wechatUser) || wechatUserMap.containsValue(wechatUser);
     }
 
+    public WechatUser getWechatUser(String appId) {
+        if (useUnionId) {
+            return unionId.getWechatUser(appId);
+        }
+
+        return wechatUserMap.get(appId);
+    }
+
+
     public boolean hasBindWechatUser() {
         return !originWechatUserSet.isEmpty() || !wechatUserMap.isEmpty();
     }

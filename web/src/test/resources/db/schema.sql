@@ -408,6 +408,7 @@ CREATE TABLE `wechat_union_id`
     `union_id`   varchar(32) NOT NULL,
     `app_id`     varchar(32) NOT NULL,
     `open_id`    varchar(32) NOT NULL,
+    `subscribe`  tinyint(2)  NOT NULL DEFAULT '1',
     `gmt_create` datetime DEFAULT CURRENT_TIMESTAMP,
     `gmt_modify` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),

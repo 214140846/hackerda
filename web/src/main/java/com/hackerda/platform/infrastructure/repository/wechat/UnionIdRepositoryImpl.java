@@ -29,20 +29,34 @@ public class UnionIdRepositoryImpl implements UnionIdRepository {
     @Transactional
     public void save(UnionId unionId) {
 
-        List<WechatUnionId> unionIdList = unionId.getNewBindWechatUser().stream().map(x -> {
-
-            WechatUnionId wechatUnionId = new WechatUnionId();
-            wechatUnionId.setUnionId(unionId.getUnionId());
-            wechatUnionId.setAppId(x.getAppId());
-            wechatUnionId.setOpenId(x.getOpenId());
-            return wechatUnionId;
-        }).collect(Collectors.toList());
+        List<WechatUnionId> unionIdList = unionId.getNewBindWechatUser().stream().map(x -> toDO(unionId, x)).collect(Collectors.toList());
         for (WechatUnionId wechatUnionId : unionIdList) {
             wechatUnionIdMapper.insertSelective(wechatUnionId);
         }
 
+        List<WechatUnionId> updateList =
+                unionId.getModifyWechatUserSet().stream().map(x -> toDO(unionId, x)).collect(Collectors.toList());
+        for (WechatUnionId wechatUnionId : updateList) {
+            WechatUnionIdExample example = new WechatUnionIdExample();
+            example.createCriteria()
+                    .andAppIdEqualTo(wechatUnionId.getAppId())
+                    .andOpenIdEqualTo(wechatUnionId.getOpenId())
+                    .andUnionIdEqualTo(wechatUnionId.getUnionId());
+
+            wechatUnionIdMapper.updateByExampleSelective(wechatUnionId, example);
+        }
+
         unionId.save();
 
+    }
+
+    @NotNull WechatUnionId toDO(UnionId unionId, WechatUser x) {
+        WechatUnionId wechatUnionId = new WechatUnionId();
+        wechatUnionId.setUnionId(unionId.getUnionId());
+        wechatUnionId.setAppId(x.getAppId());
+        wechatUnionId.setOpenId(x.getOpenId());
+        wechatUnionId.setSubscribe(x.isSubscribe());
+        return wechatUnionId;
     }
 
     @Override
@@ -51,7 +65,7 @@ public class UnionIdRepositoryImpl implements UnionIdRepository {
         example.createCriteria().andUnionIdEqualTo(unionId);
 
         List<WechatUser> wechatUserList = wechatUnionIdMapper.selectByExample(example).stream()
-                .map(x -> new WechatUser(x.getAppId(), x.getOpenId()))
+                .map(x -> new WechatUser(x.getAppId(), x.getOpenId(), x.isSubscribe_()))
                 .collect(Collectors.toList());
 
         if (CollectionUtils.isEmpty(wechatUserList)) {
@@ -77,7 +91,7 @@ public class UnionIdRepositoryImpl implements UnionIdRepository {
 
         return accountListMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
             List<WechatUser> wechatUserList = entry.getValue().stream()
-                    .map(x -> new WechatUser(x.getAppId(), x.getOpenId()))
+                    .map(x -> new WechatUser(x.getAppId(), x.getOpenId(), x.isSubscribe()))
                     .collect(Collectors.toList());
 
             return UnionId.ofRepo(entry.getValue().get(0).getUnionId(), wechatUserList);
@@ -116,7 +130,7 @@ public class UnionIdRepositoryImpl implements UnionIdRepository {
         }
 
         List<WechatUser> wechatUserList = unionIdList.stream()
-                .map(x -> new WechatUser(x.getAppId(), x.getOpenId()))
+                .map(x -> new WechatUser(x.getAppId(), x.getOpenId(), x.isSubscribe_()))
                 .collect(Collectors.toList());
 
         return UnionId.ofRepo(unionIdList.get(0).getUnionId(), wechatUserList);

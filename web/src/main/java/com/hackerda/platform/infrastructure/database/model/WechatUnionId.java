@@ -18,9 +18,20 @@ public class WechatUnionId implements Serializable {
 
     private String openId;
 
+    private Byte subscribe;
+
     private Date gmtCreate;
 
     private Date gmtModify;
 
     private static final long serialVersionUID = 1L;
+
+
+    public boolean isSubscribe_() {
+        return subscribe == (byte) 1;
+    }
+
+    public void setSubscribe (boolean subscribe) {
+        this.subscribe = subscribe ? (byte) 1 : (byte) 0;
+    }
 }

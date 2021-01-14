@@ -45,14 +45,18 @@ public class UnionIdApp {
     }
 
 
-    public void saveUnionId(WechatUser wechatUser) {
+    public UnionId saveUnionId(WechatUser wechatUser) {
 
         UnionId unionId = unionIdRepository.find(wechatUser);
-
+        WxMpUser userInfo = wechatMpService.getUserInfo(wechatUser);
+        wechatUser.setSubscribe(userInfo.getSubscribe());
         if (unionId.isEmpty()) {
-            WxMpUser userInfo = wechatMpService.getUserInfo(wechatUser);
-            getUnionId(userInfo.getUnionId(), wechatUser);
+            return getUnionId(userInfo.getUnionId(), wechatUser);
+        } else {
+            unionId.bindOpenid(wechatUser);
         }
+
+        return unionId;
     }
 
 }

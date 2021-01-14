@@ -1,6 +1,7 @@
 package com.hackerda.platform.service.wechat.handler.messageHandler;
 
 
+import com.hackerda.platform.application.UnionIdApp;
 import com.hackerda.platform.builder.TextBuilder;
 import com.hackerda.platform.config.wechat.WechatMpPlusProperties;
 import com.hackerda.platform.domain.student.StudentRepository;
@@ -31,9 +32,9 @@ public class SubscribeEventHandler implements WxMpMessageHandler {
     @Resource
     private TextBuilder textBuilder;
     @Autowired
-    private UnionIdRepository unionIdRepository;
-    @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    private UnionIdApp unionIdApp;
 
 
     @Override
@@ -42,7 +43,7 @@ public class SubscribeEventHandler implements WxMpMessageHandler {
         String fromUser = wxMessage.getFromUser();
         StringBuffer buffer = new StringBuffer();
 
-        UnionId unionId = unionIdRepository.find(new WechatUser(appId, fromUser));
+        UnionId unionId = unionIdApp.saveUnionId(new WechatUser(appId, fromUser));
 
         WechatStudentUserBO wetChatUser = studentRepository.findWetChatUser(unionId);
 

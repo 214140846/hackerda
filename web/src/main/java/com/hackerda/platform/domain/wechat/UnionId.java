@@ -1,5 +1,6 @@
 package com.hackerda.platform.domain.wechat;
 
+import com.google.common.collect.Sets;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -20,6 +21,10 @@ public class UnionId {
     @EqualsAndHashCode.Exclude
     private Set<WechatUser> originWechatUserSet = Collections.emptySet();
 
+
+    @EqualsAndHashCode.Exclude
+    private final Set<WechatUser> modifyWechatUserSet = Sets.newHashSet();
+
     public UnionId(String unionId) {
         this.unionId = unionId;
     }
@@ -28,10 +33,23 @@ public class UnionId {
         return StringUtils.isEmpty(unionId);
     }
 
-
     public void bindOpenid(WechatUser wechatUser) {
-        if (!originWechatUserSet.contains(wechatUser)) {
-            wechatUserMap.put(wechatUser.getAppId(), wechatUser);
+        wechatUserMap.put(wechatUser.getAppId(), wechatUser);
+        if (originWechatUserSet.contains(wechatUser)) {
+            modifyWechatUserSet.add(wechatUser);
+        }
+    }
+
+    public void subscribe(String appId) {
+        WechatUser wechatUser = wechatUserMap.get(appId);
+        if(wechatUser == null) {
+            throw new IllegalArgumentException("unionId " + this.unionId + " haven`t bind appId "+ appId);
+        }
+
+        wechatUser.setSubscribe(true);
+
+        if(originWechatUserSet.contains(wechatUser)) {
+            modifyWechatUserSet.add(wechatUser);
         }
     }
 
@@ -45,9 +63,22 @@ public class UnionId {
         return this.wechatUserMap.getOrDefault(appId, WechatUser.ofNull()).getOpenId();
     }
     public WechatUser getWechatUser(String appId) {
-
         return wechatUserMap.getOrDefault(appId, WechatUser.ofNull());
     }
+
+    public void unSubscribe(String appId) {
+        WechatUser wechatUser = wechatUserMap.get(appId);
+        if(wechatUser == null) {
+            throw new IllegalArgumentException("unionId " + this.unionId + " haven`t bind appId "+ appId);
+        }
+
+        wechatUser.setSubscribe(false);
+
+        if(originWechatUserSet.contains(wechatUser)) {
+            modifyWechatUserSet.add(wechatUser);
+        }
+    }
+
 
     public boolean hasOpenId(WechatUser wechatUser) {
         return wechatUserMap.containsValue(wechatUser);
@@ -57,8 +88,14 @@ public class UnionId {
         return wechatUserMap.containsKey(appId);
     }
 
+    public Set<WechatUser> getModifyWechatUserSet() {
+        return Collections.unmodifiableSet(modifyWechatUserSet);
+    }
+
+
     public void save() {
         originWechatUserSet = new HashSet<>(wechatUserMap.values());
+        modifyWechatUserSet.clear();
     }
 
     /**

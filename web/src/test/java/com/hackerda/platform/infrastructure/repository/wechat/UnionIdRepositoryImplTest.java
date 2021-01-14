@@ -32,20 +32,48 @@ public class UnionIdRepositoryImplTest {
 
     @Test
     public void save() {
-
         UnionId testUnionId = UnionId.ofNew("test_unionId");
-        testUnionId.bindOpenid(new WechatUser("appId", "openId1"));
+        testUnionId.bindOpenid(new WechatUser("appId1", "openId1"));
         unionIdRepository.save(testUnionId);
 
         assertThat(unionIdRepository.find("test_unionId")).isEqualTo(testUnionId);
 
-
-        testUnionId.bindOpenid(new WechatUser("appId", "openId2"));
+        testUnionId.bindOpenid(new WechatUser("appId2", "openId2", false));
         unionIdRepository.save(testUnionId);
 
-        assertThat(unionIdRepository.find("test_unionId")).isEqualTo(testUnionId);
+        UnionId saveId = unionIdRepository.find("test_unionId");
 
+        assertThat(saveId).isEqualTo(testUnionId);
+        assertThat(saveId.getOpenId("appId2")).isEqualTo("openId2");
+        assertThat(saveId.getWechatUser("appId2").isSubscribe()).isEqualTo(false);
     }
+
+    @Test
+    public void subscribe() {
+        // test subscribe and unSubscribe
+        UnionId testUnionId = UnionId.ofNew("test_unionId");
+        testUnionId.bindOpenid(new WechatUser("appId1", "openId1"));
+
+        testUnionId.unSubscribe("appId1");
+        unionIdRepository.save(testUnionId);
+
+        assertThat(testUnionId.getWechatUser("appId1").isSubscribe()).isFalse();
+        assertThat(unionIdRepository.find("test_unionId").getWechatUser("appId1").isSubscribe()).isFalse();
+
+        testUnionId.subscribe("appId1");
+        unionIdRepository.save(testUnionId);
+
+        assertThat(testUnionId.getWechatUser("appId1").isSubscribe()).isTrue();
+        assertThat(unionIdRepository.find("test_unionId").getWechatUser("appId1").isSubscribe()).isTrue();
+
+        // test bind
+        testUnionId.bindOpenid(new WechatUser("appId1", "openId1", false));
+        unionIdRepository.save(testUnionId);
+
+        assertThat(testUnionId.getWechatUser("appId1").isSubscribe()).isFalse();
+        assertThat(unionIdRepository.find("test_unionId").getWechatUser("appId1").isSubscribe()).isFalse();
+    }
+
 
     @Test
     public void find() {

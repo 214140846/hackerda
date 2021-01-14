@@ -92,7 +92,7 @@ public class CommunityCommentApp {
     public CompletableFuture<Void> sendCommentMessage(String receiverUserName, CommentBO commentBO) {
         UnionId unionId = unionIdRepository.findByUserName(receiverUserName);
 
-        if (unionId.hasApp("wx541fd36e6b400648")) {
+        if (unionId.hasApp("wx541fd36e6b400648") && unionId.getWechatUser("wx541fd36e6b400648").isSubscribe()) {
             CommentNoticeMessage message = new CommentNoticeMessage(unionId.getWechatUser("wx541fd36e6b400648"), commentBO);
             return wechatMessageSender.sendTemplateMessageAsync(message);
         }

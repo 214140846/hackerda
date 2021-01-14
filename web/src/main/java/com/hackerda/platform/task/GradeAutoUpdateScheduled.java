@@ -152,6 +152,7 @@ public class GradeAutoUpdateScheduled implements Runnable{
         return wetChatUser
                 .stream()
                 .filter(x-> x.hasBindApp("wx541fd36e6b400648"))
+                .filter(x-> x.getWechatUser("wx541fd36e6b400648").isSubscribe())
                 .filter(WechatStudentUserBO::isPasswordCorrect)
                 .collect(Collectors.toList());
     }
