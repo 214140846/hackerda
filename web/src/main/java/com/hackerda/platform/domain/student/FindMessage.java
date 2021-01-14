@@ -50,4 +50,9 @@ public class FindMessage implements WechatTemplateMessage {
     public String getSendApp() {
         return toWechatUser.getAppId();
     }
+
+    @Override
+    public WechatUser getToUser() {
+        return toWechatUser;
+    }
 }

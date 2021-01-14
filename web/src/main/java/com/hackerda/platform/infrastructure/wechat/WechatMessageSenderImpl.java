@@ -2,8 +2,7 @@ package com.hackerda.platform.infrastructure.wechat;
 
 import com.hackerda.platform.MDCThreadPool;
 import com.hackerda.platform.config.wechat.WechatMpConfiguration;
-import com.hackerda.platform.domain.wechat.WechatMessageSender;
-import com.hackerda.platform.domain.wechat.WechatTemplateMessage;
+import com.hackerda.platform.domain.wechat.*;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -24,6 +23,8 @@ public class WechatMessageSenderImpl implements WechatMessageSender {
 
     @Autowired
     private WechatMpConfiguration wechatMpConfiguration;
+    @Autowired
+    private WechatExceptionHandler wechatExceptionHandler;
 
     private final ExecutorService wechatMessagePool = new MDCThreadPool(8, 8,
             0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "wechatMessagePool"));
@@ -55,8 +56,11 @@ public class WechatMessageSenderImpl implements WechatMessageSender {
         try {
             String msg = wxService.getTemplateMsgService().sendTemplateMsg(wxMpTemplateMessage);
             log.info("send message {} success  msg {}", wxMpTemplateMessage.toJson(), msg);
+        } catch (WxErrorException e) {
+            wechatExceptionHandler.handle(e, wechatTemplateMessage.getToUser());
+            log.error("send message {} wechat error",wxMpTemplateMessage.toJson(), e);
         } catch (Exception e) {
-            log.error("message {} send error",wxMpTemplateMessage.toJson(), e);
+            log.error("send message {} error",wxMpTemplateMessage.toJson(), e);
         }
 
     }

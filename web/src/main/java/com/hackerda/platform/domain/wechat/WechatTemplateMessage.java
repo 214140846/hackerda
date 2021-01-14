@@ -9,4 +9,6 @@ public interface WechatTemplateMessage {
     WxMpTemplateMessage genMpTemplateMessage();
 
     String getSendApp();
+
+    WechatUser getToUser();
 }

@@ -57,6 +57,11 @@ public class CommentNoticeMessage implements WechatTemplateMessage {
         return receiver.getAppId();
     }
 
+    @Override
+    public WechatUser getToUser() {
+        return receiver;
+    }
+
     private String getDateStr(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
