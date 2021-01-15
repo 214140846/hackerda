@@ -3,6 +3,7 @@ package com.hackerda.platform.controller.api;
 
 import com.hackerda.platform.aggregator.UserInfoAggregator;
 import com.hackerda.platform.controller.WebResponse;
+import com.hackerda.platform.controller.vo.UserExtInfoVO;
 import com.hackerda.platform.controller.vo.UserInfoVO;
 import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.controller.vo.CourseTimetableOverviewVO;
@@ -13,6 +14,7 @@ import com.hackerda.platform.infrastructure.database.model.Exam;
 import com.hackerda.platform.service.CourseTimeTableService;
 import com.hackerda.platform.service.ExamTimeTableService;
 import com.hackerda.platform.service.GradeService;
+import com.hackerda.platform.service.UserExtInfoService;
 import com.hackerda.platform.service.rbac.UserAuthorizeService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -40,6 +42,8 @@ public class SchoolCommonController {
     private ExamTimeTableService examTimeTableService;
     @Autowired
     private UserInfoAggregator userInfoAggregator;
+    @Autowired
+    private UserExtInfoService userExtInfoService;
 
     @RequiresAuthentication
     @RequestMapping(value = "/grade")
@@ -97,5 +101,13 @@ public class SchoolCommonController {
         WechatStudentUserBO wechatStudentUserBO = (WechatStudentUserBO) SecurityUtils.getSubject().getPrincipal();
 
         return WebResponse.success(userInfoAggregator.updateStudentInfo(wechatStudentUserBO));
+    }
+
+    @RequiresAuthentication
+    @GetMapping("/userExtInfo")
+    public WebResponse<UserExtInfoVO> getUserExtInfo() {
+        WechatStudentUserBO wechatStudentUserBO = (WechatStudentUserBO) SecurityUtils.getSubject().getPrincipal();
+
+        return WebResponse.success(userExtInfoService.getUserExtInfo(wechatStudentUserBO));
     }
 }
