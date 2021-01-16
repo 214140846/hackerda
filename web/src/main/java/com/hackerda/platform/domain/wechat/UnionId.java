@@ -34,10 +34,11 @@ public class UnionId {
     }
 
     public void bindOpenid(WechatUser wechatUser) {
-        wechatUserMap.put(wechatUser.getAppId(), wechatUser);
-        if (originWechatUserSet.contains(wechatUser)) {
+
+        if (originWechatUserSet.contains(wechatUser) && wechatUserMap.get(wechatUser.getAppId()).isSubscribe() != wechatUser.isSubscribe()) {
             modifyWechatUserSet.add(wechatUser);
         }
+        wechatUserMap.put(wechatUser.getAppId(), wechatUser);
     }
 
     public void subscribe(String appId) {

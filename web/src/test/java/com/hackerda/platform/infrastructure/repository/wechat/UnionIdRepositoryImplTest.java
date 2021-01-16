@@ -46,6 +46,11 @@ public class UnionIdRepositoryImplTest {
         assertThat(saveId).isEqualTo(testUnionId);
         assertThat(saveId.getOpenId("appId2")).isEqualTo("openId2");
         assertThat(saveId.getWechatUser("appId2").isSubscribe()).isEqualTo(false);
+
+        // bind same user not save
+        testUnionId.bindOpenid(new WechatUser("appId2", "openId2", false));
+        assertThat(saveId.getModifyWechatUserSet().size()).isEqualTo(0);
+
     }
 
     @Test

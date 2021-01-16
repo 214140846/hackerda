@@ -41,7 +41,7 @@ public class CreateStudentService {
         WechatStudentUserBO studentUserBO = studentFactory.create(new StudentAccount(createStudentRequest.getAccount()),
                 createStudentRequest.getName(), gender, createStudentRequest.getClazzNum());
 
-        UnionId unionId = unionIdApp.getUnionId(createStudentRequest.getUnionId(), new WechatUser(createStudentRequest.getAppId(),
+        UnionId unionId = unionIdApp.saveUnionId(createStudentRequest.getUnionId(), new WechatUser(createStudentRequest.getAppId(),
                 createStudentRequest.getOpenid()));
 
         createStudentApp.createStudentUser(studentUserBO, unionId);

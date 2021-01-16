@@ -8,7 +8,6 @@ import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.user.PhoneNumber;
 import com.hackerda.platform.domain.wechat.UnionId;
-import com.hackerda.platform.domain.wechat.UnionIdRepository;
 import com.hackerda.platform.domain.wechat.WechatUser;
 import com.hackerda.platform.exception.BusinessException;
 import com.hackerda.platform.domain.constant.ErrorCode;
@@ -41,7 +40,7 @@ public class StudentAuthorizeServiceImpl implements UserAuthorizeService{
         StudentAccount studentAccount = new StudentAccount(account);
         WechatUser wechatUser = new WechatUser(appId, openid);
 
-        UnionId wechatUnionId = unionIdApp.getUnionId(unionId, wechatUser);
+        UnionId wechatUnionId = unionIdApp.saveUnionId(unionId, wechatUser);
         WechatStudentUserBO studentUser = studentBindApp.bindByUnionId(studentAccount, password, wechatUnionId, wechatUser);
 
         return getVO(studentUser, appId);

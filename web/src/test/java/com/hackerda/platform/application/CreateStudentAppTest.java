@@ -37,7 +37,7 @@ public class CreateStudentAppTest {
         WechatStudentUserBO create = studentFactory.create(new StudentAccount(2020025838), "1", "test",
                 Gender.Man, "2020060012");
 
-        UnionId unionId = unionIdApp.getUnionId("test_unionId", new WechatUser("wx05f7264e83fa40e9", "openid"));
+        UnionId unionId = unionIdApp.saveUnionId("test_unionId", new WechatUser("wx05f7264e83fa40e9", "openid"));
 
         studentBindApp.bindUnionId(create, unionId);
 
