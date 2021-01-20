@@ -81,8 +81,8 @@ public class CourseTimetableRepositoryImpl implements CourseTimetableRepository 
     }
 
     @Override
-    public CourseTimeTableOverview getByTime(int order, int datOfWeek, Term term) {
-        List<CourseTimetable> courseTimetables = courseTimeTableDao.selectByTime(order, datOfWeek, term.getTermYear(), term.getOrder());
+    public CourseTimeTableOverview getByTime(int order, int dayOfWeek, Term term) {
+        List<CourseTimetableDetailDO> courseTimetables = courseTimeTableDao.selectByTime(order, dayOfWeek, term.getTermYear(), term.getOrder());
         List<CourseTimetableBO> collect = courseTimetables.stream().map(x -> courseTimetableAdapter.toBO(x)).collect(Collectors.toList());
 
         return CourseTimeTableOverview.fromRepo(collect, false);

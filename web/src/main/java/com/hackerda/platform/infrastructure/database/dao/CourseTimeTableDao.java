@@ -29,76 +29,10 @@ public class CourseTimeTableDao {
     @Autowired
     private ClassCourseTimeTableExtMapper classCourseTimeTableExtMapper;
 
+    public List<CourseTimetableDetailDO> selectByTime (int order, int dayOfWeek, String termYear, int termOrder) {
 
-    public CourseTimetable selectByPrimaryKey(Integer id) {
-        return courseTimetableExtMapper.selectByPrimaryKey(id);
-    }
 
-    public List<CourseTimetable> selectByTime (int order, int datOfWeek, String termYear, int termOrder) {
-        CourseTimetableExample example = new CourseTimetableExample();
-        example.createCriteria().andClassOrderEqualTo(order)
-                .andClassDayEqualTo(datOfWeek)
-                .andTermYearEqualTo(termYear)
-                .andTermOrderEqualTo(termOrder);
-
-        return courseTimetableExtMapper.selectByExample(example);
-    }
-
-    public CourseTimetable selectUniqueCourse(CourseTimetable courseTimetable) {
-        CourseTimetableExample example = new CourseTimetableExample();
-        CourseTimetableExample.Criteria criteria = example.createCriteria();
-
-        getUniqueExample(courseTimetable, example, criteria);
-
-        return courseTimetableExtMapper.selectByExample(example).stream().findFirst().orElse(null);
-
-    }
-
-    private CourseTimetableExample getUniqueExample(CourseTimetable courseTimetable, CourseTimetableExample example, CourseTimetableExample.Criteria criteria) {
-
-        if (courseTimetable.getCourseId() != null) {
-            criteria.andCourseIdEqualTo(courseTimetable.getCourseId());
-        }
-        if (courseTimetable.getCourseSequenceNumber() != null) {
-            criteria.andCourseSequenceNumberEqualTo(courseTimetable.getCourseSequenceNumber());
-        }
-        if (courseTimetable.getClassDay() != null) {
-            criteria.andClassDayEqualTo(courseTimetable.getClassDay());
-        }
-        if (courseTimetable.getClassOrder() != null) {
-            criteria.andClassOrderEqualTo(courseTimetable.getClassOrder());
-        }
-        if (courseTimetable.getTermYear() != null) {
-            criteria.andTermYearEqualTo(courseTimetable.getTermYear());
-        }
-        if (courseTimetable.getTermOrder() != null) {
-            criteria.andTermOrderEqualTo(courseTimetable.getTermOrder());
-        }
-        if (courseTimetable.getStartWeek() != null) {
-            criteria.andStartWeekEqualTo(courseTimetable.getStartWeek());
-        }
-        if (courseTimetable.getEndWeek() != null) {
-            criteria.andEndWeekEqualTo(courseTimetable.getEndWeek());
-        }
-
-        return example;
-    }
-
-    public List<CourseTimetable> selectByClassRelative(ClassCourseTimetable relative) {
-
-        return courseTimetableExtMapper.selectByClassRelative(relative);
-    }
-
-    public List<CourseTimetable> selectByIdList(List<Integer> idList) {
-        CourseTimetableExample example = new CourseTimetableExample();
-        CourseTimetableExample.Criteria criteria = example.createCriteria();
-        criteria.andIdIn(idList);
-
-        return courseTimetableExtMapper.selectByExample(example);
-    }
-
-    public void insertSelective(CourseTimetable courseTimetable) {
-        courseTimetableExtMapper.insertSelective(courseTimetable);
+        return courseTimetableExtMapper.selectDetailTime(order, dayOfWeek, termYear, termOrder);
     }
 
     public void insertBatch(List<CourseTimetable> list) {
@@ -108,33 +42,11 @@ public class CourseTimeTableDao {
         courseTimetableExtMapper.insertBatch(list);
     }
 
-    public void updateByPrimaryKeySelective(CourseTimetable courseTimetable) {
-        courseTimetableExtMapper.updateByPrimaryKeySelective(courseTimetable);
-    }
-
-    public void updateByUniqueKey(CourseTimetable courseTimetable) {
-        CourseTimetableExample example = new CourseTimetableExample();
-        CourseTimetableExample.Criteria criteria = example.createCriteria();
-        getUniqueExample(courseTimetable, example, criteria);
-
-        courseTimetableExtMapper.updateByExampleSelective(courseTimetable, example);
-    }
-
     public List<CourseTimetable> selectBatchByKey(List<CourseTimetable> list){
         if(CollectionUtils.isEmpty(list)){
             return list;
         }
         return courseTimetableExtMapper.selectBatch(list);
-    }
-
-    public List<CourseTimetable> getCurrentTermTableByAccount(Integer account){
-        SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
-
-        StudentCourseTimeTable table = new StudentCourseTimeTable()
-                .setStudentId(account)
-                .setTermOrder(schoolTime.getTerm().getOrder())
-                .setTermYear(schoolTime.getTerm().getTermYear());
-        return courseTimetableExtMapper.selectByStudentRelative(table);
     }
 
     public void insertBatchStudentRelative(List<StudentCourseTimeTable> relativeList){

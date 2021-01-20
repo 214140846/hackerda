@@ -40,4 +40,6 @@ public interface CourseTimetableExtMapper extends CourseTimetableMapper {
     List<CourseTimetableDetailDO> selectDetailByStudentAccount(StudentCourseTimeTable relative);
 
     List<CourseTimetableDetailDO> selectDetailByClassId(ClassCourseTimetable relative);
+
+    List<CourseTimetableDetailDO> selectDetailTime(int order, int dayOfWeek, String termYear, int termOrder);
 }

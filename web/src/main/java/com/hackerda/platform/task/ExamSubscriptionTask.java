@@ -8,6 +8,7 @@ import com.hackerda.platform.config.wechat.WechatTemplateProperties;
 import com.hackerda.platform.domain.message.ExamRemindMessage;
 import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentRepository;
+import com.hackerda.platform.domain.student.StudentSettingRepository;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.wechat.WechatMessageSender;
 import com.hackerda.platform.domain.wechat.WechatTemplateMessage;
@@ -58,6 +59,8 @@ public class ExamSubscriptionTask {
     private WechatMpPlusProperties wechatMpPlusProperties;
     @Autowired
     private WechatMessageSender wechatMessageSender;
+    @Autowired
+    private StudentSettingRepository studentSettingRepository;
 
 
     private final List<Integer> remindPeriodList = Lists.newArrayList(0, 1, 3, 7, 14, 30, 50);
@@ -87,6 +90,7 @@ public class ExamSubscriptionTask {
                 List<WechatStudentUserBO> wechatStudentUserBOList =
                         studentRepository.getByAccountList(accountList).stream()
                                 .filter(x-> x.hasBindApp(wechatMpPlusProperties.getAppId()))
+                                .filter(x-> studentSettingRepository.get(x.getAccount()).isExamPushSwitch())
                                 .collect(Collectors.toList());
 
 

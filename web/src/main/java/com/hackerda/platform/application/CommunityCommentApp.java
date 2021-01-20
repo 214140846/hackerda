@@ -6,6 +6,7 @@ import com.hackerda.platform.domain.message.CommentNoticeMessage;
 import com.hackerda.platform.domain.message.MessageBO;
 import com.hackerda.platform.domain.message.MessageRepository;
 import com.hackerda.platform.domain.message.MessageTriggerSource;
+import com.hackerda.platform.domain.student.StudentSettingRepository;
 import com.hackerda.platform.domain.wechat.UnionId;
 import com.hackerda.platform.domain.wechat.UnionIdRepository;
 import com.hackerda.platform.domain.wechat.WechatMessageSender;

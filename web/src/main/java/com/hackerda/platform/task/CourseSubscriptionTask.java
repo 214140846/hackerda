@@ -7,6 +7,7 @@ import com.hackerda.platform.domain.course.timetable.CourseTimetableRepository;
 import com.hackerda.platform.domain.message.CourseTimetableRemindMessage;
 import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentRepository;
+import com.hackerda.platform.domain.student.StudentSettingRepository;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.time.SchoolTime;
 import com.hackerda.platform.domain.time.SchoolTimeManager;
@@ -44,6 +45,8 @@ public class CourseSubscriptionTask {
     private WechatMpPlusProperties wechatMpPlusProperties;
     @Autowired
     private WechatMessageSender wechatMessageSender;
+    @Autowired
+    private StudentSettingRepository studentSettingRepository;
 
 
     @Scheduled(cron = "0 0 8 * * ?")
@@ -98,6 +101,7 @@ public class CourseSubscriptionTask {
 
             List<WechatStudentUserBO> userList = studentRepository.getByAccountList(accountList).stream()
                     .filter(x-> x.hasBindApp(wechatMpPlusProperties.getAppId()))
+                    .filter(x-> studentSettingRepository.get(x.getAccount()).isCoursePushSwitch())
                     .collect(Collectors.toList());
 
             List<WechatTemplateMessage> messageList = userList.stream()

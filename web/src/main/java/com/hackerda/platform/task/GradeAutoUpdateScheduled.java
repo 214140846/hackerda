@@ -8,6 +8,7 @@ import com.hackerda.platform.domain.grade.GradeFetchTask;
 import com.hackerda.platform.domain.grade.GradeOverviewBO;
 import com.hackerda.platform.domain.grade.GradeUpdateMessage;
 import com.hackerda.platform.domain.student.StudentRepository;
+import com.hackerda.platform.domain.student.StudentSettingRepository;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.wechat.WechatMessageSender;
@@ -60,6 +61,8 @@ public class GradeAutoUpdateScheduled implements Runnable{
     private WechatMessageSender wechatMessageSender;
     @Autowired
     private UrpClassDao urpClassDao;
+    @Autowired
+    private StudentSettingRepository studentSettingRepository;
 
     @Value("${scheduled.gradeUpdate:false}")
     private boolean autoStart;
@@ -154,6 +157,7 @@ public class GradeAutoUpdateScheduled implements Runnable{
                 .filter(x-> x.hasBindApp("wx541fd36e6b400648"))
                 .filter(x-> x.getWechatUser("wx541fd36e6b400648").isSubscribe())
                 .filter(WechatStudentUserBO::isPasswordCorrect)
+                .filter(x-> studentSettingRepository.get(x.getAccount()).isGradePushSwitch())
                 .collect(Collectors.toList());
     }
 
