@@ -3,18 +3,12 @@ package com.hackerda.platform.controller.api;
 
 import com.hackerda.platform.aggregator.UserInfoAggregator;
 import com.hackerda.platform.controller.WebResponse;
-import com.hackerda.platform.controller.vo.UserExtInfoVO;
-import com.hackerda.platform.controller.vo.UserInfoVO;
+import com.hackerda.platform.controller.vo.*;
 import com.hackerda.platform.domain.constant.ErrorCode;
-import com.hackerda.platform.controller.vo.CourseTimetableOverviewVO;
-import com.hackerda.platform.controller.vo.GradeResultVo;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.infrastructure.database.model.Exam;
-import com.hackerda.platform.service.CourseTimeTableService;
-import com.hackerda.platform.service.ExamTimeTableService;
-import com.hackerda.platform.service.GradeService;
-import com.hackerda.platform.service.UserExtInfoService;
+import com.hackerda.platform.service.*;
 import com.hackerda.platform.service.rbac.UserAuthorizeService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -44,6 +38,8 @@ public class SchoolCommonController {
     private UserInfoAggregator userInfoAggregator;
     @Autowired
     private UserExtInfoService userExtInfoService;
+    @Autowired
+    private EvaluationService evaluationService;
 
     @RequiresAuthentication
     @RequestMapping(value = "/grade")
@@ -109,5 +105,19 @@ public class SchoolCommonController {
         WechatStudentUserBO wechatStudentUserBO = (WechatStudentUserBO) SecurityUtils.getSubject().getPrincipal();
 
         return WebResponse.success(userExtInfoService.getUserExtInfo(wechatStudentUserBO));
+    }
+
+
+    @RequiresAuthentication
+    @GetMapping("/evaluate")
+    public WebResponse<CreateCommentResultVO> evaluate() {
+        WechatStudentUserBO wechatStudentUserBO = (WechatStudentUserBO) SecurityUtils.getSubject().getPrincipal();
+        if(evaluationService.hasFinish(wechatStudentUserBO)) {
+
+            return WebResponse.success(new CreateCommentResultVO(false, "评估已完成"));
+        }
+
+        evaluationService.push(wechatStudentUserBO.getAccount());
+        return WebResponse.success(new CreateCommentResultVO(true, ""));
     }
 }

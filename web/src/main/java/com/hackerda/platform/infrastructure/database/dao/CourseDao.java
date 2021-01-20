@@ -22,25 +22,6 @@ public class CourseDao {
         return courseExtMapper.selectByExample(example);
     }
 
-    public List<Course> selectCourseByPojo(Course course){
-        CourseExample example = new CourseExample();
-        CourseExample.Criteria criteria = example.createCriteria();
-        if(course.getCourseOrder() != null){
-            criteria.andCourseOrderEqualTo(course.getCourseOrder());
-        }
-        if(course.getNum() != null){
-            criteria.andNumEqualTo(course.getNum());
-        }
-        if(course.getTermYear() != null){
-            criteria.andTermYearEqualTo(course.getTermYear());
-        }
-        if(course.getTermOrder() != null){
-            criteria.andTermOrderEqualTo(course.getTermOrder());
-        }
-
-        return courseExtMapper.selectByExample(example);
-    }
-
 
     public List<Course> selectByCourseList(List<Course> courseList){
         if(CollectionUtils.isEmpty(courseList)){

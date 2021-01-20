@@ -360,14 +360,14 @@ CREATE TABLE `course`
     `course_order`     varchar(255) NOT NULL COMMENT '课序号，课程号相同时作为标识',
     `term_year`        varchar(255) NOT NULL,
     `term_order`       int(255)     NOT NULL,
-    `teacher_account`  varchar(255) DEFAULT '',
-    `teacher_name`     varchar(255) DEFAULT '',
-    `exam_type`        varchar(255) DEFAULT '',
-    `exam_type_code`   varchar(255) DEFAULT '',
-    `academy_name`     varchar(255) DEFAULT '',
-    `academy_code`     varchar(255) DEFAULT '',
-    `course_type`      varchar(255) DEFAULT '',
-    `course_type_code` varchar(255) DEFAULT '',
+    `teacher_account`  varchar(255)          DEFAULT '',
+    `teacher_name`     varchar(255)          DEFAULT '',
+    `exam_type`        varchar(255)          DEFAULT '',
+    `exam_type_code`   varchar(255)          DEFAULT '',
+    `academy_name`     varchar(255)          DEFAULT '',
+    `academy_code`     varchar(255)          DEFAULT '',
+    `course_type`      varchar(255)          DEFAULT '',
+    `course_type_code` varchar(255)          DEFAULT '',
     `credit`           varchar(255) NOT NULL DEFAULT '' COMMENT '学分',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uc_course` (`num`, `course_order`, `term_year`, `term_order`)
@@ -409,8 +409,8 @@ CREATE TABLE `wechat_union_id`
     `app_id`     varchar(32) NOT NULL,
     `open_id`    varchar(32) NOT NULL,
     `subscribe`  tinyint(2)  NOT NULL DEFAULT '1',
-    `gmt_create` datetime DEFAULT CURRENT_TIMESTAMP,
-    `gmt_modify` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `gmt_create` datetime             DEFAULT CURRENT_TIMESTAMP,
+    `gmt_modify` datetime             DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `union_id` (`union_id`, `app_id`, `open_id`)
 ) ENGINE = InnoDB;
@@ -467,3 +467,19 @@ CREATE TABLE `student_course_time_table`
     UNIQUE KEY `uk_table` (`student_id`, `course_timetable_id`, `term_year`, `term_order`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
+
+
+CREATE TABLE `student_settings`
+(
+    `id`                  int(11)     NOT NULL AUTO_INCREMENT,
+    `account`             varchar(16) NOT NULL,
+    `grade_push_switch`   tinyint(1)  NOT NULL,
+    `course_push_switch`  tinyint(1)  NOT NULL,
+    `exam_push_switch`    tinyint(1)  NOT NULL,
+    `comment_push_switch` tinyint(1)  NOT NULL,
+    `gmt_create`          datetime DEFAULT CURRENT_TIMESTAMP,
+    `gmt_modify`          datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_setting` (`account`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;

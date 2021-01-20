@@ -1,7 +1,9 @@
 package com.hackerda.platform.infrastructure.repository.course.timetable;
 
+import com.google.common.collect.Sets;
 import com.hackerda.platform.MDCThreadPool;
 import com.hackerda.platform.domain.SpiderSwitch;
+import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.time.Term;
@@ -11,6 +13,7 @@ import com.hackerda.platform.infrastructure.database.dao.CourseTimeTableDao;
 import com.hackerda.platform.domain.course.timetable.CourseTimeTableOverview;
 import com.hackerda.platform.domain.course.timetable.CourseTimetableBO;
 import com.hackerda.platform.domain.course.timetable.CourseTimetableRepository;
+import com.hackerda.platform.infrastructure.database.dao.StudentUserDao;
 import com.hackerda.platform.infrastructure.database.model.*;
 import com.hackerda.platform.infrastructure.repository.ExceptionMsg;
 import com.hackerda.platform.infrastructure.repository.FetchExceptionHandler;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -42,6 +46,8 @@ public class CourseTimetableRepositoryImpl implements CourseTimetableRepository 
     private ClassCourseTimetableDao classCourseTimetableDao;
     @Autowired
     private CourseDao courseDao;
+    @Autowired
+    private StudentUserDao studentUserDao;
 
     @Override
     public CourseTimeTableOverview getByAccount(StudentUserBO wechatStudentUserBO, Term term) {
@@ -72,6 +78,30 @@ public class CourseTimetableRepositoryImpl implements CourseTimetableRepository 
 
         return CourseTimeTableOverview.fromRepo(collect, false);
 
+    }
+
+    @Override
+    public CourseTimeTableOverview getByTime(int order, int datOfWeek, Term term) {
+        List<CourseTimetable> courseTimetables = courseTimeTableDao.selectByTime(order, datOfWeek, term.getTermYear(), term.getOrder());
+        List<CourseTimetableBO> collect = courseTimetables.stream().map(x -> courseTimetableAdapter.toBO(x)).collect(Collectors.toList());
+
+        return CourseTimeTableOverview.fromRepo(collect, false);
+    }
+
+    @Override
+    public List<StudentAccount> getStudentById(int courseTimeTaleId) {
+        List<String> accountList = courseTimeTableDao.selectAccountById(courseTimeTaleId);
+
+        List<Integer> classIdList = courseTimeTableDao.selectClassIdById(courseTimeTaleId);
+        List<String> classAccountList = studentUserDao.selectByClassNum(classIdList).stream()
+                .map(StudentUser::getAccount).map(Object::toString)
+                .collect(Collectors.toList());
+
+
+        HashSet<String> set = Sets.newHashSet(accountList);
+        set.addAll(classAccountList);
+
+        return set.stream().map(StudentAccount::new).collect(Collectors.toList());
     }
 
 

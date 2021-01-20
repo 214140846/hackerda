@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
  * @date 2018/12/5 19:26
  */
 @Slf4j
-@Service
 public class CourseSubscribeService {
 
     /**

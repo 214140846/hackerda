@@ -1,11 +1,17 @@
 package com.hackerda.platform.infrastructure.database.dao;
 
+import com.hackerda.platform.domain.time.Term;
+import com.hackerda.platform.infrastructure.database.mapper.StudentCourseTimeTableMapper;
+import com.hackerda.platform.infrastructure.database.mapper.ext.ClassCourseTimeTableExtMapper;
 import com.hackerda.platform.infrastructure.database.mapper.ext.CourseTimetableExtMapper;
 import com.hackerda.platform.infrastructure.database.model.*;
+import com.hackerda.platform.infrastructure.database.model.example.ClassCourseTimetableExample;
 import com.hackerda.platform.infrastructure.database.model.example.CourseTimetableExample;
+import com.hackerda.platform.infrastructure.database.model.example.StudentCourseTimeTableExample;
 import com.hackerda.platform.utils.DateUtils;
 import com.hackerda.platform.domain.time.SchoolTime;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,14 +24,22 @@ import java.util.stream.Collectors;
 public class CourseTimeTableDao {
     @Resource
     private CourseTimetableExtMapper courseTimetableExtMapper;
+    @Autowired
+    private StudentCourseTimeTableMapper studentCourseTimeTableMapper;
+    @Autowired
+    private ClassCourseTimeTableExtMapper classCourseTimeTableExtMapper;
 
 
     public CourseTimetable selectByPrimaryKey(Integer id) {
         return courseTimetableExtMapper.selectByPrimaryKey(id);
     }
 
-    public List<CourseTimetable> selectByCourseTimetable(CourseTimetable courseTimetable) {
-        CourseTimetableExample example = getExample(courseTimetable);
+    public List<CourseTimetable> selectByTime (int order, int datOfWeek, String termYear, int termOrder) {
+        CourseTimetableExample example = new CourseTimetableExample();
+        example.createCriteria().andClassOrderEqualTo(order)
+                .andClassDayEqualTo(datOfWeek)
+                .andTermYearEqualTo(termYear)
+                .andTermOrderEqualTo(termOrder);
 
         return courseTimetableExtMapper.selectByExample(example);
     }
@@ -68,27 +82,6 @@ public class CourseTimeTableDao {
         }
 
         return example;
-    }
-
-    private CourseTimetableExample getExample(CourseTimetable courseTimetable){
-        CourseTimetableExample example = new CourseTimetableExample();
-        CourseTimetableExample.Criteria criteria = example.createCriteria();
-        getUniqueExample(courseTimetable, example, criteria);
-
-        if (courseTimetable.getRoomNumber() != null) {
-            criteria.andRoomNumberEqualTo(courseTimetable.getRoomNumber());
-        }
-
-        if (courseTimetable.getRoomName() != null) {
-            criteria.andRoomNameEqualTo(courseTimetable.getRoomName());
-        }
-
-        return example;
-    }
-
-    public List<CourseTimetable> selectByStudentRelative(StudentCourseTimeTable relative) {
-
-        return courseTimetableExtMapper.selectByStudentRelative(relative);
     }
 
     public List<CourseTimetable> selectByClassRelative(ClassCourseTimetable relative) {
@@ -162,4 +155,24 @@ public class CourseTimeTableDao {
         return courseTimetableExtMapper.selectDetailByClassId(relative);
     }
 
+
+    public List<String> selectAccountById(Integer id){
+        StudentCourseTimeTableExample example = new StudentCourseTimeTableExample();
+        example.createCriteria().andCourseTimetableIdEqualTo(id);
+
+        return studentCourseTimeTableMapper.selectByExample(example).stream()
+                .map(StudentCourseTimeTable::getStudentId)
+                .map(Object::toString)
+                .collect(Collectors.toList());
+    }
+
+    public List<Integer> selectClassIdById(Integer id){
+        ClassCourseTimetableExample example = new ClassCourseTimetableExample();
+        example.createCriteria().andCourseTimetableIdEqualTo(id);
+
+        return classCourseTimeTableExtMapper.selectByExample(example).stream()
+                .map(ClassCourseTimetable::getClassId)
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
+    }
 }

@@ -11,6 +11,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -32,6 +33,16 @@ public class StudentExamTimeTableDao {
 		}
 		return null;
     }
+
+    public List<String> selectStudentAccountByExamId(Integer id) {
+		StudentExamTimetableExample example = new StudentExamTimetableExample();
+		example.createCriteria().andExamTimetableIdEqualTo(id);
+
+		return studentExamTimetableMapper.selectByExample(example).stream()
+				.map(StudentExamTimetable::getAccount)
+				.collect(Collectors.toList());
+
+	}
 
     public void insert(String account,ExamTimetable exam){
     	Term term=DateUtils.getCurrentSchoolTime().getTerm();

@@ -74,6 +74,20 @@ public class CourseTimetableBO implements Comparable<CourseTimetableBO>{
         return (classDay-1) * 12 + classOrder;
     }
 
+    /**
+     * 本周是否上课
+     * @param schoolWeek 学校的教学周
+     * @return 上课则返回true
+     */
+    public boolean isHoldWeek(int schoolWeek) {
+        if (schoolWeek < 1 || schoolWeek > classInSchoolWeek.length()) {
+            return false;
+        }
+
+        return classInSchoolWeek.charAt(schoolWeek - 1) == '1';
+    }
+
+
     @Override
     public int compareTo(@NotNull CourseTimetableBO o) {
 

@@ -71,13 +71,7 @@ public class StudentRepositoryImpl implements StudentRepository {
         List<WechatStudentUserBO> studentUserBOList = studentUserDao.selectByClassNum(urpClassNum).stream()
                 .map(x -> studentUserAdapter.toBO(x)).collect(Collectors.toList());
 
-        List<StudentAccount> accountList = studentUserBOList.stream().map(WechatStudentUserBO::getAccount).collect(Collectors.toList());
-
-        Map<StudentAccount, UnionId> map = unionIdRepository.find(accountList);
-
-        for (WechatStudentUserBO wechatStudentUserBO : studentUserBOList) {
-            wechatStudentUserBO.setUnionId(map.getOrDefault(wechatStudentUserBO.getAccount(), UnionId.ofNull()));
-        }
+        bacthInitWechatUser(studentUserBOList);
 
         return studentUserBOList;
     }
@@ -99,17 +93,33 @@ public class StudentRepositoryImpl implements StudentRepository {
         return studentUserAdapter.toBO(studentUser);
     }
 
-    public List<WechatStudentUserBO> getByAccountList(Collection<Integer> accountList){
-        // TODO implement
+    public List<WechatStudentUserBO> getByAccountList(Collection<StudentAccount> accountList){
+        List<WechatStudentUserBO> studentUserBOList =
+                studentUserDao.selectByAccountList(accountList.stream().map(StudentAccount::getInt).collect(Collectors.toList())).stream()
+                .map(x -> studentUserAdapter.toBO(x)).collect(Collectors.toList());
+
+        bacthInitWechatUser(studentUserBOList);
 
         return Collections.emptyList();
+    }
+
+    void bacthInitWechatUser(List<WechatStudentUserBO> studentUserBOList) {
+        List<StudentAccount> accountList = studentUserBOList.stream().map(WechatStudentUserBO::getAccount).collect(Collectors.toList());
+
+        Map<StudentAccount, UnionId> map = unionIdRepository.find(accountList);
+
+        for (WechatStudentUserBO wechatStudentUserBO : studentUserBOList) {
+            wechatStudentUserBO.setUnionId(map.getOrDefault(wechatStudentUserBO.getAccount(), UnionId.ofNull()));
+        }
     }
 
     public List<WechatStudentUserBO> getSubscribe(SubscribeScene subscribeScene) {
         ScheduleTask task = new ScheduleTask();
         task.setScene(Integer.valueOf(subscribeScene.getScene())).setIsSubscribe((byte) 1);
-        Set<Integer> accountSet = wechatOpenIdDao.selectBySubscribe(task).stream()
-                .map(WechatOpenid::getAccount).collect(Collectors.toSet());
+        Set<StudentAccount> accountSet = wechatOpenIdDao.selectBySubscribe(task).stream()
+                .map(WechatOpenid::getAccount)
+                .map(StudentAccount::new)
+                .collect(Collectors.toSet());
 
         return getByAccountList(accountSet);
     }

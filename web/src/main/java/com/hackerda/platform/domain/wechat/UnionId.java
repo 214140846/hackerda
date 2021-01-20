@@ -86,7 +86,7 @@ public class UnionId {
     }
 
     public boolean hasApp(String appId) {
-        return wechatUserMap.containsKey(appId);
+        return wechatUserMap.containsKey(appId) && wechatUserMap.get(appId).isSubscribe();
     }
 
     public Set<WechatUser> getModifyWechatUserSet() {

@@ -64,14 +64,6 @@ public class ScheduleTaskService {
         return scheduleTaskMapper.insertSelective(scheduleTask);
     }
 
-    /**
-     * 获取一个appid和定时任务列表的映射，返回的是订阅状态可用的用户
-     * @param scene 订阅场景值
-     * @return 映射关系
-     */
-    public Map<String, List<ScheduleTask>>  getSubscribeData(int scene) {
-       return getSubscribeData(scene, true);
-    }
 
     /**
      * 获取一个appid和定时任务列表的映射

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -20,9 +21,6 @@ import java.util.List;
 public class ExamTimetableDao {
     @Resource
     private ExamTimetableMapper examTimetableMapper;
-    
-    @Autowired
-    private StudentExamTimeTableDao studentExamTimeTableDao;    
  
     //通过查询出来的exam对象插入数据
     public void insertByExam(ExamTimetable examTimetable) {
@@ -49,4 +47,13 @@ public class ExamTimetableDao {
     public List<ExamTimetable> getExamByAccount(String account){
     	return examTimetableMapper.selectByAccount(account);
     }
+
+    public List<ExamTimetable> getExamByTimePeriod(Date start, Date end) {
+
+        ExamTimetableExample example = new ExamTimetableExample();
+        example.createCriteria().andExamDateBetween(start, end);
+
+        return examTimetableMapper.selectByExample(example);
+    }
+
 }

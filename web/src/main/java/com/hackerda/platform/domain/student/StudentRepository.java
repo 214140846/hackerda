@@ -16,7 +16,7 @@ public interface StudentRepository {
 
     StudentUserBO find(StudentAccount account);
 
-    List<WechatStudentUserBO> getByAccountList(Collection<Integer> accountList);
+    List<WechatStudentUserBO> getByAccountList(Collection<StudentAccount> accountList);
 
     List<WechatStudentUserBO> getSubscribe(SubscribeScene subscribeScene);
 

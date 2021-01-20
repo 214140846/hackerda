@@ -7,6 +7,8 @@ import com.hackerda.platform.infrastructure.database.model.example.StudentUserEx
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -28,6 +30,20 @@ public class StudentUserDao {
     public List<StudentUser> selectByClassNum(Integer classNum) {
         StudentUserExample studentUserExample = new StudentUserExample();
         studentUserExample.createCriteria().andUrpclassNumEqualTo(classNum);
+
+        return studentUserExtMapper.selectByExample(studentUserExample);
+    }
+
+    public List<StudentUser> selectByClassNum(List<Integer> classNumList) {
+        StudentUserExample studentUserExample = new StudentUserExample();
+        studentUserExample.createCriteria().andUrpclassNumIn(classNumList);
+
+        return studentUserExtMapper.selectByExample(studentUserExample);
+    }
+
+    public List<StudentUser> selectByAccountList(Collection<Integer> accountList) {
+        StudentUserExample studentUserExample = new StudentUserExample();
+        studentUserExample.createCriteria().andAccountIn(new ArrayList<>(accountList));
 
         return studentUserExtMapper.selectByExample(studentUserExample);
     }
