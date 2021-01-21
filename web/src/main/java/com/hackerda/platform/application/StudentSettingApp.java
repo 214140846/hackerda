@@ -30,6 +30,10 @@ public class StudentSettingApp {
 
         StudentSettingsBO settingsBO = studentSettingRepository.get(account);
 
+        if(settingsBO == null) {
+           throw new UnsupportedOperationException("account:" + account +  "has`t setting");
+        }
+
         settingsBO.updateSwitch(updateFiled, value);
         studentSettingRepository.update(settingsBO);
 

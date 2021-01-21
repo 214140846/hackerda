@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,29 @@ public class StudentSettingsBO {
         } catch (IllegalAccessException e) {
             log.error("update field switch {} error value {}", updateField, value);
         }
+    }
+
+    public boolean getSwitchValue(String name) {
+
+        Map<String, Field> fieldMap = Arrays.stream(this.getClass().getDeclaredFields())
+                .filter(x -> x.getDeclaredAnnotation(Switch.class) != null)
+                .collect(Collectors.toMap((x -> x.getDeclaredAnnotation(Switch.class).name()), x -> x));
+
+        Field field = fieldMap.get(name);
+
+        try {
+            return (boolean) field.get(this);
+        } catch (IllegalAccessException e) {
+            log.error("get field switch value {} error", name);
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    public List<String> getSwitchNameList() {
+        return Arrays.stream(this.getClass().getDeclaredFields())
+                .filter(x -> x.getDeclaredAnnotation(Switch.class) != null)
+                .map(x -> x.getDeclaredAnnotation(Switch.class).name())
+                .collect(Collectors.toList());
     }
 
 

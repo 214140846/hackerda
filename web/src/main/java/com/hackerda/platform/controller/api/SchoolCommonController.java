@@ -14,10 +14,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -51,17 +48,6 @@ public class SchoolCommonController {
         }
 
         return WebResponse.success(grade);
-    }
-
-    @RequiresAuthentication
-    @RequestMapping(value = "/timetable")
-    public WebResponse getTimeTable() {
-
-        CourseTimetableOverviewVO vo = courseTimeTableService.getCurrentTermCourseTimeTableByStudent();
-        if (vo.getErrorCode() == ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode()){
-            return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号或密码错误");
-        }
-        return WebResponse.success(vo.getCourseTimetableVOList());
     }
 
     @RequiresAuthentication
@@ -119,5 +105,22 @@ public class SchoolCommonController {
 
         evaluationService.push(wechatStudentUserBO.getAccount());
         return WebResponse.success(new CreateCommentResultVO(true, ""));
+    }
+
+    @RequiresAuthentication
+    @GetMapping("/getStudentSetting")
+    public WebResponse<StudentSettingVO> getStudentSetting() {
+        WechatStudentUserBO wechatStudentUserBO = (WechatStudentUserBO) SecurityUtils.getSubject().getPrincipal();
+
+        return WebResponse.success(userExtInfoService.getStudentSetting(wechatStudentUserBO));
+    }
+
+    @RequiresAuthentication
+    @PostMapping("/updateStudentSetting")
+    public WebResponse<CreateCommentResultVO> updateStudentSetting(@RequestParam(value = "key") String key,
+                                                              @RequestParam(value = "value") String value) {
+        WechatStudentUserBO wechatStudentUserBO = (WechatStudentUserBO) SecurityUtils.getSubject().getPrincipal();
+
+        return WebResponse.success(userExtInfoService.updateSetting(wechatStudentUserBO, key, value));
     }
 }
