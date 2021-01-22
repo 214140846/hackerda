@@ -1,5 +1,6 @@
 package com.hackerda.platform.infrastructure.spider.course;
 
+import com.hackerda.platform.domain.time.SchoolTimeManager;
 import com.hackerda.platform.infrastructure.database.model.Course;
 import com.hackerda.platform.infrastructure.repository.course.CourseSpiderFacade;
 
@@ -12,6 +13,7 @@ import com.hackerda.spider.support.search.course.SearchCoursePost;
 import com.hackerda.spider.support.search.course.SearchCourseResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -25,6 +27,8 @@ public class CourseSpiderFacadeImpl implements CourseSpiderFacade {
 
     @Resource
     private UrpSearchSpider urpSearchSpider;
+    @Autowired
+    private SchoolTimeManager schoolTimeManager;
 
 
     @Override
@@ -79,7 +83,7 @@ public class CourseSpiderFacadeImpl implements CourseSpiderFacade {
 
     private int getTermOrder(String termName) {
         if (StringUtils.isEmpty(termName)) {
-            return DateUtils.getCurrentSchoolTime().getTerm().getOrder();
+            return schoolTimeManager.getCurrentSchoolTime().getTerm().getOrder();
         }
 
         if (termName.contains("一")) {
@@ -101,7 +105,7 @@ public class CourseSpiderFacadeImpl implements CourseSpiderFacade {
     public String getTermYear(String termName) {
         // 这里是个补偿做法 由于有些课程没有该数据  所以存储当前的学期
         if (StringUtils.isEmpty(termName)) {
-            return DateUtils.getCurrentSchoolTime().getTerm().getTermYear();
+            return schoolTimeManager.getCurrentSchoolTime().getTerm().getTermYear();
         }
         return termName.substring(0, 9);
     }

@@ -8,6 +8,7 @@ import com.hackerda.platform.domain.grade.GradeRepository;
 import com.hackerda.platform.domain.grade.TermGradeBO;
 import com.hackerda.platform.domain.grade.TermGradeViewBO;
 import com.hackerda.platform.domain.student.StudentUserBO;
+import com.hackerda.platform.domain.time.SchoolTimeManager;
 import com.hackerda.platform.infrastructure.database.dao.GradeDao;
 import com.hackerda.platform.infrastructure.database.model.Grade;
 import com.hackerda.platform.infrastructure.repository.FetchScene;
@@ -46,6 +47,8 @@ public class GradeRepositoryImpl implements GradeRepository {
     private SpiderSwitch spiderSwitch;
     @Value("${spider.grade.timeout: 5000}")
     private int getGradeTimeout;
+    @Autowired
+    private SchoolTimeManager schoolTimeManager;
 
     private final ExecutorService gradeAutoUpdatePool = new MDCThreadPool(8, 8,
             0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> new Thread(r, "gradeSearch"));
@@ -186,7 +189,7 @@ public class GradeRepositoryImpl implements GradeRepository {
     }
 
     private List<TermGradeBO> gradeToTermGradeList(List<Grade> gradeList) {
-        SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
+        SchoolTime schoolTime = schoolTimeManager.getCurrentSchoolTime();
 
         return gradeList.stream()
                 .collect(Collectors.groupingBy(x -> new Term(x.getTermYear(), x.getTermOrder())))
@@ -204,7 +207,7 @@ public class GradeRepositoryImpl implements GradeRepository {
     }
 
     private List<TermGradeBO> gradeBOToTermGradeList(List<GradeBO> gradeList) {
-        SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
+        SchoolTime schoolTime = schoolTimeManager.getCurrentSchoolTime();
 
         return gradeList.stream()
                 .collect(Collectors.groupingBy(x -> new Term(x.getTermYear(), x.getTermOrder())))

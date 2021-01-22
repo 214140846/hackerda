@@ -1,5 +1,6 @@
 package com.hackerda.platform.infrastructure.database.dao;
 
+import com.hackerda.platform.domain.time.SchoolTimeManager;
 import com.hackerda.platform.infrastructure.database.model.UrpClassroom;
 import com.hackerda.platform.utils.DateUtils;
 import com.hackerda.platform.domain.time.Term;
@@ -27,6 +28,8 @@ public class EmptyRoomDao {
 
     @Autowired
     private UrpSearchSpider urpSearchSpider;
+    @Autowired
+    private SchoolTimeManager schoolTimeManager;
 
     /**
      * 从缓存中获取空教室信息，若redis中没有相关缓存，则爬取
@@ -40,7 +43,7 @@ public class EmptyRoomDao {
     public List<UrpClassroom> getEmptyRoomReply(String week, String teaNum, String wSection) {
 
         log.info("爬取空教室缓存{} {} {}", week, teaNum, wSection);
-        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        Term term = schoolTimeManager.getCurrentSchoolTime().getTerm();
         SearchEmptyRoomPost emptyRoomPost = new SearchEmptyRoomPost(week, teaNum, wSection, "1", "200");
         emptyRoomPost.setExecutiveEducationPlanNumber(term.getExecutiveEducationPlanNum());
         List<SearchResult<EmptyRoomRecord>> resultList = urpSearchSpider.searchEmptyRoom(emptyRoomPost);

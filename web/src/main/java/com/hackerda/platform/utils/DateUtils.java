@@ -70,10 +70,6 @@ public class DateUtils {
         return currentDay;
     }
 
-    public static String getTimeOfPattern(LocalDateTime localDateTime, String pattern) {
-        return DateTimeFormatter.ofPattern(pattern).format(localDateTime);
-    }
-
     /**
      * 格式化时间转换为标准Java时间
      * @return

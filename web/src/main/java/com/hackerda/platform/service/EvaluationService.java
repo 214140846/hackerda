@@ -3,7 +3,7 @@ package com.hackerda.platform.service;
 import com.hackerda.platform.domain.constant.RedisKeys;
 import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentUserBO;
-import com.hackerda.platform.utils.DateUtils;
+import com.hackerda.platform.domain.time.SchoolTimeManager;
 import com.hackerda.platform.domain.time.Term;
 import com.hackerda.spider.UrpEvaluationSpider;
 import com.hackerda.spider.support.search.evaluation.EvaluationPagePost;
@@ -27,27 +27,29 @@ public class EvaluationService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private SchoolTimeManager schoolTimeManager;
 
     public boolean hasFinish(StudentAccount studentAccount) {
-        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        Term term = getTerm();
         String key = RedisKeys.FINISH_EVALUATION_SET.genKey(term.asKey());
         return BooleanUtils.toBoolean(stringRedisTemplate.opsForSet().isMember(key, studentAccount.getAccount()));
     }
 
     public void addFinish(StudentAccount studentAccount) {
-        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        Term term = getTerm();
         String key = RedisKeys.FINISH_EVALUATION_SET.genKey(term.asKey());
         stringRedisTemplate.opsForSet().add(key, studentAccount.getAccount());
     }
 
     public void push(StudentAccount studentAccount) {
-        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        Term term = getTerm();
         String key = RedisKeys.WAITING_EVALUATION_LIST.genKey(term.asKey());
         stringRedisTemplate.opsForList().rightPush(key, studentAccount.getAccount());
     }
 
     public StudentAccount pop() {
-        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        Term term = getTerm();
         String key = RedisKeys.WAITING_EVALUATION_LIST.genKey(term.asKey());
         String pop = stringRedisTemplate.opsForList().leftPop(key, 7, TimeUnit.DAYS);
 
@@ -76,7 +78,7 @@ public class EvaluationService {
     }
 
     public boolean hasTask() {
-        Term term = DateUtils.getCurrentSchoolTime().getTerm();
+        Term term = getTerm();
         String key = RedisKeys.WAITING_EVALUATION_LIST.genKey(term.asKey());
         return Optional.ofNullable(stringRedisTemplate.opsForList().size(key)).orElse(0L) != 0;
     }
@@ -110,6 +112,10 @@ public class EvaluationService {
             log.error("sleep error", e);
         }
         evaluationSpider.evaluate(post);
+    }
+
+    private Term getTerm() {
+        return schoolTimeManager.getCurrentSchoolTime().getTerm();
     }
 
     @Lookup

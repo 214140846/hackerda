@@ -54,12 +54,6 @@ public class CourseTimetable {
     private Date gmtCreate;
 
 
-    public boolean isCurrentTerm(){
-        Term term = DateUtils.getCurrentSchoolTime().getTerm();
-        return getTermOrder().equals(term.getOrder()) &&
-                getTermYear().equals(term.getTermYear());
-    }
-
     public ClassCourseTimetable getClassRelative(String classNum){
         return new ClassCourseTimetable()
                 .setClassId(classNum)

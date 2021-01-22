@@ -2,6 +2,7 @@ package com.hackerda.platform.service;
 
 import com.hackerda.platform.domain.SpiderSwitch;
 import com.hackerda.platform.domain.student.StudentUserBO;
+import com.hackerda.platform.domain.time.SchoolTimeManager;
 import com.hackerda.platform.infrastructure.database.dao.ExamTimetableDao;
 import com.hackerda.platform.infrastructure.database.dao.StudentExamTimeTableDao;
 import com.hackerda.platform.infrastructure.database.model.*;
@@ -49,6 +50,9 @@ public class ExamTimeTableService {
 
     @Autowired
     private SpiderSwitch spiderSwitch;
+
+    @Autowired
+    private SchoolTimeManager schoolTimeManager;
 
     public List<Exam> getExamTimeListFromSpider(StudentUserBO student) {
 
@@ -113,9 +117,6 @@ public class ExamTimeTableService {
 
     /**
      * 由于这个接口非常耗时，而且请求量非常高，所以不再每次都从抓取结果，每天更新一次
-     *
-     * @param account
-     * @return
      */
     public List<Exam> getExamTimeList(StudentUserBO student) {
         if(spiderSwitch.fetchUrp()) {
@@ -174,7 +175,7 @@ public class ExamTimeTableService {
 		String examDate = baseDate + exam.getStartTime();
 		String examEndTime = baseDate + exam.getEndTime();
 		ExamTimetable examTimetable = new ExamTimetable();
-		Term term=DateUtils.getCurrentSchoolTime().getTerm();
+		Term term=schoolTimeManager.getCurrentSchoolTime().getTerm();
 		examTimetable.setCourseName(exam.getCourse().getName()).setDay(exam.getExamDay())
 		  .setExamDate(DateUtils.localDateToDate(examDate, "yyyy-MM-dd HH:mm")).setGmtCreate(new Date())
 		  .setGmtModify(new Date()).setName(exam.getExamName()).setRoomName(exam.getClassRoom().getName())
@@ -200,7 +201,7 @@ public class ExamTimeTableService {
       */
 	public List<StudentExamTimetable> transform(List<ExamTimetable> temp, String account) {
 		List<StudentExamTimetable> studentExamTimetableList = new ArrayList<>();
-		Term term=DateUtils.getCurrentSchoolTime().getTerm();
+		Term term = schoolTimeManager.getCurrentSchoolTime().getTerm();
 		for (ExamTimetable examTimetable : temp) {
 			StudentExamTimetable stuExam = new StudentExamTimetable();
 			stuExam.setAccount(account).setExamTimetableId(examTimetable.getId())

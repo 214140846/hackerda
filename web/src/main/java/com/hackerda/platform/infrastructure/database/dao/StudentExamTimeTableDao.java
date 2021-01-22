@@ -44,15 +44,7 @@ public class StudentExamTimeTableDao {
 
 	}
 
-    public void insert(String account,ExamTimetable exam){
-    	Term term=DateUtils.getCurrentSchoolTime().getTerm();
-    	StudentExamTimetable studentExamTimetable=new StudentExamTimetable();
-    	studentExamTimetable.setAccount(account)
-    	.setExamTimetableId(exam.getId())
-    	.setTermOrder(term.getOrder())
-    	.setTermYear(String.valueOf(term.getEndYear()));
-    	studentExamTimetableMapper.insert(studentExamTimetable);
-    }  
+
     public int insertBatch(List<StudentExamTimetable> list) {
     	return studentExamTimetableMapper.batchInsert(list);
     }
