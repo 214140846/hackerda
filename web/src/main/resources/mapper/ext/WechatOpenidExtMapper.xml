@@ -101,27 +101,4 @@
     </insert>
 
 
-    <select id="selectBySubscribe" parameterType="com.hackerda.platform.infrastructure.database.model.ScheduleTask" resultMap="com.hackerda.platform.infrastructure.database.mapper.WechatOpenidMapper.BaseResultMap">
-        select
-            wechat_openid.id, wechat_openid.openid, account,
-            wechat_openid.gmt_create, gmt_modified, is_bind,
-            wechat_openid.appid
-        from schedule_task
-
-        join wechat_openid on schedule_task.openid = wechat_openid.openid
-
-        <where>
-            <if test="appid != null">
-                and schedule_task.appid = #{appid}
-            </if>
-            <if test="isSubscribe != null">
-                and is_subscribe = #{isSubscribe}
-            </if>
-            <if test="scene != null">
-                and scene = #{scene}
-            </if>
-        </where>
-
-    </select>
-
 </mapper>

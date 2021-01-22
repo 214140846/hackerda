@@ -1,10 +1,7 @@
 package com.hackerda.platform.task;
 
 import com.google.common.collect.Lists;
-import com.hackerda.platform.builder.TemplateBuilder;
-import com.hackerda.platform.config.wechat.WechatMpConfiguration;
 import com.hackerda.platform.config.wechat.WechatMpPlusProperties;
-import com.hackerda.platform.config.wechat.WechatTemplateProperties;
 import com.hackerda.platform.domain.message.ExamRemindMessage;
 import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentRepository;
@@ -14,19 +11,14 @@ import com.hackerda.platform.domain.wechat.WechatMessageSender;
 import com.hackerda.platform.domain.wechat.WechatTemplateMessage;
 import com.hackerda.platform.infrastructure.database.dao.ExamTimetableDao;
 import com.hackerda.platform.infrastructure.database.dao.StudentExamTimeTableDao;
-import com.hackerda.platform.infrastructure.database.model.ScheduleTask;
 import com.hackerda.platform.infrastructure.database.model.example.ExamTimetable;
-import com.hackerda.platform.service.ExamTimeTableService;
-import com.hackerda.platform.service.ScheduleTaskService;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.mp.api.WxMpService;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;

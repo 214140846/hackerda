@@ -1,27 +1,22 @@
 package com.hackerda.platform.infrastructure.wechat;
 
 
+import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 import com.hackerda.platform.config.wechat.MiniProgramProperties;
 import com.hackerda.platform.domain.community.ContentSecurityCheckService;
-import com.hackerda.platform.domain.wechat.WechatAuthService;
-import com.hackerda.platform.infrastructure.database.dao.ScheduleTaskDao;
-import com.hackerda.platform.infrastructure.database.model.ScheduleTask;
 import com.hackerda.platform.domain.constant.RedisKeys;
 import com.hackerda.platform.domain.constant.SubscribeScene;
+import com.hackerda.platform.domain.wechat.WechatAuthService;
 import com.hackerda.platform.infrastructure.wechat.model.AccessTokenResponse;
 import com.hackerda.platform.infrastructure.wechat.model.AuthResponse;
 import com.hackerda.platform.infrastructure.wechat.model.Response;
 import com.hackerda.platform.infrastructure.wechat.model.SubscribeMessage;
-
-import com.alibaba.fastjson.JSON;
-import com.google.gson.Gson;
 import com.hackerda.platform.utils.WXBizDataCrypt;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpEntity;
@@ -30,15 +25,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
-
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -49,8 +39,6 @@ public class MiniProgramService implements WechatAuthService, ContentSecurityChe
     private MiniProgramProperties miniProgramProperties;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
-    @Autowired
-    private ScheduleTaskDao scheduleTaskDao;
 
     private static final String root = "https://api.weixin.qq.com";
     private static final String authString = root + "/sns/jscode2session?appid=%s&secret=%s&js_code" +
@@ -82,21 +70,6 @@ public class MiniProgramService implements WechatAuthService, ContentSecurityChe
             return;
         }
 
-        List<ScheduleTask> taskList = scheduleTaskDao.selectByPojo(new ScheduleTask()
-                .setAppid(miniProgramProperties.getAppId())
-                .setOpenid(openid)
-                .setScene(Integer.parseInt(scene.getScene()))
-        );
-        if(taskList.size() == 0){
-            scheduleTaskDao.insertSelective(new ScheduleTask()
-                    .setIsSubscribe((byte) 1)
-                    .setAppid(miniProgramProperties.getAppId())
-                    .setOpenid(openid)
-                    .setScene(Integer.parseInt(scene.getScene()))
-                    .setSendStatus((byte) 0)
-                    .setTaskCount(0)
-            );
-        }
     }
 
     @Retryable(value = Exception.class)

@@ -30,8 +30,6 @@ public class StudentRepositoryImpl implements StudentRepository {
     @Autowired
     private StudentUserAdapter studentUserAdapter;
     @Autowired
-    private WechatOpenIdDao wechatOpenIdDao;
-    @Autowired
     private WechatOpenidStudentRelativeMapper wechatOpenidStudentRelativeMapper;
     @Autowired
     private UnionIdRepository unionIdRepository;
@@ -111,17 +109,6 @@ public class StudentRepositoryImpl implements StudentRepository {
         for (WechatStudentUserBO wechatStudentUserBO : studentUserBOList) {
             wechatStudentUserBO.setUnionId(map.getOrDefault(wechatStudentUserBO.getAccount(), UnionId.ofNull()));
         }
-    }
-
-    public List<WechatStudentUserBO> getSubscribe(SubscribeScene subscribeScene) {
-        ScheduleTask task = new ScheduleTask();
-        task.setScene(Integer.valueOf(subscribeScene.getScene())).setIsSubscribe((byte) 1);
-        Set<StudentAccount> accountSet = wechatOpenIdDao.selectBySubscribe(task).stream()
-                .map(WechatOpenid::getAccount)
-                .map(StudentAccount::new)
-                .collect(Collectors.toSet());
-
-        return getByAccountList(accountSet);
     }
 
     @Override

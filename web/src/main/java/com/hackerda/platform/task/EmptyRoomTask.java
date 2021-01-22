@@ -1,7 +1,8 @@
 package com.hackerda.platform.task;
 
+import com.hackerda.platform.domain.time.SchoolTime;
 import com.hackerda.platform.service.EmptyRoomService;
-import com.hackerda.platform.utils.SchoolTimeUtil;
+import com.hackerda.platform.utils.DateUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -20,11 +21,13 @@ public class EmptyRoomTask {
     @Async
     @Scheduled(cron = "0 0 1 * * ?")
     void autoGetEmptyRoom() {
-        int day = SchoolTimeUtil.getDayOfWeek();
+
+        SchoolTime schoolTime = DateUtils.getCurrentSchoolTime();
+        int day = schoolTime.getDay();
         for (int i = 0; i < 3; i++) {
-            emptyRoomService.getFullEmptyRoomReply(String.valueOf(SchoolTimeUtil.getSchoolWeek()), "01", day + i, 0);
-            emptyRoomService.getFullEmptyRoomReply(String.valueOf(SchoolTimeUtil.getSchoolWeek()), "02", day + i, 0);
-            emptyRoomService.getFullEmptyRoomReply(String.valueOf(SchoolTimeUtil.getSchoolWeek()), "03", day + i, 0);
+            emptyRoomService.getFullEmptyRoomReply(String.valueOf(schoolTime.getSchoolWeek()), "01", day + i, 0);
+            emptyRoomService.getFullEmptyRoomReply(String.valueOf(schoolTime.getSchoolWeek()), "02", day + i, 0);
+            emptyRoomService.getFullEmptyRoomReply(String.valueOf(schoolTime.getSchoolWeek()), "03", day + i, 0);
         }
     }
 }
