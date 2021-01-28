@@ -7,8 +7,8 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-public class TermGradeVo implements Comparable<TermGradeVo>{
-    private List<GradeVo> gradeList;
+public class TermGradeVO implements Comparable<TermGradeVO>{
+    private List<GradeVO> gradeList;
 
     private String termYear;
 
@@ -21,7 +21,7 @@ public class TermGradeVo implements Comparable<TermGradeVo>{
     }
 
     @Override
-    public int compareTo(TermGradeVo o) {
+    public int compareTo(TermGradeVO o) {
 
         return this.getExecutiveEducationPlanNum().compareTo(o.getExecutiveEducationPlanNum());
     }

@@ -6,7 +6,7 @@ import com.hackerda.platform.domain.student.StudentAccount;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
-import com.hackerda.platform.controller.vo.GradeResultVo;
+import com.hackerda.platform.controller.vo.GradeResultVO;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,13 +22,13 @@ public class GradeService {
     private GradeTransfer gradeTransfer;
 
 
-    public GradeResultVo getGrade() {
+    public GradeResultVO getGrade() {
         StudentUserBO wechatStudentUserBO = (StudentUserBO) SecurityUtils.getSubject().getPrincipal();
         GradeOverviewBO gradeOverview = gradeQueryApp.getGradeOverview(wechatStudentUserBO);
         return gradeTransfer.adapter2VO(gradeOverview);
     }
 
-    public GradeResultVo getGrade(int account) {
+    public GradeResultVO getGrade(int account) {
         StudentAccount studentAccount = new StudentAccount(account);
         WechatStudentUserBO wechatStudentUserBO = studentRepository.findWetChatUser(studentAccount);
 

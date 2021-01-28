@@ -3,6 +3,7 @@ package com.hackerda.platform.service;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.domain.constant.RedisKeys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,12 @@ public class GpaRanker {
 
     private final StringRedisTemplate stringRedisTemplate;
 
-    public GpaRanker(StringRedisTemplate stringRedisTemplate) {
+    private final String profiles;
+
+
+    public GpaRanker(StringRedisTemplate stringRedisTemplate, @Value("${spring.profiles.active}") String profiles) {
         this.stringRedisTemplate = stringRedisTemplate;
+        this.profiles = profiles;
     }
 
     public RankResult rank(StudentUserBO studentUser, double gpa){
@@ -36,7 +41,7 @@ public class GpaRanker {
     }
 
     private String getKey(StudentUserBO studentUser){
-        return RedisKeys.GPA_RANK.genKey(studentUser.getGrade(), studentUser.getSubjectName());
+        return RedisKeys.GPA_RANK.genKey(profiles, studentUser.getGrade(), studentUser.getSubjectName());
     }
 
 

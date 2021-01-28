@@ -7,9 +7,9 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-public class GradeResultVo {
+public class GradeResultVO {
 
-    private List<TermGradeVo> termGradeList;
+    private List<TermGradeVO> termGradeList;
 
     private double gpa;
 

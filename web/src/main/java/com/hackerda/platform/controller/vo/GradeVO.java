@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 @Accessors(chain = true)
-public class GradeVo implements Comparable<GradeVo>{
+public class GradeVO implements Comparable<GradeVO>{
     private CourseVO course;
 
     private Integer account;
@@ -42,7 +42,7 @@ public class GradeVo implements Comparable<GradeVo>{
     private boolean update = false;
 
     @Override
-    public int compareTo(@NonNull GradeVo gradeVo) {
+    public int compareTo(@NonNull GradeVO gradeVo) {
         if(gradeVo.getTermYear().compareTo(this.getTermYear()) == 0){
             if(gradeVo.getTermOrder().compareTo(this.getTermOrder()) == 0){
                 return gradeVo.getOperateTime().compareTo(this.getOperateTime());

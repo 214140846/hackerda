@@ -1,17 +1,19 @@
 package com.hackerda.platform.infrastructure.database.model;
 
-import com.hackerda.platform.utils.DateUtils;
-import com.hackerda.platform.domain.time.Term;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @Accessors(chain = true)
-public class Grade {
+public class Grade implements Serializable {
+
+    private static final long serialVersionUID = 8938192019053638674L;
+
     @EqualsAndHashCode.Exclude
     private Integer id;
 
@@ -168,23 +170,5 @@ public class Grade {
         }
         return this;
     }
-
-    public boolean isCurrentTermGrade() {
-        Term term = DateUtils.getCurrentSchoolTime().getTerm();
-        return this.getTermYear().equals(term.getTermYear()) && this.getTermOrder().equals(term.getOrder());
-
-    }
-
-
-    private Date parseGradeOperateTime(String text) {
-        if (text.length() == 12) {
-            text = text + "00";
-        }
-        return DateUtils.localDateToDate(text, DateUtils.PATTERN_WITHOUT_SPILT);
-    }
-
-
-
-
 
 }

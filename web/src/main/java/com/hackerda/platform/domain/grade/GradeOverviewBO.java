@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Data
 public class GradeOverviewBO {
 
-    private List<TermGradeBO> termGradeList;
+    private TermGradeViewBO termGradeViewBO = TermGradeViewBO.ofEmpty();
 
     private double gpa;
 
@@ -29,14 +29,23 @@ public class GradeOverviewBO {
 
     private String errorMsg;
 
-    public GradeOverviewBO (TermGradeViewBO termGradeViewBO) {
-        this.termGradeList = termGradeViewBO.getTermGradeBOList();
+    private GradeOverviewBO (TermGradeViewBO termGradeViewBO) {
+        setTermGradeViewBO(termGradeViewBO);
+    }
+
+
+    private GradeOverviewBO() {
+
+    }
+
+    public void setTermGradeViewBO (TermGradeViewBO termGradeViewBO) {
+        this.termGradeViewBO = termGradeViewBO;
 
         double sumGradePoint = 0.0;
         double sumCredit = 0.0;
         double sumOptionalCredit = 0.0;
 
-        List<GradeBO> collect = termGradeList.stream()
+        List<GradeBO> collect = this.termGradeViewBO.getTermGradeBOList().stream()
                 .flatMap(x -> x.getGradeList().stream())
                 .filter(GradeBO::hasScore)
                 .collect(Collectors.toList());
@@ -52,63 +61,29 @@ public class GradeOverviewBO {
         }
         this.setOptionalCourseCredit(sumOptionalCredit);
 
-        this.errorCode = termGradeViewBO.getErrorCode();
-        this.errorMsg = termGradeViewBO.getErrorMsg();
-
         if(sumCredit != 0){
             double f = sumGradePoint / sumCredit;
             BigDecimal b = new BigDecimal(f);
             this.setGpa(b.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue());
         }
+
     }
 
 
     public List<GradeBO> getUpdateGrade(){
-        if(!CollectionUtils.isEmpty(termGradeList)) {
-            return termGradeList.stream().map(TermGradeBO::getGradeList)
-                    .flatMap(Collection::stream)
-                    .filter(GradeBO::isUpdate)
-                    .collect(Collectors.toList());
-        }
-        return Collections.emptyList();
+        return this.termGradeViewBO.getUpdateGrade();
     }
 
     public List<GradeBO> getNewGrade(){
-        if(!CollectionUtils.isEmpty(termGradeList)) {
-            return termGradeList.stream().map(TermGradeBO::getGradeList)
-                    .flatMap(Collection::stream)
-                    .filter(GradeBO::isNewGrade)
-                    .collect(Collectors.toList());
-        }
-        return Collections.emptyList();
+        return this.termGradeViewBO.getNewGrade();
     }
 
     public boolean fetchSuccess(){
-        if(CollectionUtils.isEmpty(termGradeList)){
-            return false;
-        }
-
-        boolean success = true;
-
-        for (TermGradeBO gradeBO : termGradeList) {
-            if(!gradeBO.isFetchSuccess() && !gradeBO.isFinishFetch()){
-                success = false;
-                break;
-            }
-        }
-        return success;
+        return this.termGradeViewBO.isFetchSuccess();
     }
 
     public List<GradeBO> getNeedToSendGrade(){
-        if(!CollectionUtils.isEmpty(termGradeList)){
-            return termGradeList.get(0).getGradeList()
-                    .stream()
-                    .filter(GradeBO::hasScore)
-                    .filter(x-> x.isUpdate() || x.isNewGrade())
-                    .filter(GradeBO::isTodayUpdate)
-                    .collect(Collectors.toList());
-        }
-        return Collections.emptyList();
+        return this.termGradeViewBO.getNeedToSendGrade();
     }
 
     /**
@@ -116,6 +91,7 @@ public class GradeOverviewBO {
      * @return 完成抓取则返回true
      */
     public boolean isFinishFetch(){
+        List<TermGradeBO> termGradeList = this.termGradeViewBO.getTermGradeBOList();
         if (!CollectionUtils.isEmpty(termGradeList)) {
             for (TermGradeBO grade : termGradeList) {
                 if(!grade.isFinishFetch()){
@@ -125,6 +101,36 @@ public class GradeOverviewBO {
             return true;
         }
         return false;
+    }
+
+    public List<TermGradeBO> getTermGradeList() {
+        return this.termGradeViewBO.getTermGradeBOList();
+    }
+
+
+    public static GradeOverviewBO create(TermGradeViewBO termGradeViewBO) {
+
+        GradeOverviewBO gradeOverviewBO = new GradeOverviewBO(termGradeViewBO);
+
+        gradeOverviewBO.errorCode = termGradeViewBO.getErrorCode();
+        gradeOverviewBO.errorMsg = termGradeViewBO.getErrorMsg();
+
+        return gradeOverviewBO;
+    }
+
+
+    public static GradeOverviewBO ofFetchFail(int errorCode, String msg) {
+
+        GradeOverviewBO gradeOverviewBO = new GradeOverviewBO();
+
+        gradeOverviewBO.setErrorCode(errorCode);
+        gradeOverviewBO.setErrorMsg(msg);
+
+        return gradeOverviewBO;
+    }
+
+    public static GradeOverviewBO ofEmpty() {
+        return new GradeOverviewBO();
     }
 
 

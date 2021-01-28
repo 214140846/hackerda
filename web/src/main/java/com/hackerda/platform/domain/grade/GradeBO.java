@@ -59,9 +59,9 @@ public class GradeBO {
 
     private String examTime;
 
-    private String unpassedReasonCode;
+    private String unPassedReasonCode;
 
-    private String unpassedReasonExplain;
+    private String unPassedReasonExplain;
 
     private String remark;
 
@@ -69,7 +69,7 @@ public class GradeBO {
 
     private String retakeCourseMark;
 
-    private String retakecourseModeCode;
+    private String retakeCourseModeCode;
 
     private String retakeCourseModeExplain;
 
@@ -80,7 +80,12 @@ public class GradeBO {
     private Integer termOrder;
 
     private boolean update = false;
+
+    private boolean scoreUpdate = false;
+
     private boolean newGrade = false;
+
+    private boolean show = true;
 
     private Date gmtCreate;
 
@@ -170,11 +175,33 @@ public class GradeBO {
         return new EqualsBuilder()
                 .append(account, gradeBO.account)
                 .append(score, gradeBO.score)
+                .append(credit, gradeBO.credit)
+                .append(gradePoint, gradeBO.gradePoint)
+                .append(levelName, gradeBO.levelName)
+                .append(levelPoint, gradeBO.levelPoint)
+                .append(rank, gradeBO.rank)
                 .append(courseName, gradeBO.courseName)
                 .append(courseNumber, gradeBO.courseNumber)
                 .append(courseOrder, gradeBO.courseOrder)
+                .append(coursePropertyCode, gradeBO.coursePropertyCode)
+                .append(coursePropertyName, gradeBO.coursePropertyName)
+                .append(examTypeCode, gradeBO.examTypeCode)
+                .append(examTypeName, gradeBO.examTypeName)
+                .append(studyHour, gradeBO.studyHour)
+                .append(operateTime, gradeBO.operateTime)
+                .append(operator, gradeBO.operator)
+                .append(examTime, gradeBO.examTime)
+                .append(unPassedReasonCode, gradeBO.unPassedReasonCode)
+                .append(unPassedReasonExplain, gradeBO.unPassedReasonExplain)
+                .append(remark, gradeBO.remark)
+                .append(replaceCourseNumber, gradeBO.replaceCourseNumber)
+                .append(retakeCourseMark, gradeBO.retakeCourseMark)
+                .append(retakeCourseModeCode, gradeBO.retakeCourseModeCode)
+                .append(retakeCourseModeExplain, gradeBO.retakeCourseModeExplain)
+                .append(standardPoint, gradeBO.standardPoint)
                 .append(termYear, gradeBO.termYear)
                 .append(termOrder, gradeBO.termOrder)
+                .append(show, gradeBO.show)
                 .isEquals();
     }
 

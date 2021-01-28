@@ -44,7 +44,7 @@ public class GradeAdapter {
         grade.setRemark(gradeBO.getRemark());
         grade.setReplaceCourseNumber(gradeBO.getReplaceCourseNumber());
         grade.setRetakeCourseMark(gradeBO.getRetakeCourseMark());
-        grade.setRetakecourseModeCode(gradeBO.getRetakecourseModeCode());
+        grade.setRetakecourseModeCode(gradeBO.getRetakeCourseModeCode());
         grade.setRetakeCourseModeExplain(gradeBO.getRetakeCourseModeExplain());
 
         grade.setStandardPoint(gradeBO.getStandardPoint());
@@ -53,8 +53,8 @@ public class GradeAdapter {
         grade.setTermOrder(gradeBO.getTermOrder());
         grade.setTermYear(gradeBO.getTermYear());
 
-        grade.setUnpassedReasonCode(gradeBO.getUnpassedReasonCode());
-        grade.setUnpassedReasonExplain(gradeBO.getUnpassedReasonExplain());
+        grade.setUnpassedReasonCode(gradeBO.getUnPassedReasonCode());
+        grade.setUnpassedReasonExplain(gradeBO.getUnPassedReasonExplain());
 
 
         return grade;
@@ -94,7 +94,7 @@ public class GradeAdapter {
         bo.setRemark(grade.getRemark());
         bo.setReplaceCourseNumber(grade.getReplaceCourseNumber());
         bo.setRetakeCourseMark(grade.getRetakeCourseMark());
-        bo.setRetakecourseModeCode(grade.getRetakecourseModeCode());
+        bo.setRetakeCourseModeCode(grade.getRetakecourseModeCode());
         bo.setRetakeCourseModeExplain(grade.getRetakeCourseModeExplain());
 
 
@@ -106,8 +106,8 @@ public class GradeAdapter {
         bo.setTermOrder(grade.getTermOrder());
         bo.setTermYear(grade.getTermYear());
 
-        bo.setUnpassedReasonCode(grade.getUnpassedReasonCode());
-        bo.setUnpassedReasonExplain(grade.getUnpassedReasonExplain());
+        bo.setUnPassedReasonCode(grade.getUnpassedReasonCode());
+        bo.setUnPassedReasonExplain(grade.getUnpassedReasonExplain());
 
 
         CourseBO course = new CourseBO();

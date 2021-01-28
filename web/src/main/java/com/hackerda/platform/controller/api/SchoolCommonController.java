@@ -4,7 +4,6 @@ package com.hackerda.platform.controller.api;
 import com.hackerda.platform.aggregator.UserInfoAggregator;
 import com.hackerda.platform.controller.WebResponse;
 import com.hackerda.platform.controller.vo.*;
-import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.domain.student.StudentUserBO;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.infrastructure.database.model.Exam;
@@ -13,11 +12,9 @@ import com.hackerda.platform.service.rbac.UserAuthorizeService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -40,14 +37,9 @@ public class SchoolCommonController {
 
     @RequiresAuthentication
     @RequestMapping(value = "/grade")
-    public WebResponse getNowGradeV2() {
-        GradeResultVo grade = gradeService.getGrade();
+    public WebResponse<GradeResultVO> getNowGradeV2() {
 
-        if (grade.getErrorCode() == ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode()){
-            return WebResponse.fail(ErrorCode.ACCOUNT_OR_PASSWORD_INVALID.getErrorCode(), "账号或密码错误");
-        }
-
-        return WebResponse.success(grade);
+        return WebResponse.success(gradeService.getGrade());
     }
 
     @RequiresAuthentication

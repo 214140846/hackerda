@@ -36,6 +36,7 @@ public class RedisConfig extends CachingConfigurerSupport {
         };
     }
 
+    @SuppressWarnings("rawtypes")
     @Bean(name = "redisTemplate")
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisSerializer genericJackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();

@@ -1,5 +1,6 @@
 package com.hackerda.platform.domain.grade;
 
+import com.hackerda.platform.domain.time.Term;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -12,11 +13,7 @@ import java.util.stream.Collectors;
 public class TermGradeBO implements Comparable<TermGradeBO> {
     private List<GradeBO> gradeList = Collections.emptyList();
 
-    private String termYear;
-
-    private int termOrder;
-
-    private boolean isCurrentTerm;
+    private Term term;
 
     private boolean fetchSuccess;
 
@@ -27,7 +24,7 @@ public class TermGradeBO implements Comparable<TermGradeBO> {
     private int errorCode;
 
     public String getExecutiveEducationPlanNum() {
-        return this.getTermYear() + "-" + this.getTermOrder()+ "-1";
+        return this.term.getExecutiveEducationPlanNum();
     }
 
     @Override
