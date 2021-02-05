@@ -48,6 +48,7 @@ public class GradeOverviewBO {
         List<GradeBO> collect = this.termGradeViewBO.getTermGradeBOList().stream()
                 .flatMap(x -> x.getGradeList().stream())
                 .filter(GradeBO::hasScore)
+                .filter(GradeBO::isShow)
                 .collect(Collectors.toList());
 
         // count gpa
