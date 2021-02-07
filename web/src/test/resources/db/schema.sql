@@ -446,6 +446,7 @@ CREATE TABLE `grade`
     `retakeCourse_mode_code`     varchar(16)            DEFAULT NULL COMMENT '重修课程模式编号',
     `retake_course_mode_explain` varchar(128)           DEFAULT NULL COMMENT '重修课程模式解释',
     `standard_point`             varchar(8)             DEFAULT NULL COMMENT '标准分数',
+    `is_show` tinyint(1) DEFAULT '1',
     `term_year`                  varchar(255)  NOT NULL,
     `term_order`                 int(255)      NOT NULL,
     `gmt_create`                 datetime               DEFAULT CURRENT_TIMESTAMP,

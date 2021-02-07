@@ -56,6 +56,7 @@ public class GradeAdapter {
         grade.setUnpassedReasonCode(gradeBO.getUnPassedReasonCode());
         grade.setUnpassedReasonExplain(gradeBO.getUnPassedReasonExplain());
 
+        grade.setIsShow(gradeBO.isShow());
 
         return grade;
     }

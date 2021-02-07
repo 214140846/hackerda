@@ -1,13 +1,16 @@
 package com.hackerda.platform.infrastructure.database.model;
 
+import java.io.Serializable;
+import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.Serializable;
-import java.util.Date;
-
+/**
+ * grade
+ * @author 
+ */
 @Data
 @Accessors(chain = true)
 public class Grade implements Serializable {
@@ -17,62 +20,145 @@ public class Grade implements Serializable {
     @EqualsAndHashCode.Exclude
     private Integer id;
 
+    /**
+     * 对应的考试编号
+     */
     @EqualsAndHashCode.Exclude
-    private Integer examId = 0;
+    private Integer examId;
 
+    /**
+     * 学号
+     */
     private Integer account;
 
+    /**
+     * 分数
+     */
     private Double score;
 
+    /**
+     * 学分
+     */
     private Double credit;
 
+    /**
+     * 根据gpa计算规则换算的数值
+     */
     @EqualsAndHashCode.Exclude
     private Double gradePoint;
 
+    /**
+     * 成绩等级名称 如“优秀”，“良好”等
+     */
     private String levelName;
 
+    /**
+     * 对应成绩等级的分数
+     */
     private String levelPoint;
 
+    /**
+     * 排名
+     */
     @EqualsAndHashCode.Exclude
     private Integer rank;
 
+    /**
+     * 课程名
+     */
     private String courseName;
 
+    /**
+     * 课程号
+     */
     private String courseNumber;
 
+    /**
+     * 课序号，课程号相同时作为标识
+     */
     private String courseOrder;
 
+    /**
+     * 课程类型代码
+     */
     private String coursePropertyCode;
 
+    /**
+     * 课程类型名称
+     */
     private String coursePropertyName;
 
+    /**
+     * 考试类型代码
+     */
     private String examTypeCode;
 
+    /**
+     * 考试类名名称
+     */
     private String examTypeName;
 
+    /**
+     * 学时
+     */
     private Integer studyHour;
 
+    /**
+     * 操作时间
+     */
     private String operateTime;
 
+    /**
+     * 操作人，老师的id或者root
+     */
     private String operator;
 
+    /**
+     * 考试时间
+     */
     private String examTime;
 
+    /**
+     * 未通过原因编号
+     */
     private String unpassedReasonCode;
 
+    /**
+     * 未通过原因解释
+     */
     private String unpassedReasonExplain;
 
+    /**
+     * 备注
+     */
     private String remark;
 
+    /**
+     * 替换课程编号
+     */
     private String replaceCourseNumber;
 
+    /**
+     * 重修课程标识
+     */
     private String retakeCourseMark;
 
+    /**
+     * 重修课程模式编号
+     */
     private String retakecourseModeCode;
 
+    /**
+     * 重修课程模式解释
+     */
     private String retakeCourseModeExplain;
 
+    /**
+     * 标准分数
+     */
     private String standardPoint;
+
+    private Boolean isShow;
 
     private String termYear;
 

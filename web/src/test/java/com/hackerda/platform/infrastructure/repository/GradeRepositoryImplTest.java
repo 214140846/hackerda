@@ -5,103 +5,78 @@ import com.hackerda.platform.domain.grade.GradeRepository;
 import com.hackerda.platform.domain.grade.TermGradeBO;
 import com.hackerda.platform.domain.grade.TermGradeViewBO;
 import com.hackerda.platform.domain.student.StudentAccount;
+import com.hackerda.platform.domain.student.StudentRepository;
 import com.hackerda.platform.domain.student.WechatStudentUserBO;
 import com.hackerda.platform.infrastructure.database.mapper.GradeMapper;
+import com.hackerda.platform.infrastructure.database.model.Grade;
+import com.hackerda.platform.infrastructure.repository.grade.GradeAdapter;
 import com.hackerda.platform.infrastructure.repository.grade.GradeSpiderFacade;
 import com.hackerda.platform.infrastructure.repository.student.StudentRepositoryImpl;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @Slf4j
-@RunWith(SpringRunner.class)
+@ActiveProfiles("test")
 @SpringBootTest
+@RunWith(SpringRunner.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class GradeRepositoryImplTest {
 
     @Autowired
     private GradeRepository gradeRepository;
     @Autowired
-    private GradeMapper gradeMapper;
+    private GradeAdapter gradeAdapter;
     @Autowired
-    private StudentRepositoryImpl studentUserRepository;
-    @MockBean
-    private GradeSpiderFacade gradeSpiderFacade;
-    @Autowired
-    private FetchStatusRecorder fetchStatusRecorder;
+    private StudentRepository studentRepository;
 
+    private List<GradeBO> currentGradeList;
 
-    @Test
-    public void testUpdate(){
-        gradeMapper.truncate();
+    @Before
+    public void init() {
+        currentGradeList = getGradeList("/currentGrade");
+    }
 
-        WechatStudentUserBO user = studentUserRepository.findWetChatUser(new StudentAccount(2017025838));
+    @SneakyThrows
+    private List<GradeBO> getGradeList(String fileName) {
 
-        TermGradeViewBO viewBO = gradeRepository.getAllByStudent(user);
-
-        GradeBO gradeBO = viewBO.getTermGradeBOList().get(0).getGradeList().stream().findAny().orElse(null);
-
-        if(gradeBO != null){
-            gradeBO.setScore(-2.0);
-            gradeRepository.update(Collections.singletonList(gradeBO));
+        try (ObjectInputStream out = new ObjectInputStream(new FileInputStream(this.getClass().getResource(fileName).getPath()))) {
+            //执行反序列化读取
+            Grade[] obj = (Grade[]) out.readObject();
+            //将数组转换成List
+            return Arrays.stream(obj).map(x-> gradeAdapter.toBO(x)).collect(Collectors.toList());
         }
-
-        TermGradeViewBO viewBO1 = gradeRepository.getAllByStudent(user);
-        List<GradeBO> update = viewBO1.getTermGradeBOList().get(0).getUpdate();
-
-        assert update.size() == 1;
-    }
-
-
-    @Test
-    public void testNewGrade(){
-
-        WechatStudentUserBO user = studentUserRepository.findWetChatUser(new StudentAccount(2017025838));
-
-        List<TermGradeBO> termGradeBOList = gradeRepository.getAllByStudent(user).getTermGradeBOList();
-
-        termGradeBOList.get(0).getGradeList().stream().findAny()
-                .ifPresent(gradeBO -> gradeRepository.delete(gradeBO));
-
-        List<TermGradeBO> termGradeBOList2 = gradeRepository.getAllByStudent(user).getTermGradeBOList();
-        List<GradeBO> newGrade = termGradeBOList2.get(0).getNew();
-
-        assert newGrade.size() == 1;
     }
 
     @Test
-    public void testGetGrade(){
+    public void testSave(){
 
-        WechatStudentUserBO user = studentUserRepository.findWetChatUser(new StudentAccount(2017025838));
+        gradeRepository.save(currentGradeList);
 
-        fetchStatusRecorder.removeRecord(FetchScene.EVER_GRADE, "2017025838");
+        Integer account = currentGradeList.stream().findAny().get().getAccount();
 
-        when(gradeSpiderFacade.getSchemeGrade(any())).thenReturn(Collections.emptyList());
+        TermGradeViewBO all = gradeRepository.getAllByStudent(studentRepository.find(new StudentAccount(account)));
 
-        gradeRepository.getAllByStudent(user);
-
-        fetchStatusRecorder.recordFinish(FetchScene.EVER_GRADE, "2017025838");
-
-        gradeRepository.getAllByStudent(user);
-
-        verify(gradeSpiderFacade, times(1)).getSchemeGrade(any());
-
-        assertThat(fetchStatusRecorder.needToFetch(FetchScene.EVER_GRADE, "2017025837")).isFalse();
-    }
-
-    @Test
-    public void clear(){
-
-        fetchStatusRecorder.clearRecord(FetchScene.EVER_GRADE);
+        assertThat(all.size()).isEqualTo(currentGradeList.size());
 
     }
 

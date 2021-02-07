@@ -8,7 +8,7 @@
         course_name, course_number, course_order, course_property_code, course_property_name,
         exam_type_code, exam_type_name, study_hour, operate_time, operator, exam_time, unpassed_reason_code,
         unpassed_reason_explain, remark, replace_course_number, retake_course_mark, retakeCourse_mode_code,
-        retake_course_mode_explain, standard_point, term_year, term_order)
+        retake_course_mode_explain, standard_point,is_show, term_year, term_order)
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -40,6 +40,7 @@
             #{item.retakecourseModeCode,jdbcType=VARCHAR},
             #{item.retakeCourseModeExplain,jdbcType=VARCHAR},
             #{item.standardPoint,jdbcType=VARCHAR},
+            #{item.isShow,jdbcType=VARCHAR},
             #{item.termYear,jdbcType=VARCHAR},
             #{item.termOrder,jdbcType=INTEGER}
             )

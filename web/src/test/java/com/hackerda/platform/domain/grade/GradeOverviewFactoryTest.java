@@ -1,6 +1,5 @@
 package com.hackerda.platform.domain.grade;
 
-import com.google.common.collect.Lists;
 import com.hackerda.platform.infrastructure.database.model.Grade;
 import com.hackerda.platform.infrastructure.repository.grade.GradeAdapter;
 import lombok.SneakyThrows;
@@ -10,18 +9,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 @Slf4j
 @ActiveProfiles("test")
@@ -53,7 +52,6 @@ public class GradeOverviewFactoryTest {
             //将数组转换成List
             return Arrays.stream(obj).map(x-> gradeAdapter.toBO(x)).collect(Collectors.toList());
         }
-
     }
 
     private GradeBO randomGet(List<GradeBO> list) {
@@ -111,13 +109,7 @@ public class GradeOverviewFactoryTest {
     @Test
     public void checkHide() {
 
-        List<GradeBO> copy = getGradeList("/currentGrade");
-
-        GradeBO gradeBO = randomGet(copy);
-        gradeBO.setScore(gradeBO.getScore() + 1);
-
-
-        // 3.抓取结果比数据多一条新的数据
+        // 3.抓取结果比数据库少一条新的数据
         List<GradeBO> copy2 = getGradeList("/currentGrade");
         copy2.remove(0);
         TermGradeViewBO termGradeViewBO3 =

@@ -75,6 +75,10 @@ public class TermGradeViewBO {
         return Collections.emptyList();
     }
 
+    public int size() {
+        return termGradeBOList.stream().mapToInt(TermGradeBO ::size).sum();
+    }
+
 
 
     /**

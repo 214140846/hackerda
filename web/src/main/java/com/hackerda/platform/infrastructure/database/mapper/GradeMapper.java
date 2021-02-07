@@ -1,18 +1,12 @@
 package com.hackerda.platform.infrastructure.database.mapper;
 
 import com.hackerda.platform.infrastructure.database.model.Grade;
-import com.hackerda.platform.infrastructure.database.model.example.GradeExample;
+import com.hackerda.platform.infrastructure.database.model.GradeExample;
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
-import org.springframework.stereotype.Repository;
 
-@Mapper
-@Repository
 public interface GradeMapper {
-    int countByExample(GradeExample example);
+    long countByExample(GradeExample example);
 
     int deleteByExample(GradeExample example);
 
@@ -33,7 +27,4 @@ public interface GradeMapper {
     int updateByPrimaryKeySelective(Grade record);
 
     int updateByPrimaryKey(Grade record);
-
-    @Update("truncate table grade")
-    void truncate();
 }

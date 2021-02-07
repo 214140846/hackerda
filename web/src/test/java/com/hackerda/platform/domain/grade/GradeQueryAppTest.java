@@ -64,11 +64,11 @@ public class GradeQueryAppTest {
     @SneakyThrows
     private List<Grade> getGradeList(String fileName) {
 
-        try (ObjectInputStream out = new ObjectInputStream(new FileInputStream(new File(this.getClass().getResource(fileName).getPath())))) {
+        try (ObjectInputStream out = new ObjectInputStream(new FileInputStream(this.getClass().getResource(fileName).getPath()))) {
             //执行反序列化读取
             Grade[] obj = (Grade[]) out.readObject();
             //将数组转换成List
-            return Arrays.asList(obj);
+            return Lists.newArrayList(obj);
         }
 
     }
@@ -92,6 +92,29 @@ public class GradeQueryAppTest {
         assertThat(bo1.fetchSuccess()).isTrue();
         assertThat(bo1.getUpdateGrade().size()).isEqualTo(0);
         assertThat(bo1.getTermGradeList().size()).isGreaterThan(0);
+    }
+
+    @Test
+    public void testUpdateAfterFetchSuccess(){
+        doReturn(true).when(spiderSwitch).fetchUrp();
+        doReturn(currentGradeList).when(gradeSpiderFacade).getCurrentTermGrade(any());
+        doReturn(schemeGradeList).when(gradeSpiderFacade).getSchemeGrade(any());
+
+        WechatStudentUserBO user = studentUserRepository.findWetChatUser(new StudentAccount(2017025838));
+
+        GradeOverviewBO bo = gradeQueryApp.getGradeOverview(user);
+
+        assertThat(bo.fetchSuccess()).isTrue();
+        assertThat(bo.getNewGrade().size()).isGreaterThan(0);
+
+
+        List<Grade> currentGradeList = getGradeList("/currentGrade");
+        currentGradeList.remove(0);
+        doReturn(currentGradeList).when(gradeSpiderFacade).getCurrentTermGrade(any());
+        GradeOverviewBO bo1 = gradeQueryApp.getGradeOverview(user);
+        assertThat(bo1.fetchSuccess()).isTrue();
+        assertThat(bo1.getUpdateGrade().size()).isEqualTo(1);
+        assertThat(bo1.getUpdateGrade().stream().findAny().get().isShow()).isFalse();
     }
 
     @Test

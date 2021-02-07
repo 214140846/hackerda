@@ -2,16 +2,14 @@ package com.hackerda.platform.infrastructure.database.dao;
 
 import com.hackerda.platform.infrastructure.database.mapper.ext.GradeExtMapper;
 import com.hackerda.platform.infrastructure.database.model.Grade;
-import com.hackerda.platform.infrastructure.database.model.example.GradeExample;
-import com.hackerda.platform.domain.time.SchoolTime;
-import com.hackerda.platform.utils.DateUtils;
+
+import com.hackerda.platform.infrastructure.database.model.GradeExample;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

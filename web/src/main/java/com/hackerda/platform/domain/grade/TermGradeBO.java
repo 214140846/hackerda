@@ -27,6 +27,10 @@ public class TermGradeBO implements Comparable<TermGradeBO> {
         return this.term.getExecutiveEducationPlanNum();
     }
 
+    public int size() {
+        return gradeList.size();
+    }
+
     @Override
     public int compareTo(TermGradeBO o) {
         return this.getExecutiveEducationPlanNum().compareTo(o.getExecutiveEducationPlanNum());
