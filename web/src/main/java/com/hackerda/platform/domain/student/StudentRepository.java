@@ -16,6 +16,8 @@ public interface StudentRepository {
 
     StudentUserBO find(StudentAccount account);
 
+    List<StudentUserBO> find(int page, int size);
+
     List<WechatStudentUserBO> getByAccountList(Collection<StudentAccount> accountList);
 
     void save(StudentUserBO studentUser);

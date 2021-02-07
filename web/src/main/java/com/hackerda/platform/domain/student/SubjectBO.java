@@ -2,14 +2,16 @@ package com.hackerda.platform.domain.student;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
 @AllArgsConstructor
 public class SubjectBO {
 
-    private String grade;
+    private final String grade;
 
-    private String name;
+    private final String name;
 
-    private String num;
+    private final String num;
 }

@@ -2,10 +2,7 @@ package com.hackerda.platform.infrastructure.repository.student;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.hackerda.platform.domain.student.AcademyBO;
-import com.hackerda.platform.domain.student.ClazzBO;
-import com.hackerda.platform.domain.student.ClazzInfoRepository;
-import com.hackerda.platform.domain.student.SubjectBO;
+import com.hackerda.platform.domain.student.*;
 import com.hackerda.platform.infrastructure.database.mapper.ext.UrpClassExtMapper;
 import com.hackerda.platform.infrastructure.database.model.UrpClass;
 import com.hackerda.platform.infrastructure.database.model.example.UrpClassExample;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -30,6 +28,7 @@ public class ClazzInfoRepositoryImpl implements ClazzInfoRepository {
     private final Cache<String, List<AcademyBO>> academyCache = CacheBuilder.newBuilder().build();
     private final Cache<String, List<SubjectBO>> subjectCache = CacheBuilder.newBuilder().build();
     private final Cache<String, List<ClazzBO>> clazzCache = CacheBuilder.newBuilder().build();
+    private final Cache<String, Optional<UrpClass>> clazzInfoCache = CacheBuilder.newBuilder().build();
 
     @Override
     public List<AcademyBO> findAcademy(String grade) {
@@ -85,7 +84,29 @@ public class ClazzInfoRepositoryImpl implements ClazzInfoRepository {
     }
 
     @Override
-    public UrpClass findClassByNum(String classNum) {
-        return null;
+    public ClazzInfoBO findClassByNum(String classNum) {
+
+        UrpClassExample example = new UrpClassExample();
+        example.createCriteria().andClassNumEqualTo(classNum);
+
+        try {
+            Optional<UrpClass> optional = clazzInfoCache.get(classNum, () -> urpClassExtMapper.selectByExample(example).stream().findFirst());
+
+            UrpClass urpClass = optional.orElse(null);
+
+            if(urpClass == null) {
+                return null;
+            }
+
+            SubjectBO subjectBO = new SubjectBO(urpClass.getAdmissionGrade(), urpClass.getSubjectName(), urpClass.getSubjectNum());
+            ClazzBO clazzBO = new ClazzBO(urpClass.getAdmissionGrade(), urpClass.getClassName(), urpClass.getClassNum());
+            AcademyBO academyBO = new AcademyBO(urpClass.getAdmissionGrade(), urpClass.getAcademyName(), urpClass.getAcademyNum());
+
+            return new ClazzInfoBO(academyBO, subjectBO, clazzBO);
+
+        } catch (ExecutionException e) {
+            log.error("findAcademy urpClass {} cache error", classNum, e);
+            return null;
+        }
     }
 }

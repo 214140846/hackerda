@@ -1,11 +1,9 @@
 package com.hackerda.platform.infrastructure.repository.student;
 
-import com.hackerda.platform.domain.student.StudentAccount;
-import com.hackerda.platform.domain.student.StudentUserBO;
-import com.hackerda.platform.domain.student.StudentWechatBindDetail;
-import com.hackerda.platform.domain.student.WechatStudentUserBO;
+import com.hackerda.platform.domain.student.*;
 import com.hackerda.platform.infrastructure.database.model.StudentUser;
 import com.hackerda.platform.infrastructure.database.model.WechatOpenid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +15,8 @@ public class StudentUserAdapter {
     private String key;
     @Value("${student.useUnionId: true}")
     private boolean useUnionId;
+    @Autowired
+    private ClazzInfoRepository clazzInfoRepository;
 
     public WechatStudentUserBO toBO(StudentUser studentUser) {
 
@@ -39,6 +39,7 @@ public class StudentUserAdapter {
         user.setKey(key);
         user.setMsgHasCheck(studentUser.getHasCheck());
         user.setUseUnionId(useUnionId);
+        user.setClazzInfoBO(clazzInfoRepository.findClassByNum(studentUser.getUrpclassNum().toString()));
 
         return user;
 

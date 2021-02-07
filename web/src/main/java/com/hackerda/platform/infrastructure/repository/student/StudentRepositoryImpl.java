@@ -1,5 +1,6 @@
 package com.hackerda.platform.infrastructure.repository.student;
 
+import com.github.pagehelper.PageHelper;
 import com.hackerda.platform.domain.constant.ErrorCode;
 import com.hackerda.platform.domain.constant.SubscribeScene;
 import com.hackerda.platform.domain.student.StudentAccount;
@@ -34,6 +35,7 @@ public class StudentRepositoryImpl implements StudentRepository {
     @Autowired
     private UnionIdRepository unionIdRepository;
 
+    @Override
     public WechatStudentUserBO findWetChatUser(StudentAccount account){
 
         StudentUser studentUser = studentUserDao.selectStudentByAccount(account.getInt());
@@ -91,6 +93,16 @@ public class StudentRepositoryImpl implements StudentRepository {
         return studentUserAdapter.toBO(studentUser);
     }
 
+    @Override
+    public List<StudentUserBO> find(int page, int size) {
+        PageHelper.startPage(page, size);
+
+        return studentUserDao.selectAllStudent().stream()
+                .map(studentUser-> studentUserAdapter.toBO(studentUser))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<WechatStudentUserBO> getByAccountList(Collection<StudentAccount> accountList){
         List<WechatStudentUserBO> studentUserBOList =
                 studentUserDao.selectByAccountList(accountList.stream().map(StudentAccount::getInt).collect(Collectors.toList())).stream()
@@ -120,7 +132,7 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void save(WechatStudentUserBO studentUser) {
 
         if(studentUser.isSaveOrUpdate()) {

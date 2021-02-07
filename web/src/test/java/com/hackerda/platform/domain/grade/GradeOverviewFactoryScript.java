@@ -11,6 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 
 /**
@@ -35,6 +38,23 @@ public class GradeOverviewFactoryScript {
         GradeOverviewBO gradeOverviewBO = gradeOverviewFactory.create(studentUserBO);
 
         System.out.println(gradeOverviewBO.getGpa());
+
+    }
+
+    @Test
+    public void update() {
+
+        List<StudentUserBO> studentUserBOS;
+
+        int page = 0;
+
+        while ((studentUserBOS = studentRepository.find(page ++ , 500)).size() != 0) {
+
+            for (StudentUserBO studentUserBO : studentUserBOS) {
+
+            }
+        }
+
 
     }
 }

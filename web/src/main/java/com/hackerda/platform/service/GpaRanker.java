@@ -41,7 +41,9 @@ public class GpaRanker {
     }
 
     private String getKey(StudentUserBO studentUser){
-        return RedisKeys.GPA_RANK.genKey(profiles, studentUser.getGrade(), studentUser.getSubjectName());
+        return RedisKeys.GPA_RANK.genKey(profiles, studentUser.getGrade(),
+                studentUser.getClazzInfoBO().getAcademyBO().getNum(),
+                studentUser.getClazzInfoBO().getSubjectBO().getNum());
     }
 
 

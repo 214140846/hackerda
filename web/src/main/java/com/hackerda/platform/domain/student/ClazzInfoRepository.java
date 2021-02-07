@@ -4,6 +4,9 @@ import com.hackerda.platform.infrastructure.database.model.UrpClass;
 
 import java.util.List;
 
+/**
+ * @author chenjuanrong
+ */
 public interface ClazzInfoRepository {
 
 
@@ -13,5 +16,5 @@ public interface ClazzInfoRepository {
 
     List<ClazzBO> findClazz(String grade, String academyNum, String subjectNum);
 
-    UrpClass findClassByNum(String classNum);
+    ClazzInfoBO findClassByNum(String classNum);
 }
